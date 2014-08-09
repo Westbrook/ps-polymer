@@ -1,6 +1,6 @@
 *PS Polymer*
 
-Wrapping the PhotoShelter.com API with Polymer.js to surface many photographer data points via web components.
+Wrapping the PhotoShelter.com API (http://www.photoshelter.com/developer/) with Polymer.js (http://www.polymer-project.org) to surface many photographer data points via web components.
 
 Data for users, image, and galleries are available with:
 * ps-user-service
