@@ -1,0 +1,274 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-image-service/ps-image-service.html">
+<!--
+Element for sharing a PhotoShelter.com image.
+
+##### Example
+
+    <ps-share></ps-share>
+
+@element ps-share
+@blurb Element for sharing a PhotoShelter.com image.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-share" attributes="image user I_ID">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    *, *:before, *:after {
+      -webkit-box-sizing: inherit;
+      -moz-box-sizing: inherit;
+      box-sizing: inherit;
+    }
+    input,
+    textarea {
+      width: 100%;
+      background: transparent;
+      border-radius: 0;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 10px 35px 10px 15px;
+      margin: 0;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    input:focus,
+    textarea:focus {
+      outline: none;
+    }
+    textarea {
+      overflow: hidden;
+      resize: vertical;
+    }
+    a {
+      color: #F2AFAF;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    a:focus, a:after {
+      outline: none;
+    }
+    .shareEmail {
+
+    }
+    form {
+      position: relative;
+      margin: 0 0 20px;
+    }
+    label {
+      padding: 0 0 5px;
+      float: left;
+      width: 100%;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    form button {
+      -webkit-appearance: none;
+      border: none;
+      line-height: inherit;
+      outline: none;
+      text-decoration: none;
+      cursor: pointer;
+      background: transparent;
+      position: absolute;
+      right: 0;
+      top: 20px;
+      margin: 0;
+      text-indent: -999em;
+      color: #fff;
+      height: 35px;
+      width: 35px;
+      line-height: 35px;
+      color: #F2AFAF;
+    }
+    form button:hover {
+      color: #fff;
+    }
+    form button:after {
+      text-indent: 0;
+      font-family: 'icon-set';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      font-size: 2em;
+      line-height: inherit;
+    }
+    .copyURL:after,
+    .copyEmbed:after {
+      content: '\0152';
+    }
+    .shareEmail:after {
+      content: '\005b';
+    }
+    .share-options {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      float: left;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+    .share-options li {
+      width: 30px;
+      margin: auto;
+    }
+    .share-options a {
+      width: 100%;
+      float: left;
+      font-size: 2em;
+      text-indent: -999em;
+    }
+    .share-options a:hover {
+      color: #fff;
+    }
+    .share-options a:before {
+      width: 100%;
+      text-align: center;
+      float: left;
+      text-indent: 0;
+      font-family: 'icon-set';
+    }
+    .facebook:before {
+      content: '\0037';
+    }
+    .twitter:before {
+      content: '\0031';
+    }
+    .pinterest:before {
+      content: '\0034';
+    }
+    .linkedin:before {
+      content: '\0035';
+    }
+    .tumblr:before {
+      content: '\0060';
+    }
+    .google_plusone_share:before {
+      content: '\0036';
+    }
+    </style>
+
+    <template if="{{!!I_ID}}">
+      <ps-image-service id="service-image-iptc-{{I_ID}}" image="{{image}}" type="share" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
+    </template>
+    
+    <template if="{{!!image}}">
+      <template if="{{!user}}">
+        <ps-user-service id="service-user" user="{{user}}" U_ID='{{image.owner_id}}'></ps-user-service>
+      </template>
+      <h1>Share This Image</h1>
+      <form>
+          <label>Link</label>
+          <input type="text" id="copyURL" value="{{urlBase}}{{urlPath}}{{urlID}}" class="link">
+          <button data-clipboard-target="copyURL" class="copyURL" title="Copy Link">Copy Link</button>
+      </form>
+      <form>
+          <label>Email</label>
+          <input type="email" id="emailURL" placeholder="Enter an email address" class="email">
+          <button class="shareEmail" title="Share Via Email">Share Via Email</button>
+      </form>
+      <form>
+          <label>Embed</label>
+          <textarea class="embed" type="text" id="copyEmbed"><script src="http://designsxwj.com/polymer/components/platform/platform.js"></script><link rel="import" href="http://designsxwj.com/polymer/finished/ps-image-card.html"><ps-image-card I_ID="I000071U7CTddD8s"></ps-image-card></textarea>
+          <button data-clipboard-target="copyEmbed" class="copyEmbed" title="Copy Embed Code">Copy Embed Code</button>
+      </form>
+      
+      <label>Social</label>
+      <ul class="share-options">
+          <li><a title="Facebook" class="facebook" href="http://api.addthis.com/oexchange/0.8/forward/facebook/offer?&amp;pubid=ra-51a66612171174a7&amp;url={{urlBase}}{{urlPath}}{{urlID}}" target="_blank">Facebook</a></li>
+          <li><a title="Twitter" class="twitter" href="http://api.addthis.com/oexchange/0.8/forward/twitter/offer?&amp;pubid=ra-51a66612171174a7&amp;url={{urlBase}}{{urlPath}}{{urlID}}" target="_blank">Twitter</a></li>
+          <li><a title="Pinterest" class="pinterest" href="http://api.addthis.com/oexchange/0.8/forward/pinterest/offer?&amp;pubid=ra-51a66612171174a7&amp;url={{urlBase}}{{urlPath}}{{urlID}}" target="_blank">Pinterest</a></li>
+          <li><a title="LinkedIn" class="linkedin" href="http://api.addthis.com/oexchange/0.8/forward/linkedin/offer?&amp;pubid=ra-51a66612171174a7&amp;url={{urlBase}}{{urlPath}}{{urlID}}" target="_blank">LinkedIn</a></li>
+          <li><a title="Tumblr" class="tumblr" href="http://api.addthis.com/oexchange/0.8/forward/tumblr/offer?&amp;pubid=ra-51a66612171174a7&amp;url={{urlBase}}{{urlPath}}{{urlID}}" target="_blank">Tumblr</a></li>
+          <li><a title="Google+" class="google_plusone_share" href="http://api.addthis.com/oexchange/0.8/forward/google_plusone_share/offer?&amp;pubid=ra-51a66612171174a7&amp;url={{urlBase}}{{urlPath}}{{urlID}}" target="_blank">Google+</a></li>
+      </ul>
+    </template>
+  </template>
+
+  <script>
+  Polymer('ps-share', {
+    /**
+     * The `I_ID` attribute is the image_id to be displayed.
+     * 
+     * @attribute I_ID
+     * @type string
+     * @default ''
+     */
+    I_ID: '',
+    /**
+     * The `urlBase` attribute is the image owners non-CNAME PhotoShelter.com URL.
+     * 
+     * @attribute urlBase
+     * @type string
+     * @default ''
+     */
+    urlBase: '',
+    /**
+     * The `urlPath` attribute is the path required to view the image in it's gallery (or lack there of) context.
+     * 
+     * @attribute urlPath
+     * @type string
+     * @default ''
+     */
+    urlPath: '',
+    /**
+     * The `urlID` attribute is the C_ID/G_ID/I_ID conbination to view the image on PhotoShelter.com.
+     * 
+     * @attribute urlID
+     * @type string
+     * @default ''
+     */
+    urlID: '',
+    created: function() {
+      /**
+       * The `image` attribute defines the PhotoShelter image to be displayed.
+       * 
+       * @attribute image
+       * @type object
+       * @default {}
+       */
+      this.image = {};
+      /**
+       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+       * 
+       * @attribute extends
+       * @type array
+       * @default []
+       */
+      this.extends = [];
+    },
+    /**
+    * The `userChanged` method manages the urlBase attribute based on the user attribute.
+    * 
+    * @method userChanged
+    */
+    userChanged: function(attrName, oldVal, newVal) {
+      this.urlBase = 'http://' + this.user.label + '.photoshelter.com';
+    },
+    /**
+    * The `imageChanged` method manages the urlPath and urlId attributes based on the image attribute.
+    * 
+    * @method imageChanged
+    */
+    imageChanged: function(attrName, oldVal, newVal) {
+      this.urlPath = (this.image.gallery_id) ? '/gallery-image/' : '/image/';
+      this.urlID = ((this.image.gallery_id) ? this.image.gallery_id + '/' : '') +
+        this.image.image_id;
+    }
+  });
+  </script>
+</polymer-element>

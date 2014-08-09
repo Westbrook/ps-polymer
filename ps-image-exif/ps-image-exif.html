@@ -1,0 +1,93 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-image-service/ps-image-service.html">
+<!--
+Element displaying the EXIF data for a PhotoShelter.com image.
+
+##### Example
+
+    <ps-image-exif></ps-image-exif>
+
+@element ps-image-exif
+@blurb Element displaying the EXIF data for a PhotoShelter.com image.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-image-exif" attributes="image I_ID">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    dl {
+      margin: 0;
+      padding: 0;
+    }
+    dt {
+      font-weight: 700;
+      font-size: 1.08em;
+      float: left;
+      width: 50%;
+      padding: 0 2% 20px 0;
+      clear: both;
+    }
+    dd {
+      float: right;
+      width: 48%;
+      padding: 0 0 20px;
+      margin: 0;
+      text-align: right;
+    }
+    dd:last-child {
+      padding: 0;
+    }
+    </style>
+
+    <template if="{{!!I_ID}}">
+      <ps-image-service id="service-image-exif-{{I_ID}}" image="{{image}}" type="exif" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
+    </template>
+    
+    <template if="{{!!image}}">
+      <h1>Image Exif</h1>
+      <dl>
+        <template repeat="{{image.Exif}}">
+          <dt>{{name}}</dt>
+          <dd>{{value}}</dd>
+        </template>
+      </dl>
+    </template>
+  </template>
+
+  <script>
+  Polymer('ps-image-exif', {
+    /**
+     * The `I_ID` attribute is the image_id to be displayed.
+     * 
+     * @attribute I_ID
+     * @type string
+     * @default ''
+     */
+    I_ID: '',
+    created: function() {
+      /**
+       * The `image` attribute defines the PhotoShelter image to be displayed.
+       * 
+       * @attribute image
+       * @type object
+       * @default {}
+       */
+      this.image = {};
+      /**
+       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+       * 
+       * @attribute extends
+       * @type array
+       * @default ["Exif"]
+       */
+      this.extends = [
+        "Exif"
+      ]
+    }
+  });
+  </script>
+</polymer-element>

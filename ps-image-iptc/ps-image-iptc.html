@@ -1,0 +1,162 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-image-service/ps-image-service.html">
+<link rel="import" href="../ps-user-service/ps-user-service.html">
+<!--
+Element displaying the IPTC data for a PhotoShelter.com image.
+
+##### Example
+
+    <ps-image-iptc></ps-image-iptc>
+
+@element ps-image-iptc
+@blurb Element displaying the IPTC data for a PhotoShelter.com image.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-image-iptc" attributes="image user I_ID">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    *, *:before, *:after {
+      -webkit-box-sizing: inherit;
+      -moz-box-sizing: inherit;
+      box-sizing: inherit;
+    }
+    a {
+      color: #F2AFAF;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    dl {
+      margin: 0;
+      padding: 0;
+    }
+    dt {
+      font-weight: 700;
+      font-size: 1.08em;
+    }
+    dd {
+      padding: 0 0 20px;
+      margin: 0;
+    }
+    dd:last-child {
+      padding: 0;
+    }
+    .keywords b:last-child {
+      display: none;
+    }
+    b {
+      font-weight: normal;
+    }
+    </style>
+
+    <template if="{{!!I_ID}}">
+      <ps-image-service id="service-image-iptc-{{I_ID}}" image="{{image}}" type="iptc" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
+    </template>
+
+    <template if="{{!!image}}">
+      <template if="{{!user}}">
+        <ps-user-service id="service-user" user="{{user}}" U_ID='{{image.owner_id}}'></ps-user-service>
+      </template>
+      <h1>{{image.Iptc.name || image.Iptc.headline || image.Iptc.title || image.Iptc.file_name}}</h1>
+      <h2><a href="{{urlBase}}" target="_blank">{{image.Iptc.author}}</a></h2>
+      <p>{{image.Iptc.description || image.Iptc.caption || image.Iptc.display_caption}}</p>
+
+      <dl>
+        <template if="{{!!keywords}}">
+          <dt>Key Words</dt>
+          <dd class="keywords">
+            <template repeat="{{keyword in keywords}}">
+              <a href="{{urlBase}}/search?I_DSC={{keyword}}&_ACT=search&I_DSC_AND=t" target="_blank" title="{{keyword}}">{{keyword}}</a><b>,&nbsp;</b>
+            </template>
+          </dd>
+        </template>
+        <dt>Location</dt>
+        <dd>{{image.Iptc.city}}, {{image.Iptc.state}} {{image.Iptc.country}}</dd>
+        <dt>Copyright</dt>
+        <dd>{{image.Iptc.copyright}}</dd>
+      </dl>
+    </template>
+  </template>
+
+  <script>
+  Polymer('ps-image-iptc', {
+    /**
+     * The `I_ID` attribute is the image_id to be displayed.
+     * 
+     * @attribute I_ID
+     * @type string
+     * @default ''
+     */
+    I_ID: '',
+    /**
+     * The `urlBase` attribute is the image owners non-CNAME PhotoShelter.com URL.
+     * 
+     * @attribute urlBase
+     * @type string
+     * @default ''
+     */
+    urlBase: '',
+    created: function() {
+      /**
+       * The `image` attribute defines the PhotoShelter image to be displayed.
+       * 
+       * @attribute image
+       * @type object
+       * @default {}
+       */
+      this.image = {};
+      /**
+       * The `user` attribute defines the PhotoShelter user who's account of which the image is a part.
+       * 
+       * @attribute user
+       * @type object
+       * @default {}
+       */
+      this.user = {};
+      /**
+       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+       * 
+       * @attribute extends
+       * @type array
+       * @default ["Iptc"]
+       */
+      this.extends = [
+        "Iptc"
+      ];
+      /**
+       * The `user` attribute defines the PhotoShelter user who's account of which the image is a part.
+       * 
+       * @attribute user
+       * @type object
+       * @default {}
+       */
+      this.keywords = [];
+    },
+   /**
+    * The `imageChanged` method mutates the keyword attribute in the server response into an array.
+    * 
+    * @method imageChanged
+    */
+    imageChanged: function(attrName, oldVal, newVal) {
+      if (!!this.image.Iptc.keyword)
+        this.keywords = this.image.Iptc.keyword.split(', ');
+      else
+        this.keywords = false;
+    },
+    /**
+    * The `userChanged` method manages the urlBase attribute based on the user attribute.
+    * 
+    * @method userChanged
+    */
+    userChanged: function(attrName, oldVal, newVal) {
+      this.urlBase = 'http://' + this.user.label + '.photoshelter.com';
+    }
+  });
+  </script>
+</polymer-element>

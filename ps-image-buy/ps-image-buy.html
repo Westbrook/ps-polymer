@@ -1,0 +1,168 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-image-service/ps-image-service.html">
+<link rel="import" href="../ps-user-service/ps-user-service.html">
+<!--
+Element displaying purchasing info for a PhotoShelter.com image.
+
+##### Example
+
+    <ps-image-buy></ps-image-buy>
+
+@element ps-image-buy
+@blurb Element displaying purchasing info for a PhotoShelter.com image.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-image-buy" attributes="image user I_ID">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    *, *:before, *:after {
+      -webkit-box-sizing: inherit;
+      -moz-box-sizing: inherit;
+      box-sizing: inherit;
+    }
+    a {
+      float: left;
+      clear: both;
+      margin: 0;
+      padding: 0 0 0 40px;
+      line-height: 40px;
+      vertical-align: middle;
+      position: relative;
+      color: #F2AFAF;
+      text-decoration: none;
+    }
+    a:hover {
+      color: #fff;
+    }
+    a:before {
+      position: absolute;
+      height: 100%;
+      width: 40px;
+      left: 0;
+      top: 0;
+      font-family: 'icon-set';
+      line-height: inherit;
+      font-size: 2em;
+    }
+    .RF:before {
+      content: '\007d';
+    }
+    .RM:before {
+      content: '\007b';
+    }
+    .PR:before {
+      content: '\0026';
+    }
+    .BND:before {
+      content: '\005c';
+    }
+    .PU:before {
+      content: '\007e';
+    }
+    </style>
+
+    <template if="{{!!I_ID}}">
+      <ps-image-service id="service-image-buy-{{I_ID}}" type="buy" image="{{image}}" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
+    </template>
+    
+    <template if="{{!!image}}">
+      <template if="{{!user}}">
+        <ps-user-service id="service-user" user="{{user}}" U_ID='{{image.owner_id}}'></ps-user-service>
+      </template>
+      <template if="{{!!image.Profile.length}}">
+        <h1>Purchase Options</h1>
+        <template repeat="{{profile in image.Profile}}">
+          <a href="{{urlBase}}{{urlPath}}{{urlID}}#cart/{{profile.type}}/{{urlID}}" target="_blank" title="{{profile.name}}" class="{{profile.type}}">{{profile.name}}</a>
+        </template>
+      </template>
+    </template>
+  </template>
+
+  <script>
+  Polymer('ps-image-buy', {
+    /**
+     * The `I_ID` attribute is the image_id to be displayed.
+     * 
+     * @attribute I_ID
+     * @type string
+     * @default ''
+     */
+    I_ID: '',
+    /**
+     * The `urlBase` attribute is the image owners non-CNAME PhotoShelter.com URL.
+     * 
+     * @attribute urlBase
+     * @type string
+     * @default ''
+     */
+    urlBase: '',
+    /**
+     * The `urlPath` attribute is the path required to view the image in it's gallery (or lack there of) context.
+     * 
+     * @attribute urlPath
+     * @type string
+     * @default ''
+     */
+    urlPath: '',
+    /**
+     * The `urlID` attribute is the C_ID/G_ID/I_ID conbination to view the image on PhotoShelter.com.
+     * 
+     * @attribute urlID
+     * @type string
+     * @default ''
+     */
+    urlID: '',
+    created: function() {
+      /**
+       * The `image` attribute defines the PhotoShelter image to be displayed.
+       * 
+       * @attribute image
+       * @type object
+       * @default {}
+       */
+      this.image = {};
+      /**
+       * The `user` attribute defines the PhotoShelter user who's account of which the image is a part.
+       * 
+       * @attribute user
+       * @type object
+       * @default {}
+       */
+      this.user = {};
+      /**
+       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+       * 
+       * @attribute extends
+       * @type array
+       * @default ["Profile"]
+       */
+      this.extends = [
+        "Profile"
+      ]
+    },
+    /**
+    * The `userChanged` method manages the urlBase attribute based on the user attribute.
+    * 
+    * @method userChanged
+    */
+    userChanged: function(attrName, oldVal, newVal) {
+      this.urlBase = 'http://' + this.user.label + '.photoshelter.com';
+    },
+    /**
+    * The `imageChanged` method manages the urlPath and urlId attributes based on the image attribute.
+    * 
+    * @method imageChanged
+    */
+    imageChanged: function(attrName, oldVal, newVal) {
+      this.urlPath = (this.image.gallery_id) ? '/gallery-image/' : '/image/';
+      this.urlID = ((this.image.gallery_id) ? this.image.gallery_id + '/' : '') +
+        this.image.image_id;
+    }
+  });
+  </script>
+</polymer-element>

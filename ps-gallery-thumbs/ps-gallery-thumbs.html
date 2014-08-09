@@ -1,0 +1,86 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
+<link rel="import" href="../ps-image/ps-image.html">
+<!--
+Element displaying a PhotoShelter.com gallery as thumbnails.
+
+##### Example
+
+    <ps-gallery-thumbs></ps-gallery-thumbs>
+
+@element ps-gallery-thumbs
+@blurb Element displaying a PhotoShelter.com gallery as thumbnails.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-gallery-thumbs" attributes="image G_ID gallery">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    ps-image {
+      float: left;
+      width: 50%;
+    }
+    ps-image:nth-child(n*2) {
+      padding-left: 5px;
+    }
+    img {
+      width: 100%;
+      height: auto;
+    }
+    </style>
+
+    <template if="{{!!G_ID}}">
+      <ps-gallery-service id="service" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extends}}"></ps-gallery-service>
+    </template>
+
+    <template if="{{!!gallery.GalleryImage}}">
+      <template repeat="{{image, i in gallery.GalleryImage}}" id="thumbs">
+        <ps-image image="{{image}}" relativeSize="true" class="gallery-thumb" on-tap="{{updateI_ID}}" data-idx="{{i}}"></ps-image>
+      </template>
+    </template>
+    
+  </template>
+
+  <script>
+  Polymer('ps-gallery-thumbs',{
+    created: function() {
+      /**
+       * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
+       * 
+       * @attribute gallery
+       * @type object
+       * @default {}
+       */
+      this.gallery = {};
+      /**
+       * The `extends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
+       * 
+       * @attribute extends
+       * @type array
+       * @default ["GalleryImage", "ImageLink", "Image"]
+       */
+      this.extends = [
+        "GalleryImage",
+        "ImageLink",
+        "Image"
+      ]
+    },
+    /**
+    * The `updateI_ID` method updates the currently displayed image from the available gallery data.
+    * 
+    * @method updateI_ID
+    */
+    updateI_ID: function(e) {
+      var galleryImage = this.gallery[e.currentTarget.dataset.idx],
+          image = galleryImage.Image;
+      if (typeof image.Profile === 'undefined' && typeof galleryImage.Profile !== 'undefined')
+        image.Profile = galleryImage.Profile;
+      this.image = image;
+    }
+  });
+  </script>
+</polymer-element>
