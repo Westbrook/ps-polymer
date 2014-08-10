@@ -172,17 +172,17 @@ Element for sharing a PhotoShelter.com image.
         <ps-user-service id="service-user" user="{{user}}" U_ID='{{image.owner_id}}'></ps-user-service>
       </template>
       <h1>Share This Image</h1>
-      <form>
+      <form autocomplete="off">
           <label>Link</label>
           <input type="text" id="copyURL" value="{{urlBase}}{{urlPath}}{{urlID}}" class="link">
           <button data-clipboard-target="copyURL" class="copyURL" title="Copy Link">Copy Link</button>
       </form>
-      <form>
+      <form autocomplete="off" on-submit="{{emailShare}}">
           <label>Email</label>
           <input type="email" id="emailURL" placeholder="Enter an email address" class="email">
-          <button class="shareEmail" title="Share Via Email">Share Via Email</button>
+          <button class="shareEmail" title="Share Via Email" on-tap="{{emailShare}}">Share Via Email</button>
       </form>
-      <form>
+      <form autocomplete="off">
           <label>Embed</label>
           <textarea class="embed" type="text" id="copyEmbed"><script src="http://designsxwj.com/polymer/components/platform/platform.js"></script><link rel="import" href="http://designsxwj.com/polymer/finished/ps-image-card.html"><ps-image-card I_ID="I000071U7CTddD8s"></ps-image-card></textarea>
           <button data-clipboard-target="copyEmbed" class="copyEmbed" title="Copy Embed Code">Copy Embed Code</button>
@@ -285,6 +285,13 @@ Element for sharing a PhotoShelter.com image.
       this.urlPath = (this.image.gallery_id) ? '/gallery-image/' : '/image/';
       this.urlID = ((this.image.gallery_id) ? this.image.gallery_id + '/' : '') +
         this.image.image_id;
+    },
+    emailShare: function(e) {
+      e.preventDefault();
+      var email = this.$.emailURL.value;
+      if (email)
+        window.open('http://api.addthis.com/oexchange/0.8/forward/email/offer?&pubid=ra-51a66612171174a7&url=' +
+          encodeURI(this.urlBase + this.urlPath + this.urlID) + '&to=' + encodeURI(email), '_blank');
     }
   });
   </script>
