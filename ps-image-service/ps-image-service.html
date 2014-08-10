@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
 <!--
 Element requesting Image information from PhotoShelter.com. This element has no presence in the IU.
@@ -20,6 +21,7 @@ Element requesting Image information from PhotoShelter.com. This element has no 
       display: none;
     }
     </style>
+    <ps-globals id="globals"></ps-globals>
     <core-ajax id="ajax"
       auto
       url="{{url}}"
@@ -76,7 +78,7 @@ Element requesting Image information from PhotoShelter.com. This element has no 
     */
     extendUrl: function() {
       var extend = '&extend={',
-        url = 'http://www.photoshelter.com/psapi/v3/image/' + this.I_ID + '?api_key=PS631731c7&fields=*';
+        url = 'http://www.photoshelter.com/psapi/v3/image/' + this.I_ID + '?api_key=' + this.$.globals.apiKey + '&fields=*';
       for(var i = 0, ct = this.extends.length; i < ct; i ++) {
         if (i > 0 ) extend += ',';
         extend += '"' + this.extends[i] + '":{"fields":"*"}'

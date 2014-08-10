@@ -144,7 +144,7 @@ Element displaying the IPTC data for a PhotoShelter.com image.
     * @method imageChanged
     */
     imageChanged: function(attrName, oldVal, newVal) {
-      if (!!this.image.Iptc.keyword)
+      if (!!this.image && !!this.image.Iptc && !!this.image.Iptc.keyword)
         this.keywords = this.image.Iptc.keyword.split(', ');
       else
         this.keywords = false;
