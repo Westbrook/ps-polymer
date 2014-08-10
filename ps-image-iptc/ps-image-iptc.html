@@ -60,12 +60,18 @@ Element displaying the IPTC data for a PhotoShelter.com image.
     </template>
 
     <template if="{{!!image}}">
-      <template if="{{!user}}">
+      <template if="{{!user || !user.user_id }}">
         <ps-user-service id="service-user" user="{{user}}" U_ID='{{image.owner_id}}'></ps-user-service>
       </template>
-      <h1>{{image.Iptc.name || image.Iptc.headline || image.Iptc.title || image.Iptc.file_name}}</h1>
-      <h2><a href="{{urlBase}}" target="_blank">{{image.Iptc.author}}</a></h2>
-      <p>{{image.Iptc.description || image.Iptc.caption || image.Iptc.display_caption}}</p>
+      <template if="{{!!image.Iptc.headline || !!image.Iptc.title}}">
+        <h1>{{image.Iptc.headline || image.Iptc.title}}</h1>
+      </template>
+      <template if="{{!!image.Iptc.author || !!user.first_name}}">
+        <h2><a href="{{urlBase}}" target="_blank">{{image.Iptc.author || user.first_name + ' ' + user.last_name}}</a></h2>
+      </template>
+      <template if="{{!!image.Iptc.description || !!image.Iptc.caption || !!image.Iptc.display_caption}}">
+        <p>{{image.Iptc.description || image.Iptc.caption || image.Iptc.display_caption}}</p>
+      </template>
 
       <dl>
         <template if="{{!!keywords}}">
@@ -76,8 +82,10 @@ Element displaying the IPTC data for a PhotoShelter.com image.
             </template>
           </dd>
         </template>
-        <dt>Location</dt>
-        <dd>{{image.Iptc.city}}, {{image.Iptc.state}} {{image.Iptc.country}}</dd>
+        <template if="{{!!image.Iptc.city || !!image.Iptc.state || !!image.Iptc.country}}">
+          <dt>Location</dt>
+          <dd>{{image.Iptc.city}}, {{image.Iptc.state}} {{image.Iptc.country}}</dd>
+        </template>
         <dt>Copyright</dt>
         <dd>{{image.Iptc.copyright}}</dd>
       </dl>
