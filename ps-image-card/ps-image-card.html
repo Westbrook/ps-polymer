@@ -310,7 +310,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
               <ps-share image="{{image}}" user="{{user}}"></ps-share>
               <ps-image-exif image="{{image}}"></ps-image-exif>
               <ps-image-buy image="{{image}}" user="{{user}}" hidden?="{{!image.Profile.length}}"></ps-image-buy>
-              <ps-gallery-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery}}"></ps-gallery-thumbs>
+              <ps-gallery-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery || !gallery.GalleryImage}}"></ps-gallery-thumbs>
             </div>
           </article>
           <nav>
@@ -318,7 +318,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
             <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="share"></button>
             <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="exif"></button>
             <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="buy" hidden?="{{!image.Profile.length}}"></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="thumbs" hidden?="{{!gallery}}"></button>
+            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="thumbs" hidden?="{{!gallery || !gallery.GalleryImage}}"></button>
           </nav>
         </div>
         <ps-image-bkg image="{{image}}"></ps-image-bkg>

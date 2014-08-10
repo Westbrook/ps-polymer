@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-image-service/ps-image-service.html">
+<link rel="import" href="../ps-user-service/ps-user-service.html">
 <!--
 Element for sharing a PhotoShelter.com image.
 
@@ -167,7 +168,7 @@ Element for sharing a PhotoShelter.com image.
     </template>
     
     <template if="{{!!image}}">
-      <template if="{{!user}}">
+      <template if="{{!user || !user.user_id}}">
         <ps-user-service id="service-user" user="{{user}}" U_ID='{{image.owner_id}}'></ps-user-service>
       </template>
       <h1>Share This Image</h1>
@@ -210,6 +211,14 @@ Element for sharing a PhotoShelter.com image.
      */
     I_ID: '',
     /**
+     * The `U_ID` attribute is the user_id to be displayed.
+     * 
+     * @attribute U_ID
+     * @type string
+     * @default ''
+     */
+    U_ID: '',
+    /**
      * The `urlBase` attribute is the image owners non-CNAME PhotoShelter.com URL.
      * 
      * @attribute urlBase
@@ -242,6 +251,14 @@ Element for sharing a PhotoShelter.com image.
        * @default {}
        */
       this.image = {};
+      /**
+       * The `user` attribute defines the PhotoShelter user to be displayed.
+       * 
+       * @attribute user
+       * @type object
+       * @default {}
+       */
+      this.user = {};
       /**
        * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
        * 
