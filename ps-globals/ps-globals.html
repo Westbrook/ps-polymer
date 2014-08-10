@@ -1,0 +1,27 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+Stores global variables required in components consuming the PhotoShelter.com API.
+
+##### Example
+
+    <ps-globals></ps-globals>
+
+@element ps-globals
+@blurb Stores global variables required in components consuming the PhotoShelter.com API.
+@status alpha
+@homepage 
+-->
+<polymer-element name="ps-globals">
+  <script>
+  (function() {
+    var apiKey = 'PS631731c7';
+
+    Polymer('ps-globals', {
+       ready: function() {
+         this.apiKey = apiKey;
+       }
+    });
+  })();
+  </script>
+</polymer-element>
