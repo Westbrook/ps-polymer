@@ -38,7 +38,7 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
     </template>
 
     <template if="{{!!gallery}}">
-      <template repeat="{{image, i in gallery}}" id="thumbs">
+      <template repeat="{{image, i in gallery.GalleryImage}}" id="thumbs">
         <ps-image image="{{image}}" relativeSize="true" class="gallery-thumb" on-tap="{{updateI_ID}}" data-idx="{{i}}"></ps-image>
       </template>
     </template>
