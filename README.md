@@ -2,7 +2,11 @@
 
 Wrapping the PhotoShelter.com API (http://www.photoshelter.com/developer/) with Polymer.js (http://www.polymer-project.org) to surface many photographer data points via web components.
 
-Data for users, image, and galleries are available with:
+Globals can be set with:
+* ps-globals
+** Currently this only manages the PS.com API key for service requests. You can sign up for a key at: http://www.photoshelter.com/developer/index/register/api_key
+
+Using the key set in ps-globals, data for users, image, and galleries are available with:
 * ps-user-service
 * ps-image-service
 * ps-gallery-service
