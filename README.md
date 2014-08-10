@@ -1,4 +1,4 @@
-*PS Polymer*
+# PS Polymer
 
 Wrapping the PhotoShelter.com API (http://www.photoshelter.com/developer/) with Polymer.js (http://www.polymer-project.org) to surface many photographer data points via web components.
 
@@ -28,6 +28,6 @@ Gallery information is used to create:
 And these elements join the image elements to form:
 * ps-gallery
 
-*Polymer.js*
+## Polymer.js
 
 core-ajax, core-component-page, platform, polymer-test-tools, and polymer are currently included as v0.3.4. While I'll try to keep them up-to-date as best I can, please visit www.polymer-project.org for the latest.
