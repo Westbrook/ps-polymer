@@ -83,7 +83,7 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
     * @method updateI_ID
     */
     updateI_ID: function(e) {
-      var galleryImage = this.gallery[e.currentTarget.dataset.idx],
+      var galleryImage = this.gallery.GalleryImage[e.currentTarget.dataset.idx],
           image = galleryImage.Image;
       if (typeof image.Profile === 'undefined' && typeof galleryImage.Profile !== 'undefined')
         image.Profile = galleryImage.Profile;
