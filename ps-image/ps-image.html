@@ -35,14 +35,14 @@ Element displaying a PhotoShelter.com image.
     <template if="{{!!image}}">
       <img src="{{image.ImageLink.base}}/{{I_ID}}/sec={{image.ImageLink.token}}/fit={{size}}" width="{{width}}" height="{{height}}" class="{{aspectRatio}}" title="{{image.Iptc.title}}"/>
     </template>
-    
+
   </template>
 
   <script>
   Polymer('ps-image', {
     /**
      * The `I_ID` attribute is the image_id to be displayed.
-     * 
+     *
      * @attribute I_ID
      * @type string
      * @default ''
@@ -50,7 +50,7 @@ Element displaying a PhotoShelter.com image.
     I_ID: '',
     /**
      * The `size` attribute is the fit of the img-get2 URL to be requested
-     * 
+     *
      * @attribute size
      * @type string
      * @default '250x250'
@@ -58,7 +58,7 @@ Element displaying a PhotoShelter.com image.
     size: '250x250',
     /**
      * The `width` attribute is the screen width of the displayed image.
-     * 
+     *
      * @attribute width
      * @type number
      * @default 250
@@ -66,7 +66,7 @@ Element displaying a PhotoShelter.com image.
     width: 250,
     /**
      * The `height` attribute is the screen height of the displayed image.
-     * 
+     *
      * @attribute height
      * @type number
      * @default 250
@@ -74,7 +74,7 @@ Element displaying a PhotoShelter.com image.
     height: 250,
     /**
      * The `aspectRatio` attribute is the aspect ratio that the image displays at.
-     * 
+     *
      * @attribute aspectRatio
      * @type string
      * @default 'landscape'
@@ -83,7 +83,7 @@ Element displaying a PhotoShelter.com image.
     created: function() {
       /**
        * The `image` attribute defines the PhotoShelter image to be displayed.
-       * 
+       *
        * @attribute image
        * @type object
        * @default {}
@@ -91,7 +91,7 @@ Element displaying a PhotoShelter.com image.
       this.image = {};
       /**
        * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
-       * 
+       *
        * @attribute extends
        * @type array
        * @default ["ImageLink"]
@@ -102,7 +102,7 @@ Element displaying a PhotoShelter.com image.
     },
     /**
     * The `makeSize` method mutates width, height and size in relation to the image in question.
-    * 
+    *
     * @method makeSize
     */
     makeSize: function(size) {
@@ -123,7 +123,7 @@ Element displaying a PhotoShelter.com image.
     },
     /**
     * The `relativeSizeChanged` method append relative to image[class].
-    * 
+    *
     * @method relativeSizeChanged
     */
     relativeSizeChanged: function() {
