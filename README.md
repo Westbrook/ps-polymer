@@ -30,4 +30,4 @@ And these elements join the image elements to form:
 
 ## Polymer.js
 
-core-ajax, core-component-page, platform, polymer-test-tools, and polymer are currently included as v0.3.4. While I'll try to keep them up-to-date as best I can, please visit www.polymer-project.org for the latest.
+core-ajax, core-component-page, platform, polymer-test-tools, and polymer are currently included as v0.5.2. While I'll try to keep them up-to-date as best I can, please visit www.polymer-project.org for the latest.
