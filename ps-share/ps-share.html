@@ -166,7 +166,7 @@ Element for sharing a PhotoShelter.com image.
     <template if="{{!!I_ID}}">
       <ps-image-service id="service-image-iptc-{{I_ID}}" image="{{image}}" type="share" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
     </template>
-    
+
     <template if="{{!!image}}">
       <template if="{{!user || !user.user_id}}">
         <ps-user-service id="service-user" user="{{user}}" U_ID='{{image.owner_id}}'></ps-user-service>
@@ -184,10 +184,10 @@ Element for sharing a PhotoShelter.com image.
       </form>
       <form autocomplete="off">
           <label>Embed</label>
-          <textarea class="embed" type="text" id="copyEmbed"><script src="http://designsxwj.com/polymer/components/platform/platform.js"></script><link rel="import" href="http://designsxwj.com/polymer/finished/ps-image-card.html"><ps-image-card I_ID="I000071U7CTddD8s"></ps-image-card></textarea>
+          <textarea class="embed" type="text" id="copyEmbed"><script src="webcomponentsjs/webcomponents.js"></script></script><link rel="import" href="ps-image-card/ps-image-card.html"><ps-image-card I_ID="I000071U7CTddD8s"></ps-image-card></textarea>
           <button data-clipboard-target="copyEmbed" class="copyEmbed" title="Copy Embed Code">Copy Embed Code</button>
       </form>
-      
+
       <label>Social</label>
       <ul class="share-options">
           <li><a title="Facebook" class="facebook" href="http://api.addthis.com/oexchange/0.8/forward/facebook/offer?&amp;pubid=ra-51a66612171174a7&amp;url={{urlBase}}{{urlPath}}{{urlID}}" target="_blank">Facebook</a></li>
@@ -204,7 +204,7 @@ Element for sharing a PhotoShelter.com image.
   Polymer('ps-share', {
     /**
      * The `I_ID` attribute is the image_id to be displayed.
-     * 
+     *
      * @attribute I_ID
      * @type string
      * @default ''
@@ -212,7 +212,7 @@ Element for sharing a PhotoShelter.com image.
     I_ID: '',
     /**
      * The `U_ID` attribute is the user_id to be displayed.
-     * 
+     *
      * @attribute U_ID
      * @type string
      * @default ''
@@ -220,7 +220,7 @@ Element for sharing a PhotoShelter.com image.
     U_ID: '',
     /**
      * The `urlBase` attribute is the image owners non-CNAME PhotoShelter.com URL.
-     * 
+     *
      * @attribute urlBase
      * @type string
      * @default ''
@@ -228,7 +228,7 @@ Element for sharing a PhotoShelter.com image.
     urlBase: '',
     /**
      * The `urlPath` attribute is the path required to view the image in it's gallery (or lack there of) context.
-     * 
+     *
      * @attribute urlPath
      * @type string
      * @default ''
@@ -236,7 +236,7 @@ Element for sharing a PhotoShelter.com image.
     urlPath: '',
     /**
      * The `urlID` attribute is the C_ID/G_ID/I_ID conbination to view the image on PhotoShelter.com.
-     * 
+     *
      * @attribute urlID
      * @type string
      * @default ''
@@ -245,7 +245,7 @@ Element for sharing a PhotoShelter.com image.
     created: function() {
       /**
        * The `image` attribute defines the PhotoShelter image to be displayed.
-       * 
+       *
        * @attribute image
        * @type object
        * @default {}
@@ -253,7 +253,7 @@ Element for sharing a PhotoShelter.com image.
       this.image = {};
       /**
        * The `user` attribute defines the PhotoShelter user to be displayed.
-       * 
+       *
        * @attribute user
        * @type object
        * @default {}
@@ -261,7 +261,7 @@ Element for sharing a PhotoShelter.com image.
       this.user = {};
       /**
        * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
-       * 
+       *
        * @attribute extends
        * @type array
        * @default []
@@ -270,7 +270,7 @@ Element for sharing a PhotoShelter.com image.
     },
     /**
     * The `userChanged` method manages the urlBase attribute based on the user attribute.
-    * 
+    *
     * @method userChanged
     */
     userChanged: function(attrName, oldVal, newVal) {
@@ -278,7 +278,7 @@ Element for sharing a PhotoShelter.com image.
     },
     /**
     * The `imageChanged` method manages the urlPath and urlId attributes based on the image attribute.
-    * 
+    *
     * @method imageChanged
     */
     imageChanged: function(attrName, oldVal, newVal) {
