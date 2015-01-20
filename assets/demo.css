@@ -26,3 +26,6 @@ body > p {
 	background: #888;
 	overflow: auto;
 }
+.ps-collection {
+	max-height: 1500px;
+}

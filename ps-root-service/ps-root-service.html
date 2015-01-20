@@ -1,0 +1,123 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--
+Element requesting root collection information from PhotoShelter.com. This element has no presence in the IU.
+
+##### Example
+
+    <ps-root-service></ps-root-service>
+
+@element ps-root-service
+@blurb Element requesting root collection information from PhotoShelter.com.
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-root-service" attributes="root U_ID extends" constructor="PsRootService">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <ps-globals id="globals"></ps-globals>
+    <core-ajax id="{{id}}"
+      auto
+      url="{{url}}"
+      on-core-response="{{rootLoaded}}"
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer('ps-root-service', {
+    /**
+     * The `G_ID` attribute is the gallery_id to be displayed and is a REQUIRED attribute.
+     *
+     * @attribute G_ID
+     * @type string
+     * @default ''
+     */
+    U_ID: '',
+    /**
+     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+     *
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
+    created: function() {
+      /**
+       * The `gallery` attribute describes the gallery that is returned from PhotoShelter.com.
+       *
+       * @attribute gallery
+       * @type object
+       * @default null
+       */
+      this.root = {};
+      /**
+       * The `extends` attribute outlines the extends that will be requested of PhotoShelter.com.
+       *
+       * @attribute extends
+       * @type array
+       * @default []
+       */
+      this.extends = [];
+    },
+    ready: function() {
+      if (this.U_ID)
+        this.url = this.extendUrl();
+    },
+    /**
+    * The `extendUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
+    *
+    * @method createUrl
+    * @return {String} Returns a string URL to be sent to the core-ajax element.
+    */
+    extendUrl: function() {
+      var extend = '&extend={',
+          url = 'http://www.photoshelter.com/psapi/v3/collection/root/children?user_id=' + this.U_ID + '&api_key=PS631731c7&fields=*';
+      for(var i = 0, ct = this.extends.length; i < ct; i ++) {
+        if (i > 0 ) extend += ',';
+        extend += '"' + this.extends[i] + '":{"fields":"*"}'
+      }
+      if (ct) {
+        url += extend + '}';
+      }
+      return url;
+    },
+    /**
+    * The `galleryLoaded` method makes a copy of the loaded data.
+    *
+    * @method galleryLoaded
+    */
+    rootLoaded: function() {
+      // Make a copy of the loaded data
+      var root = [];  //this.$[this.id].response.data.children.Collection;
+      root.push.apply(root, this.$[this.id].response.data.children.Gallery);
+      if (!!root[0].name) {
+        root.sort(function (a, b) {
+          if (a.name > b.name) {
+            return 1;
+          }
+          if (a.name < b.name) {
+            return -1;
+          }
+          // a must be equal to b
+          return 0;
+        });
+      }
+      this.root = root;
+    },
+    /**
+    * The `G_IDChanged` method updates the URL.
+    *
+    * @method G_IDChanged
+    */
+    U_IDChanged: function(attrName, oldVal, newVal) {
+      if (this.U_ID)
+        this.url = this.extendUrl();
+    }
+  });
+  </script>
+</polymer-element>

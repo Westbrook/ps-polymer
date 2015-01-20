@@ -1,0 +1,71 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-root-service/ps-root-service.html">
+<link rel="import" href="../ps-gallery/ps-gallery.html">
+<!--
+Element displaying a PhotoShelter.com collection.
+
+##### Example
+
+    <ps-collection></ps-collection>
+
+@element ps-image
+@blurb Element displaying a PhotoShelter.com collection.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-collection" attributes="collection U_ID C_ID">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    ps-gallery {
+      position: relative;
+      top: auto;
+      right: auto;
+      bottom: auto;
+      left: auto;
+      width: 100%;
+      height: 500px;
+      float: left;
+    }
+    </style>
+
+    <template if="{{!!U_ID}}">
+      <ps-root-service id="service-root-{{I_ID}}" root="{{collection}}" U_ID='{{U_ID}}' extends="{{extends}}"></ps-root-service>
+    </template>
+
+    <template if="{{!!collection}}">
+      <template repeat="{{child in collection}}" id="children">
+        <template if="{{!!child.gallery_id}}">
+          <ps-gallery G_ID="{{child.gallery_id}}"></ps-gallery>
+        </template>
+      </template>
+    </template>
+
+  </template>
+
+  <script>
+  Polymer('ps-collection', {
+    /**
+     * The `U_ID` attribute is the user_id to display root collections.
+     *
+     * @attribute U_ID
+     * @type string
+     * @default ''
+     */
+    U_ID: '',
+    created: function() {
+      /**
+       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+       *
+       * @attribute extends
+       * @type array
+       * @default ["ImageLink"]
+       */
+      this.extends = [];
+    }
+  });
+  </script>
+</polymer-element>
