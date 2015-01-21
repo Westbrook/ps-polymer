@@ -42,7 +42,7 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
         <ps-image image="{{image}}" relativeSize="true" class="gallery-thumb" on-tap="{{updateI_ID}}" data-idx="{{i}}"></ps-image>
       </template>
     </template>
-    
+
   </template>
 
   <script>
@@ -50,7 +50,7 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
     created: function() {
       /**
        * The `G_ID` attribute is the gallery_id to be displayed.
-       * 
+       *
        * @attribute G_ID
        * @type string
        * @default ''
@@ -58,7 +58,7 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
       G_ID: '',
       /**
        * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
-       * 
+       *
        * @attribute gallery
        * @type object
        * @default {}
@@ -66,7 +66,7 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
       this.gallery = {};
       /**
        * The `extends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
-       * 
+       *
        * @attribute extends
        * @type array
        * @default ["GalleryImage", "ImageLink", "Image"]
@@ -79,11 +79,11 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
     },
     /**
     * The `updateI_ID` method updates the currently displayed image from the available gallery data.
-    * 
+    *
     * @method updateI_ID
     */
     updateI_ID: function(e) {
-      var galleryImage = this.gallery[e.currentTarget.dataset.idx],
+      var galleryImage = this.gallery.GalleryImage[e.currentTarget.dataset.idx],
           image = galleryImage.Image;
       if (typeof image.Profile === 'undefined' && typeof galleryImage.Profile !== 'undefined')
         image.Profile = galleryImage.Profile;

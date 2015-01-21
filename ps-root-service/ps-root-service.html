@@ -93,7 +93,7 @@ Element requesting root collection information from PhotoShelter.com. This eleme
     */
     rootLoaded: function() {
       // Make a copy of the loaded data
-      var root = [];  //this.$[this.id].response.data.children.Collection;
+      var root = this.$[this.id].response.data.children.Collection;
       root.push.apply(root, this.$[this.id].response.data.children.Gallery);
       if (!!root[0].name) {
         root.sort(function (a, b) {
