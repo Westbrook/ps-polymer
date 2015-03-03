@@ -13,7 +13,7 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
 @status alpha
 @homepage #
 -->
-<polymer-element name="ps-gallery-service" attributes="gallery G_ID extends" constructor="PsGalleryService">
+<polymer-element name="ps-gallery-service" attributes="gallery image G_ID extends" constructor="PsGalleryService">
   <template>
     <style>
     :host {
@@ -32,7 +32,7 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
   Polymer('ps-gallery-service', {
     /**
      * The `G_ID` attribute is the gallery_id to be displayed and is a REQUIRED attribute.
-     * 
+     *
      * @attribute G_ID
      * @type string
      * @default ''
@@ -40,7 +40,7 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
     G_ID: '',
     /**
      * The `url` attribute is the URL from which PhotoShelter.com data is requested.
-     * 
+     *
      * @attribute url
      * @type string
      * @default ''
@@ -49,7 +49,7 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
     created: function() {
       /**
        * The `gallery` attribute describes the gallery that is returned from PhotoShelter.com.
-       * 
+       *
        * @attribute gallery
        * @type object
        * @default null
@@ -57,7 +57,7 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
       this.gallery = {};
       /**
        * The `extends` attribute outlines the extends that will be requested of PhotoShelter.com.
-       * 
+       *
        * @attribute extends
        * @type array
        * @default []
@@ -70,7 +70,7 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
     },
     /**
     * The `extendUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
-    * 
+    *
     * @method createUrl
     * @return {String} Returns a string URL to be sent to the core-ajax element.
     */
@@ -88,16 +88,18 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
     },
     /**
     * The `galleryLoaded` method makes a copy of the loaded data.
-    * 
+    *
     * @method galleryLoaded
     */
     galleryLoaded: function() {
       // Make a copy of the loaded data
       this.gallery = this.$[this.id].response.data.Gallery;
+      if (typeof this.gallery.KeyImage !== 'undefined')
+        this.image = this.gallery.KeyImage.Image;
     },
     /**
     * The `G_IDChanged` method updates the URL.
-    * 
+    *
     * @method G_IDChanged
     */
     G_IDChanged: function(attrName, oldVal, newVal) {

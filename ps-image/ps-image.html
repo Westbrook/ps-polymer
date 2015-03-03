@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-image-service/ps-image-service.html">
+<link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
 <!--
 Element displaying a PhotoShelter.com image.
 
@@ -13,7 +14,7 @@ Element displaying a PhotoShelter.com image.
 @homepage #
 -->
 
-<polymer-element name="ps-image" attributes="image I_ID size relativeSize">
+<polymer-element name="ps-image" attributes="image I_ID G_ID size relativeSize sizeType">
   <template>
     <style>
     :host {
@@ -29,11 +30,15 @@ Element displaying a PhotoShelter.com image.
     </style>
 
     <template if="{{!!I_ID}}">
-      <ps-image-service id="service-image-link-{{I_ID}}" image="{{image}}" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
+      <ps-image-service id="service-image-link-{{I_ID}}" image="{{image}}" I_ID='{{I_ID}}' extends="{{imageExtends}}"></ps-image-service>
+    </template>
+
+    <template if="{{!!G_ID}}">
+      <ps-gallery-service id="service-image-link-{{G_ID}}" image="{{image}}" G_ID='{{G_ID}}' extends="{{galleryExtends}}"></ps-gallery-service>
     </template>
 
     <template if="{{!!image}}">
-      <img src="{{image.ImageLink.base}}/{{I_ID}}/sec={{image.ImageLink.token}}/fit={{size}}" width="{{width}}" height="{{height}}" class="{{aspectRatio}}" title="{{image.Iptc.title}}"/>
+      <img src="{{image.ImageLink.base}}/{{I_ID}}/sec={{image.ImageLink.token}}/{{sizeType}}={{size}}" width="{{width}}" height="{{height}}" class="{{aspectRatio}}" title="{{image.Iptc.title}}"/>
     </template>
 
   </template>
@@ -49,13 +54,21 @@ Element displaying a PhotoShelter.com image.
      */
     I_ID: '',
     /**
+     * The `sizeType` attribute is the size type for the img-get2 request
+     *
+     * @attribute sizeType
+     * @type string
+     * @default 'fit'
+     */
+    sizeType: 'fit',
+    /**
      * The `size` attribute is the fit of the img-get2 URL to be requested
      *
      * @attribute size
      * @type string
      * @default '250x250'
      */
-    size: '250x250',
+    size: '350x350',
     /**
      * The `width` attribute is the screen width of the displayed image.
      *
@@ -63,7 +76,7 @@ Element displaying a PhotoShelter.com image.
      * @type number
      * @default 250
      */
-    width: 250,
+    width: 350,
     /**
      * The `height` attribute is the screen height of the displayed image.
      *
@@ -71,7 +84,7 @@ Element displaying a PhotoShelter.com image.
      * @type number
      * @default 250
      */
-    height: 250,
+    height: 350,
     /**
      * The `aspectRatio` attribute is the aspect ratio that the image displays at.
      *
@@ -90,13 +103,25 @@ Element displaying a PhotoShelter.com image.
        */
       this.image = {};
       /**
-       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+       * The `imageExtends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
        *
-       * @attribute extends
+       * @attribute imageExtends
        * @type array
        * @default ["ImageLink"]
        */
-      this.extends = [
+      this.imageExtends = [
+        "ImageLink"
+      ];
+      /**
+       * The `galleryExtends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
+       *
+       * @attribute galleryExtends
+       * @type array
+       * @default ["KeyImage", "Image"]
+       */
+      this.galleryExtends = [
+        "KeyImage",
+        "Image",
         "ImageLink"
       ];
     },
