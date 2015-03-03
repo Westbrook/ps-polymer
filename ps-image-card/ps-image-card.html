@@ -19,10 +19,6 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
 @homepage #
 -->
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="../vendor/jquery-2.1.0.min.js"><\/script>')</script>
-<script src="../vendor/nanoScroller.0.8.0.min.js"></script>
-
 <polymer-element name="ps-image-card" attributes="I_ID G_ID image gallery">
   <template>
     <style>
@@ -140,6 +136,10 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
       right: 0;
       bottom: 4em;
       width: 4em;
+    }
+    #scrolling {
+        overflow: auto;
+        padding: 3em 4em;
     }
     nav > button {
       float: left;
@@ -304,14 +304,12 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
 
       <template if="{{!!user}}">
         <div class="tray" data-offscreen?="{{!tray}}">
-          <article id="scrolling" class="nano">
-            <div class="nano-content">
-              <ps-image-iptc image="{{image}}" user="{{user}}"></ps-image-iptc>
-              <ps-share image="{{image}}" user="{{user}}"></ps-share>
-              <ps-image-exif image="{{image}}"></ps-image-exif>
-              <ps-image-buy image="{{image}}" user="{{user}}" hidden?="{{!image.Profile.length}}"></ps-image-buy>
-              <ps-gallery-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery || !gallery.GalleryImage}}"></ps-gallery-thumbs>
-            </div>
+          <article id="scrolling">
+              <ps-image-iptc image="{{image}}" user="{{user}}" hidden?="{{showing != 'iptc'}}"></ps-image-iptc>
+              <ps-share image="{{image}}" user="{{user}}" hidden?="{{showing != 'share'}}"></ps-share>
+              <ps-image-exif image="{{image}}" hidden?="{{showing != 'exif'}}"></ps-image-exif>
+              <ps-image-buy image="{{image}}" user="{{user}}" hidden?="{{!image.Profile.length || showing != 'buy'}}"></ps-image-buy>
+              <ps-gallery-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery || !gallery.GalleryImage || showing != 'thumbs'}}"></ps-gallery-thumbs>
           </article>
           <nav>
             <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="iptc"></button>
@@ -326,17 +324,14 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     </template>
 
     <button  on-tap="{{toggle}}" class="toggle"></button>
-    
+
   </template>
 
   <script>
   Polymer('ps-image-card',{
-    observe: {
-      showing: 'setScroll'
-    },
     /**
      * The `G_ID` attribute is the gallery_id to be displayed.
-     * 
+     *
      * @attribute G_ID
      * @type string
      * @default false
@@ -344,7 +339,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     G_ID: '',
     /**
      * The `I_ID` attribute is the image_id to be displayed.
-     * 
+     *
      * @attribute I_ID
      * @type string
      * @default ''
@@ -352,7 +347,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     I_ID: '',
     /**
      * The `showing` attribute dictate which of the info panes is open.
-     * 
+     *
      * @attribute showing
      * @type string
      * @default "iptc"
@@ -360,7 +355,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     showing: 'iptc',
     /**
      * The `tray` attribute outlines the open state of the info tray.
-     * 
+     *
      * @attribute tray
      * @type boolean
      * @default false
@@ -369,7 +364,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     created: function() {
       /**
        * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
-       * 
+       *
        * @attribute gallery
        * @type object
        * @default {}
@@ -377,7 +372,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
       this.gallery = {};
       /**
        * The `image` attribute defines the PhotoShelter image to be displayed.
-       * 
+       *
        * @attribute image
        * @type object
        * @default {}
@@ -385,7 +380,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
       this.image = {};
       /**
        * The `user` attribute defines the PhotoShelter user who's account of which the image is a part.
-       * 
+       *
        * @attribute user
        * @type object
        * @default {}
@@ -393,7 +388,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
       this.user = {};
       /**
        * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
-       * 
+       *
        * @attribute extends
        * @type array
        * @default ["ImageLink", "Iptc", "Profile", "Exif"]
@@ -407,22 +402,20 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     },
    /**
     * The `trayChanged` method updates info pane scrolling when hanging to true.
-    * 
+    *
     * @method trayChanged
     * @param {String} oldVal Pass in the old value of this.tray.
     * @param {String} oldVal Pass in the new value of this.tray.
     */
     trayChanged: function(oldVal, newVal) {
       if (oldVal === true) return;
-      $(this.shadowRoot.getElementById('scrolling')).nanoScroller({iOSNativeScrolling:true});
     },
    /**
     * The `imageChanged` method updates info pane scrolling and manages the set state of this.user
-    * 
+    *
     * @method imageChanged
     */
     imageChanged: function() {
-      $(this.shadowRoot.getElementById('scrolling')).nanoScroller({iOSNativeScrolling:true});
       if (this.user !== {} && this.user.user_id !== this.image.owner_id) {
         // document.querySelector('#template-service-user').model = {
         //   user: false,
@@ -433,7 +426,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     },
    /**
     * The `changeTab` method updates the element currently showing in the info pane.
-    * 
+    *
     * @method changeTab
     * @param {Event} event Pass in the click event.
     */
@@ -441,23 +434,8 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
       this.showing = event.currentTarget.dataset.tab;
     },
    /**
-    * The `setScroll` method focuses the correct content in the info tray and prepares the JS scrollbar shim.
-    * Attached via observe.
-    * 
-    * @method setScroll
-    * @param {String} oldVal Pass in the old value of this.showing.
-    * @param {String} oldVal Pass in the new value of this.showing.
-    */
-    setScroll: function(oldVal, newVal) {
-      var target = (newVal === 'share') ? 'ps-' : 'ps-image-';
-      target = (newVal === 'thumbs') ? 'ps-gallery-' : target;
-      $(this.shadowRoot.getElementById('scrolling')).find('[image]').hide();
-      $(this.shadowRoot.getElementById('scrolling')).find(target+newVal).show();
-      $(this.shadowRoot.getElementById('scrolling')).nanoScroller({iOSNativeScrolling:true});
-    },
-   /**
     * The `toggle` method manages the value of this.tray, and sets scrolling on the info pane.
-    * 
+    *
     * @method toggle
     */
     toggle: function() {
