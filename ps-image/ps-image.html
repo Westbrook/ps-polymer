@@ -37,7 +37,7 @@ Element displaying a PhotoShelter.com image.
       <ps-gallery-service id="service-image-link-{{G_ID}}" image="{{image}}" G_ID='{{G_ID}}' extends="{{galleryExtends}}"></ps-gallery-service>
     </template>
 
-    <template if="{{!!image}}">
+    <template if="{{!!image && !!image.ImageLink}}">
       <img src="{{image.ImageLink.base}}/{{I_ID}}/sec={{image.ImageLink.token}}/{{sizeType}}={{size}}" width="{{width}}" height="{{height}}" class="{{aspectRatio}}" title="{{image.Iptc.title}}"/>
     </template>
 
