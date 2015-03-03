@@ -15,7 +15,7 @@ Element displaying a PhotoShelter.com gallery.
 @homepage #
 -->
 
-<polymer-element name="ps-gallery" attributes="G_ID gallery">
+<polymer-element name="ps-gallery" attributes="G_ID gallery user">
   <template>
     <style no-shim="">
     :host {
@@ -32,14 +32,14 @@ Element displaying a PhotoShelter.com gallery.
       <ps-gallery-service id="service-gallery" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extends}}"></ps-gallery-service>
     </template>
 
-    <ps-image-card image='{{gallery.KeyImage.Image}}' gallery="{{gallery}}"></ps-image-card>
+    <ps-image-card image='{{gallery.KeyImage.Image}}' gallery="{{gallery}}" user="{{user}}"></ps-image-card>
   </template>
 
   <script>
   Polymer('ps-gallery',{
     /**
      * The `G_ID` attribute is the gallery_id to be displayed.
-     * 
+     *
      * @attribute G_ID
      * @type string
      * @default false
@@ -48,7 +48,7 @@ Element displaying a PhotoShelter.com gallery.
     created: function() {
       /**
        * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
-       * 
+       *
        * @attribute gallery
        * @type object
        * @default {}
@@ -56,7 +56,7 @@ Element displaying a PhotoShelter.com gallery.
       this.gallery = {};
       /**
        * The `extends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
-       * 
+       *
        * @attribute extends
        * @type array
        * @default ["KeyImage", "GalleryImage", "ImageLink", "Image", "Iptc", "Exif", "Profile"]
