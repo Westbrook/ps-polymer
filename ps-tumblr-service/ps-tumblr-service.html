@@ -1,0 +1,84 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../core-shared-lib/core-shared-lib.html">
+<!--
+Element requesting tumblr blog data
+
+##### Example
+
+    <ps-tumblr-service></ps-tumblr-service>
+
+@element ps-tumblr-service
+@blurb Element requesting tumblr blog data
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-tumblr-service" attributes="label posts limit">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <ps-globals id="globals"></ps-globals>
+    <core-shared-lib on-core-shared-lib-load="{{contentLoaded}}"
+        url="{{url}}"></core-shared-lib>
+  </template>
+  <script>
+  Polymer('ps-tumblr-service', {
+    /**
+     * The `label` attribute is the tumblr label who's blog will be requested
+     *
+     * @attribute label
+     * @type string
+     * @default ''
+     */
+    label: '',
+
+    /**
+     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+     *
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
+
+    created: function() {
+      this.posts = [];
+      this.url = '';
+    },
+    ready: function() {
+      if (!!this.label)
+        this.url = this.createUrl();
+    },
+
+   /**
+    * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
+    *
+    * @method createUrl
+    * @return {String} Returns a string URL to be sent to the core-ajax element.
+    */
+    createUrl: function() {
+        return '//api.tumblr.com/v2/blog/' +
+            this.label +
+            '.tumblr.com/posts/?api_key=VmUy8FNTTGOzaz9y7fB1qt9ECa3uBziyO5pVa5UIpqhx36kiLo&' +
+            'limit=' + this.limit + '&callback=%%callback%%';
+    },
+    /**
+    * The `contentLoaded` method makes a copy of the loaded data.
+    *
+    * @method userLoaded
+    */
+    contentLoaded: function() {
+      // Make a copy of the loaded data
+
+      this.posts = arguments[1][1][0].response.posts;
+    },
+    labelChanged: function(attrName, oldVal, newVal) {
+      if (!!this.label)
+        this.url = this.createUrl();
+    }
+  });
+  </script>
+</polymer-element>
