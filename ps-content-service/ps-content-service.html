@@ -80,8 +80,10 @@ Element requesting User information from PhotoShelter.com. This element has no p
     * @return {String} Returns a string URL to be sent to the core-ajax element.
     */
     createUrl: function() {
-      return 'http://www.photoshelter.com/psapi/v3/content/?api_key=' + this.$.globals.data.apikey + '&fields=*&user_id=' +
-        this.U_ID + '&' + this.parameter + '=' + this.value;
+        return this.$.globals.data.baseurl + this.$.globals.data.version +
+            '/content/?api_key=' + this.$.globals.data.apikey +
+                '&fields=*&user_id=' + this.U_ID + '&' +
+                    this.parameter + '=' + this.value;
     },
     /**
     * The `contentLoaded` method makes a copy of the loaded data.

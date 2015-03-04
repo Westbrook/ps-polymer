@@ -76,7 +76,8 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
     */
     extendUrl: function() {
       var extend = '&extend={',
-          url = 'http://www.photoshelter.com/psapi/v3/gallery/' + this.G_ID + '?api_key=PS631731c7&fields=*';
+          url = this.$.globals.data.baseurl + this.$.globals.data.version +
+              '/gallery/' + this.G_ID + '?api_key=PS631731c7&fields=*';
       for(var i = 0, ct = this.extends.length; i < ct; i ++) {
         if (i > 0 ) extend += ',';
         extend += '"' + this.extends[i] + '":{"fields":"*"}'

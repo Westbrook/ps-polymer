@@ -32,7 +32,7 @@ Element requesting User information from PhotoShelter.com. This element has no p
   Polymer('ps-user-service', {
     /**
      * The `U_ID` attribute is the user_id to be displayed and is a REQUIRED attribute.
-     * 
+     *
      * @attribute I_ID
      * @type string
      * @default ''
@@ -41,7 +41,7 @@ Element requesting User information from PhotoShelter.com. This element has no p
 
     /**
      * The `url` attribute is the URL from which PhotoShelter.com data is requested.
-     * 
+     *
      * @attribute url
      * @type string
      * @default ''
@@ -59,16 +59,17 @@ Element requesting User information from PhotoShelter.com. This element has no p
 
    /**
     * The `createUrl` method will merge the given U_ID with the API endpoint and API_KEY so that data can be requested.
-    * 
+    *
     * @method createUrl
     * @return {String} Returns a string URL to be sent to the core-ajax element.
     */
     createUrl: function() {
-      return 'http://www.photoshelter.com/psapi/v3/user/' + this.U_ID + '?api_key=PS631731c7&fields=*';
+      return this.$.globals.data.baseurl + this.$.globals.data.version +
+          '/user/' + this.U_ID + '?api_key=PS631731c7&fields=*';
     },
     /**
     * The `userLoaded` method makes a copy of the loaded data.
-    * 
+    *
     * @method userLoaded
     */
     userLoaded: function() {
