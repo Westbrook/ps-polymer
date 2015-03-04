@@ -65,7 +65,8 @@ Element requesting User information from PhotoShelter.com. This element has no p
     */
     createUrl: function() {
       return this.$.globals.data.baseurl + this.$.globals.data.version +
-          '/user/' + this.U_ID + '?api_key=PS631731c7&fields=*';
+          '/user/' + this.U_ID + '?api_key=' + this.$.globals.data.apikey +
+              '&fields=*';
     },
     /**
     * The `userLoaded` method makes a copy of the loaded data.

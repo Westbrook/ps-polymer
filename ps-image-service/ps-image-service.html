@@ -79,7 +79,7 @@ Element requesting Image information from PhotoShelter.com. This element has no 
     extendUrl: function() {
       var extend = '&extend={',
         url = this.$.globals.data.baseurl + this.$.globals.data.version +
-            '/image/' + this.I_ID + '?api_key=' + this.$.globals.apiKey + '&fields=*';
+            '/image/' + this.I_ID + '?api_key=' + this.$.globals.data.apikey + '&fields=*';
       for(var i = 0, ct = this.extends.length; i < ct; i ++) {
         if (i > 0 ) extend += ',';
         extend += '"' + this.extends[i] + '":{"fields":"*"}'
