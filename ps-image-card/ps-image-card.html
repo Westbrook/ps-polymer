@@ -1,4 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../core-icons/social-icons.html">
 <link rel="import" href="../ps-image-service/ps-image-service.html">
 <link rel="import" href="../ps-user-service/ps-user-service.html">
 <link rel="import" href="../ps-image-bkg/ps-image-bkg.html">
@@ -84,10 +86,9 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
       background: transparent;
       color: #fff;
     }
-    button:after {
-      line-height: inherit;
-      font-size: 1.5em;
-      font-family: 'icon-set';
+    button core-icon {
+        width: 50%;
+        height: 50%;
     }
     .tray {
       position: absolute;
@@ -141,22 +142,13 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
         overflow: auto;
         padding: 3em 4em;
     }
-    nav > button {
+    nav > button[data-tab] {
       float: left;
       width: 4em;
       height: 4em;
       line-height: 4em;
       font-size: inherit;
       position: relative;
-    }
-    nav > button:after {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      line-height: inherit;
-      text-align: center;
     }
     nav > button:hover {
       background: rgba(0, 0, 0, 0.65);
@@ -168,21 +160,6 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     [data-tab=buy].buy {
       background: rgba(0, 0, 0, 0.55);
     }
-    [data-tab=iptc]:after {
-      content: 'Q';
-    }
-    [data-tab=share]:after {
-      content: '8 ';
-    }
-    [data-tab=exif]:after {
-      content: '\0152';
-    }
-    [data-tab=buy]:after {
-      content: 'i';
-    }
-    [data-tab=thumbs]:after {
-      content: '\0073';
-    }
     .toggle {
       position: absolute;
       right: 0;
@@ -192,19 +169,6 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
       line-height: 4em;
       font-size: inherit;
       cursor: pointer;
-    }
-    .toggle:after {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      line-height: inherit;
-      text-align: center;
-      content: 'a';
-    }
-    .tray[data-offscreen] ~ .toggle:after {
-      content: 'Q';
     }
     .tray[data-offscreen] ~ .toggle {
       background: rgba(0, 0, 0, 0.55);
@@ -312,18 +276,18 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
               <ps-gallery-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery || !gallery.GalleryImage || showing != 'thumbs'}}"></ps-gallery-thumbs>
           </article>
           <nav>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="iptc"></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="share"></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="exif"></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="buy" hidden?="{{!image.Profile.length}}"></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="thumbs" hidden?="{{!gallery || !gallery.GalleryImage}}"></button>
+            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="iptc"><core-icon icon="info"></core-icon></button>
+            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="share"><core-icon icon="social:share"></core-icon></button>
+            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="exif"><core-icon icon="more-horiz"></core-icon></button>
+            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="buy" hidden?="{{!image.Profile.length}}"><core-icon icon="shopping-cart"></core-icon></button>
+            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="thumbs" hidden?="{{!gallery || !gallery.GalleryImage}}"><core-icon icon="apps"></core-icon></button>
           </nav>
         </div>
         <ps-image-bkg image="{{image}}"></ps-image-bkg>
       </template>
     </template>
 
-    <button  on-tap="{{toggle}}" class="toggle"></button>
+    <button on-tap="{{toggle}}" class="toggle"><core-icon icon="info"></core-icon></button>
 
   </template>
 
@@ -440,9 +404,6 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     */
     toggle: function() {
       this.tray = !this.tray;
-      if (this.tray) {
-        this.setScroll(this.showing, this.showing);
-      }
     }
   });
   </script>
