@@ -13,7 +13,7 @@ Element requesting root collection information from PhotoShelter.com. This eleme
 @status alpha
 @homepage #
 -->
-<polymer-element name="ps-root-service" attributes="root U_ID extends" constructor="PsRootService">
+<polymer-element name="ps-root-service" attributes="root U_ID extends sort_by" constructor="PsRootService">
   <template>
     <style>
     :host {
@@ -46,6 +46,14 @@ Element requesting root collection information from PhotoShelter.com. This eleme
      * @default ''
      */
     url: '',
+    /**
+     * The `sort_by` attribute orders the data set.
+     *
+     * @attribute sort_by
+     * @type string
+     * @default ''
+     */
+    sort_by: 'modified_at',
     created: function() {
       /**
        * The `gallery` attribute describes the gallery that is returned from PhotoShelter.com.
@@ -97,12 +105,12 @@ Element requesting root collection information from PhotoShelter.com. This eleme
       // Make a copy of the loaded data
       var root = this.$[this.id].response.data.children.Collection;
       root.push.apply(root, this.$[this.id].response.data.children.Gallery);
-      if (!!root[0].name) {
+      if (!!root[0][this.sort_by]) {
         root.sort(function (a, b) {
-          if (a.name > b.name) {
+          if (a[this.sort_by] > b[this.sort_by]) {
             return 1;
           }
-          if (a.name < b.name) {
+          if (a[this.sort_by] < b[this.sort_by]) {
             return -1;
           }
           // a must be equal to b

@@ -25,6 +25,7 @@ Element displaying a PhotoShelter.com collection.
       float: left;
       width: 25%;
       padding: 10px;
+      line-height: 1.5;
     }
     .child:nth-of-type(4n + 1) {
       clear: both;
@@ -39,7 +40,7 @@ Element displaying a PhotoShelter.com collection.
       <template repeat="{{child in collection}}" id="children">
         <div class="child">
           <ps-image image="{{child.KeyImage}}" relativeSize="true"></ps-image>
-          {{child.name}}
+          <h4>{{child.name}}</h4>
         </div>
       </template>
     </template>
