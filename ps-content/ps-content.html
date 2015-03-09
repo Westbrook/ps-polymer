@@ -1,0 +1,70 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-content-service/ps-content-service.html">
+<!--
+Element displaying a PhotoShelter.com image.
+
+##### Example
+
+    <ps-content></ps-content>
+
+@element ps-content
+@blurb Element displaying a PhotoShelter.com content page
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-content" attributes="content U_ID parameter value">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    img {
+      vertical-align: middle;
+    }
+    .relative {
+      width: 100%;
+      height: auto;
+    }
+    </style>
+
+    <template if="{{!!U_ID}}">
+      <ps-content-service id="service-content-{{U_ID}}" content="{{content}}" U_ID='{{U_ID}}' parameter="{{parameter}}" value="{{value}}"></ps-image-service>
+    </template>
+
+    <div id="content"></div>
+    
+  </template>
+
+  <script>
+  Polymer('ps-content', {
+    /**
+     * The `U_ID` attribute is the user_id who's content will be displayed.
+     *
+     * @attribute U_ID
+     * @type string
+     * @default ''
+     */
+    U_ID: '',
+    /**
+    * The `parameter` attribute defines by what parameter the content will be requested
+    *
+    * @attribute parameter
+    * @type string
+    * @default ''
+    */
+    parameter: '',
+    /**
+    * The `value` attribute defines what value of content will be requested
+    *
+    * @attribute value
+    * @type string
+    * @default ''
+    */
+    value: '',
+    contentChanged: function() {
+        this.$.content.innerHTML = this.content.content;
+    }
+  });
+  </script>
+</polymer-element>

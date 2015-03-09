@@ -1,11 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-image-service/ps-image-service.html">
+<link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
+<link rel="import" href="../core-image/core-image.html">
 <!--
 Element displaying a PhotoShelter.com image.
 
 ##### Example
 
-    <ps-image></ps-image>
+<ps-image></ps-image>
 
 @element ps-image
 @blurb Element displaying a PhotoShelter.com image.
@@ -13,122 +15,128 @@ Element displaying a PhotoShelter.com image.
 @homepage #
 -->
 
-<polymer-element name="ps-image" attributes="image I_ID size relativeSize">
-  <template>
+<polymer-element name="ps-image" attributes="image I_ID G_ID size sizing sizeType height width">
+    <template>
     <style>
     :host {
-      display: block;
+        display: block;
     }
     img {
-      vertical-align: middle;
+        vertical-align: middle;
     }
     .relative {
-      width: 100%;
-      height: auto;
+        width: 100%;
+        height: 0;
+        float: left;
+    }
+    .cover {
+        width: 100%;
+        height: 100%;
     }
     </style>
 
     <template if="{{!!I_ID}}">
-      <ps-image-service id="service-image-link-{{I_ID}}" image="{{image}}" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
+        <ps-image-service id="service-image-link-{{I_ID}}" image="{{image}}" I_ID='{{I_ID}}' extends="{{imageExtends}}"></ps-image-service>
     </template>
 
-    <template if="{{!!image}}">
-      <img src="{{image.ImageLink.base}}/{{I_ID}}/sec={{image.ImageLink.token}}/fit={{size}}" width="{{width}}" height="{{height}}" class="{{aspectRatio}}" title="{{image.Iptc.title}}"/>
+    <template if="{{!!G_ID}}">
+        <ps-gallery-service id="service-image-link-{{G_ID}}" image="{{image}}" G_ID='{{G_ID}}' extends="{{galleryExtends}}"></ps-gallery-service>
     </template>
 
-  </template>
+    <template if="{{!!image && !!image.ImageLink}}">
+        <core-image id="img" src="{{image.ImageLink.base}}/{{I_ID}}sec={{image.ImageLink.token}}/{{sizeType}}={{size}}"
+            width="{{width}}" height="{{height}}" class="{{sizing}}"
+            title="{{image.Iptc.title}}" sizing="{{sizing == 'relative' ? 'cover' : 'contain'}}"
+            style="padding-bottom: {{ratio()}}"></core-image>
+    </template>
 
-  <script>
-  Polymer('ps-image', {
+</template>
+
+<script>
+Polymer('ps-image', {
     /**
-     * The `I_ID` attribute is the image_id to be displayed.
-     *
-     * @attribute I_ID
-     * @type string
-     * @default ''
-     */
+    * The `I_ID` attribute is the image_id to be displayed.
+    *
+    * @attribute I_ID
+    * @type string
+    * @default ''
+    */
     I_ID: '',
     /**
-     * The `size` attribute is the fit of the img-get2 URL to be requested
-     *
-     * @attribute size
-     * @type string
-     * @default '250x250'
-     */
-    size: '250x250',
+    * The `sizeType` attribute is the size type for the img-get2 request
+    *
+    * @attribute sizeType
+    * @type string
+    * @default 'fit'
+    */
+    sizeType: 'fit',
     /**
-     * The `width` attribute is the screen width of the displayed image.
-     *
-     * @attribute width
-     * @type number
-     * @default 250
-     */
-    width: 250,
+    * The `size` attribute is the fit of the img-get2 URL to be requested
+    *
+    * @attribute size
+    * @type string
+    * @default '250x250'
+    */
+    size: '350x350',
     /**
-     * The `height` attribute is the screen height of the displayed image.
-     *
-     * @attribute height
-     * @type number
-     * @default 250
-     */
-    height: 250,
+    * The `width` attribute is the screen width of the displayed image.
+    *
+    * @attribute width
+    * @type number
+    * @default null
+    */
+    width: null,
     /**
-     * The `aspectRatio` attribute is the aspect ratio that the image displays at.
-     *
-     * @attribute aspectRatio
-     * @type string
-     * @default 'landscape'
-     */
-    aspectRatio: 'landscape',
+    * The `height` attribute is the screen height of the displayed image.
+    *
+    * @attribute height
+    * @type number
+    * @default null
+    */
+    height: null,
     created: function() {
-      /**
-       * The `image` attribute defines the PhotoShelter image to be displayed.
-       *
-       * @attribute image
-       * @type object
-       * @default {}
-       */
-      this.image = {};
-      /**
-       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
-       *
-       * @attribute extends
-       * @type array
-       * @default ["ImageLink"]
-       */
-      this.extends = [
-        "ImageLink"
-      ];
+        /**
+        * The `image` attribute defines the PhotoShelter image to be displayed.
+        *
+        * @attribute image
+        * @type object
+        * @default {}
+        */
+        this.image = {};
+        /**
+        * The `imageExtends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+        *
+        * @attribute imageExtends
+        * @type array
+        * @default ["ImageLink"]
+        */
+        this.imageExtends = [
+            "ImageLink"
+        ];
+        /**
+        * The `galleryExtends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
+        *
+        * @attribute galleryExtends
+        * @type array
+        * @default ["KeyImage", "Image"]
+        */
+        this.galleryExtends = [
+            "KeyImage",
+            "Image",
+            "ImageLink"
+        ];
     },
     /**
-    * The `makeSize` method mutates width, height and size in relation to the image in question.
+    * The `ratio` method gets the display ratio.
     *
-    * @method makeSize
+    * @method ratio
     */
-    makeSize: function(size) {
-      var iWidth = this.image.screen_width_max || this.image.Image.screen_width_max,
+    ratio: function() {
+        if (this.sizing !== 'relative') return 0;
+        var iWidth = this.image.screen_width_max || this.image.Image.screen_width_max,
         iHeight = this.image.screen_height_max || this.image.Image.screen_height_max;
-      if (typeof size === 'undefined') {
-        if (iWidth > iHeight) {
-          this.width = 400;
-        } else {
-          this.width = 200;
-        }
-        this.height = iHeight / iWidth * this.width;
-        this.height = Math.floor(this.height);
-      }
-      if (this.height > this.width) this.aspectRatio = 'portrait';
-      if (this.relativeSize === "true") this.aspectRatio += ' relative';
-      this.size = this.width + 'x' + this.height;
-    },
-    /**
-    * The `relativeSizeChanged` method append relative to image[class].
-    *
-    * @method relativeSizeChanged
-    */
-    relativeSizeChanged: function() {
-      if (this.relativeSize === "true") this.aspectRatio += ' relative';
+        return (iHeight / iWidth * 100) + '%';
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>

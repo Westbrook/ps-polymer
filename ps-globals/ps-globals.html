@@ -10,16 +10,24 @@ Stores global variables required in components consuming the PhotoShelter.com AP
 @element ps-globals
 @blurb Stores global variables required in components consuming the PhotoShelter.com API.
 @status alpha
-@homepage 
+@homepage
 -->
-<polymer-element name="ps-globals">
+<polymer-element name="ps-globals" attributes="apikey version baseurl">
   <script>
   (function() {
-    var apiKey = 'PS631731c7';
+    var data = {
+        baseurl: 'http://www.photoshelter.com/psapi/',
+        version: 'v3.0'
+    };
+    //var apiKey = 'PS631731c7';
 
     Polymer('ps-globals', {
        ready: function() {
-         this.apiKey = apiKey;
+           this.data = data;
+           for (var i = 0; i < this.attributes.length; ++i) {
+             var attr = this.attributes[i];
+             data[attr.nodeName] = attr.value;
+           }
        }
     });
   })();

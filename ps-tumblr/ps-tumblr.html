@@ -1,0 +1,168 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-tumblr-service/ps-tumblr-service.html">
+<!--
+Element displaying a tumblr blog.
+
+##### Example
+
+    <ps-tumblr></ps-tumblr>
+
+@element ps-tumblr
+@blurb Element displaying a tumblr blog.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-tumblr" attributes="label">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    </style>
+    <ps-tumblr-service limit="10" label="{{label}}" posts="{{posts}}"></ps-tumblr-service>
+
+    <div>
+        <template bind="{{posts[0]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-1"></div>
+    </div>
+    <div>
+        <template bind="{{posts[1]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-2"></div>
+    </div>
+    <div>
+        <template bind="{{posts[2]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-3"></div>
+    </div>
+    <div>
+        <template bind="{{posts[3]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-4"></div>
+    </div>
+    <div>
+        <template bind="{{posts[4]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-5"></div>
+    </div>
+    <div>
+        <template bind="{{posts[45]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-6"></div>
+    </div>
+    <div>
+        <template bind="{{posts[6]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-7"></div>
+    </div>
+    <div>
+        <template bind="{{posts[7]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-8"></div>
+    </div>
+    <div>
+        <template bind="{{posts[8]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-9"></div>
+    </div>
+    <div>
+        <template bind="{{posts[9]}}">
+            <template if="{{type=='photo'}}">
+                <template repeat="{{photo in photos}}">
+                    <img src="{{photo.alt_sizes[0].url}}" />
+                </template>
+            </template>
+        </template>
+        <div id="post-10"></div>
+    </div>
+
+  </template>
+
+  <script>
+  Polymer('ps-tumblr', {
+    /**
+     * The `U_ID` attribute is the user_id who's content will be displayed.
+     *
+     * @attribute U_ID
+     * @type string
+     * @default ''
+     */
+    U_ID: '',
+    /**
+    * The `parameter` attribute defines by what parameter the content will be requested
+    *
+    * @attribute parameter
+    * @type string
+    * @default ''
+    */
+    parameter: '',
+    /**
+    * The `value` attribute defines what value of content will be requested
+    *
+    * @attribute value
+    * @type string
+    * @default ''
+    */
+    value: '',
+    postsChanged: function() {
+        var post;
+        if (!this.posts) return;
+        for(var i = 0, ct = this.posts.length; i < ct; i++) {
+            post = this.posts[i];
+            this.$['post-' + (i+1)].innerHTML = post.caption;
+        }
+    }
+  });
+  </script>
+</polymer-element>

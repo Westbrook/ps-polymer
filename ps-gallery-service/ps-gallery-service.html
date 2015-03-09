@@ -6,104 +6,113 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
 
 ##### Example
 
-    <ps-gallery-service></ps-gallery-service>
+<ps-gallery-service></ps-gallery-service>
 
 @element ps-gallery-service
 @blurb Element requesting Gallery information from PhotoShelter.com.
 @status alpha
 @homepage #
 -->
-<polymer-element name="ps-gallery-service" attributes="gallery G_ID extends" constructor="PsGalleryService">
-  <template>
+<polymer-element name="ps-gallery-service" attributes="gallery image G_ID extends" constructor="PsGalleryService">
+    <template>
     <style>
     :host {
-      display: none;
+        display: none;
     }
     </style>
     <ps-globals id="globals"></ps-globals>
     <core-ajax id="{{id}}"
-      auto
-      url="{{url}}"
-      on-core-response="{{galleryLoaded}}"
-      handleAs="json">
-    </core-ajax>
-  </template>
-  <script>
-  Polymer('ps-gallery-service', {
+    auto
+    url="{{url}}"
+    on-core-response="{{galleryLoaded}}"
+    handleAs="json">
+</core-ajax>
+</template>
+<script>
+Polymer('ps-gallery-service', {
     /**
-     * The `G_ID` attribute is the gallery_id to be displayed and is a REQUIRED attribute.
-     * 
-     * @attribute G_ID
-     * @type string
-     * @default ''
-     */
+    * The `G_ID` attribute is the gallery_id to be displayed and is a REQUIRED attribute.
+    *
+    * @attribute G_ID
+    * @type string
+    * @default ''
+    */
     G_ID: '',
     /**
-     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
-     * 
-     * @attribute url
-     * @type string
-     * @default ''
-     */
+    * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+    *
+    * @attribute url
+    * @type string
+    * @default ''
+    */
     url: '',
     created: function() {
-      /**
-       * The `gallery` attribute describes the gallery that is returned from PhotoShelter.com.
-       * 
-       * @attribute gallery
-       * @type object
-       * @default null
-       */
-      this.gallery = {};
-      /**
-       * The `extends` attribute outlines the extends that will be requested of PhotoShelter.com.
-       * 
-       * @attribute extends
-       * @type array
-       * @default []
-       */
-      this.extends = [];
+        /**
+        * The `gallery` attribute describes the gallery that is returned from PhotoShelter.com.
+        *
+        * @attribute gallery
+        * @type object
+        * @default null
+        */
+        this.gallery = {};
+        /**
+        * The `extends` attribute outlines the extends that will be requested of PhotoShelter.com.
+        *
+        * @attribute extends
+        * @type array
+        * @default []
+        */
+        this.extends = [];
     },
     ready: function() {
-      if (this.G_ID)
+        if (this.G_ID)
         this.url = this.extendUrl();
     },
     /**
     * The `extendUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
-    * 
+    *
     * @method createUrl
     * @return {String} Returns a string URL to be sent to the core-ajax element.
     */
     extendUrl: function() {
-      var extend = '&extend={',
-          url = 'http://www.photoshelter.com/psapi/v3/gallery/' + this.G_ID + '?api_key=PS631731c7&fields=*';
-      for(var i = 0, ct = this.extends.length; i < ct; i ++) {
-        if (i > 0 ) extend += ',';
-        extend += '"' + this.extends[i] + '":{"fields":"*"}'
-      }
-      if (ct) {
-        url += extend + '}';
-      }
-      return url;
+        var extend = '&extend={',
+        url = this.$.globals.data.baseurl + this.$.globals.data.version +
+            '/gallery/' + this.G_ID + '?api_key=' + this.$.globals.data.apikey +
+                '&fields=*';
+        for(var i = 0, ct = this.extends.length; i < ct; i ++) {
+            if (i > 0 ) extend += ',';
+            extend += '"' + this.extends[i];
+            if (this.extends[i] === 'GalleryImage') {
+                extend += '":{"params":{"sort_by":"display_order"},"fields":"*"}'
+            } else {
+                extend += '":{"fields":"*"}';
+            }
+        }
+        if (ct) {
+            url += extend + '}';
+        }
+        return url;
     },
     /**
     * The `galleryLoaded` method makes a copy of the loaded data.
-    * 
+    *
     * @method galleryLoaded
     */
     galleryLoaded: function() {
-      // Make a copy of the loaded data
-      this.gallery = this.$[this.id].response.data.Gallery;
+        // Make a copy of the loaded data
+        this.gallery = this.$[this.id].response.data.Gallery;
+        if (typeof this.gallery.KeyImage !== 'undefined')
+        this.image = this.gallery.KeyImage.Image;
     },
     /**
     * The `G_IDChanged` method updates the URL.
-    * 
+    *
     * @method G_IDChanged
     */
     G_IDChanged: function(attrName, oldVal, newVal) {
-      if (this.G_ID)
+        if (this.G_ID)
         this.url = this.extendUrl();
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>

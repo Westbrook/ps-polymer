@@ -10,10 +10,12 @@ Using the key set in ps-globals, data for users, image, and galleries are availa
 * ps-user-service
 * ps-image-service
 * ps-gallery-service
+* ps-root-service
+* ps-tumblr-service
+* ps-content-service
 
 User and image information can be used to create the following stand alone elements:
 * ps-image
-* ps-image-bkg
 * ps-image-buy
 * ps-image-iptc
 * ps-share
@@ -23,10 +25,13 @@ These elements are used to create:
 
 Gallery information is used to create:
 * ps-gallery-thumbs
-* ps-gallery-slideshow (in development)
+* ps-slideshow
 
 And these elements join the image elements to form:
 * ps-gallery
+
+Collection information is used to create:
+* ps-collection
 
 ## Polymer.js
 

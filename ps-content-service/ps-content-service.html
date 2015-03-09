@@ -1,0 +1,104 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--
+Element requesting User information from PhotoShelter.com. This element has no presence in the IU.
+
+##### Example
+
+    <ps-user-service></ps-user-service>
+
+@element ps-user-service
+@blurb Element requesting User information from PhotoShelter.com.
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-content-service" attributes="content U_ID parameter value" constructor="PsContentService">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <ps-globals id="globals"></ps-globals>
+    <core-ajax id="{{id}}"
+      auto
+      url="{{url}}"
+      on-core-response="{{contentLoaded}}"
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer('ps-content-service', {
+    /**
+     * The `U_ID` attribute is the user_id to be displayed and is a REQUIRED attribute.
+     *
+     * @attribute I_ID
+     * @type string
+     * @default ''
+     */
+    U_ID: '',
+    /**
+    * The `parameter` attribute defines by what parameter the content will be requested
+    *
+    * @attribute parameter
+    * @type string
+    * @default ''
+    */
+    parameter: '',
+    /**
+     * The `value` attribute defines what value of content will be requested
+     *
+     * @attribute value
+     * @type string
+     * @default ''
+     */
+     value: '',
+
+    /**
+     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+     *
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
+
+    created: function() {
+      this.user = {};
+      this.url = '';
+    },
+    ready: function() {
+      if (!!this.U_ID)
+        this.url = this.createUrl();
+    },
+
+   /**
+    * The `createUrl` method will merge the given U_ID with the API endpoint and API_KEY so that data can be requested.
+    *
+    * @method createUrl
+    * @return {String} Returns a string URL to be sent to the core-ajax element.
+    */
+    createUrl: function() {
+        return this.$.globals.data.baseurl + this.$.globals.data.version +
+            '/content/?api_key=' + this.$.globals.data.apikey +
+                '&fields=*&user_id=' + this.U_ID + '&' +
+                    this.parameter + '=' + this.value;
+    },
+    /**
+    * The `contentLoaded` method makes a copy of the loaded data.
+    *
+    * @method userLoaded
+    */
+    contentLoaded: function() {
+      // Make a copy of the loaded data
+
+      this.content = this.$[this.id].response.data.Content[0];
+    },
+    U_IDChanged: function(attrName, oldVal, newVal) {
+      if (!!this.U_ID)
+        this.url = this.createUrl();
+    }
+  });
+  </script>
+</polymer-element>

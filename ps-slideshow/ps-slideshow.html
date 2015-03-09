@@ -1,0 +1,265 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-image-service/ps-image-service.html">
+<link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
+<link rel="import" href="../ps-image/ps-image.html">
+<!--
+Element displaying a PhotoShelter.com slideshow of images
+
+##### Example
+
+<ps-slideshow></ps-slideshow>
+
+@element ps-slideshow
+@blurb Element displaying a PhotoShelter.com slideshow of images
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-slideshow" attributes="G_ID I_IDs images I_ID image gallery">
+    <template>
+    <style>
+    :host {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+    }
+    ps-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+    .anim {
+        -webkit-transition-property: all;
+        -moz-transition-property: all;
+        -o-transition-property: all;
+        transition-property: all;
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -webkit-transition-timing-function: ease-in-out;
+        -moz-transition-timing-function: ease-in-out;
+        -o-transition-timing-function: ease-in-out;
+        transition-timing-function: ease-in-out;
+    }
+    :host([transition=slide]) .prev,
+    :host([transition=slide]) .preload-prev,
+    :host([transition=slide]) .current.back {
+        -webkit-transform: translate3d(-100%, 0, 0);
+        -moz-transform: translate3d(-100%, 0, 0);
+        -ms-transform: translate3d(-100%, 0, 0);
+        -o-transform: translate3d(-100%, 0, 0);
+        transform: translate3d(-100%, 0, 0);
+    }
+    :host([transition=slide]) .next,
+    :host([transition=slide]) .preload-next,
+    :host([transition=slide]) .current.forward {
+        -webkit-transform: translate3d(100%, 0, 0);
+        -moz-transform: translate3d(100%, 0, 0);
+        -ms-transform: translate3d(100%, 0, 0);
+        -o-transform: translate3d(100%, 0, 0);
+        transform: translate3d(100%, 0, 0);
+    }
+    :host([transition=slide]) .prev.forward,
+    :host([transition=slide]) .next.back,
+    .current {
+        -webkit-transform: translate3d(0, 0, 0);
+        -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+        -o-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    button {
+        -webkit-appearance: none;
+        border: none;
+        line-height: inherit;
+        outline: none;
+        padding: 0;
+        text-decoration: none;
+        cursor: pointer;
+        background: transparent;
+        color: #fff;
+        width: 50%;
+    }
+    .advance {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+    }
+    .retreat {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+    }
+    </style>
+
+    <template if="{{!!G_ID}}">
+        <ps-gallery-service id="service-gallery" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extends}}"></ps-gallery-service>
+    </template>
+
+    <ps-image onstage class="current" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
+    <ps-image class="preload-prev" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
+    <ps-image class="preload-next" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
+    <ps-image onstage class="prev" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
+    <ps-image onstage class="next" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
+
+    <button class="advance" on-tap={{forward}}></button>
+    <button class="retreat" on-tap={{back}}></button>
+
+</template>
+
+<script>
+Polymer('ps-slideshow',{
+    created: function() {
+        /**
+        * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
+        *
+        * @attribute gallery
+        * @type object
+        * @default {}
+        */
+        this.gallery = {};
+        /**
+        * The `extends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
+        *
+        * @attribute extends
+        * @type array
+        * @default ["KeyImage", "GalleryImage", "ImageLink", "Image", "Iptc", "Exif", "Profile"]
+        */
+        this.extends = [
+            "KeyImage",
+            "GalleryImage",
+            "ImageLink",
+            "Image",
+            "Iptc",
+            "Exif",
+            "Profile"
+        ];
+
+        this.cleanups = [
+            {
+                selector: '.current.forward',
+                dest: 'next',
+                newImage: false
+            },
+            {
+                selector: '.current.back',
+                dest: 'prev',
+                newImage: false
+            },
+            {
+                selector: '.prev.forward',
+                dest: 'current',
+                newImage: false
+            },
+            {
+                selector: '.prev.back',
+                dest: 'next',
+                newImage: true
+            },
+            {
+                selector: '.next.forward',
+                dest: 'prev',
+                newImage: true
+            },
+            {
+                selector: '.next.back',
+                dest: 'current',
+                newImage: false
+            }
+        ];
+
+        this.current = 0;
+    },
+    setup: function() {
+        var image;
+        if (this.I_ID) {
+            for (var i = 0, ct = this.images.length; i < ct; i++) {
+                image = this.images[i];
+                if (image.image_id === this.I_ID) {
+                    this.current = i;
+                    break;
+                }
+            }
+        }
+        this.shadowRoot.querySelector('.current').image = this.getImage('current');
+        this.shadowRoot.querySelector('.next').image = this.getImage('next');
+        this.shadowRoot.querySelector('.prev').image = this.getImage('prev');
+        this.shadowRoot.querySelector('.preload-prev').image = this.getImage('preload-prev');
+        this.shadowRoot.querySelector('.preload-next').image = this.getImage('preload-next');
+    },
+    galleryChanged: function() {
+        if (typeof this.gallery.GalleryImage !== 'undefined') {
+            this.images = this.gallery.GalleryImage;
+            this.setup();
+        }
+    },
+    I_IDChanged: function() {
+        if (this.images.length) this.setup();
+    },
+    back: function() {
+        var images = this.shadowRoot.querySelectorAll('[onstage]');
+        this.current = this.getIdx(-1);
+        this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanup.bind(this), false);
+        for (var i = 0, ct = images.length; i < ct; i++) {
+            images[i].classList.add('anim','forward');
+        }
+    },
+    forward: function() {
+        var images = this.shadowRoot.querySelectorAll('[onstage]');
+        this.current = this.getIdx(1);
+        this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanup.bind(this), false);
+        for (var i = 0, ct = images.length; i < ct; i++) {
+            images[i].classList.add('anim','back');
+        }
+    },
+    cleanup: function() {
+        var pane;
+        this.shadowRoot.querySelector('.current').removeEventListener('transitionend', this.cleanup, false);
+        for (var i = 0, ct = this.cleanups.length; i < ct; i++) {
+            pane = this.shadowRoot.querySelector(this.cleanups[i].selector);
+            if (pane !== null) {
+                pane.className = this.cleanups[i].dest;
+                if (this.cleanups[i].newImage) {
+                    pane.image = this.getImage(this.cleanups[i].dest);
+                }
+            }
+        }
+        this.image = this.getImage('current');
+        this.shadowRoot.querySelector('.preload-prev').image = this.getImage('preload-prev');
+        this.shadowRoot.querySelector('.preload-next').image = this.getImage('preload-next');
+    },
+    getIdx: function(offset) {
+        var index = this.current + offset;
+        if (index < 0) {
+            index = this.images.length + index;
+        } else if (index >= this.images.length) {
+            index = index - this.images.length;
+        }
+        return index;
+    },
+    getImage: function(step) {
+        var index;
+        switch (step) {
+            case 'current':
+            return this.images[this.current];
+        case 'next':
+            return this.images[this.getIdx(1)];
+        case 'prev':
+            return this.images[this.getIdx(-1)];
+        case 'preload-next':
+            return this.images[this.getIdx(2)];
+        case 'preload-prev':
+            return this.images[this.getIdx(-2)];
+        }
+    }
+});
+</script>
+</polymer-element>
