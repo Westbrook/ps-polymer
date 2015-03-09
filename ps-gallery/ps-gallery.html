@@ -1,13 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
-<link rel="import" href="../ps-image-card/ps-image-card.html">
+<link rel="import" href="../ps-slideshow/ps-slideshow.html">
 <link rel="import" href="../ps-gallery-thumbs/ps-gallery-thumbs.html">
 <!--
 Element displaying a PhotoShelter.com gallery.
 
 ##### Example
 
-    <ps-gallery></ps-gallery>
+<ps-gallery></ps-gallery>
 
 @element ps-gallery
 @blurb Element displaying a PhotoShelter.com gallery.
@@ -15,62 +15,64 @@ Element displaying a PhotoShelter.com gallery.
 @homepage #
 -->
 
-<polymer-element name="ps-gallery" attributes="G_ID gallery user">
-  <template>
+<polymer-element name="ps-gallery" attributes="G_ID gallery user I_ID">
+    <template>
     <style no-shim="">
     :host {
-      display: block;
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
     }
     </style>
 
     <template if="{{!!G_ID}}">
-      <ps-gallery-service id="service-gallery" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extends}}"></ps-gallery-service>
+        <ps-gallery-service id="service-gallery" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extends}}"></ps-gallery-service>
     </template>
 
-    <ps-image-card image='{{gallery.KeyImage.Image}}' gallery="{{gallery}}" user="{{user}}"></ps-image-card>
-  </template>
+    <template if="{{!!gallery}}">
+        <ps-slideshow gallery="{{gallery}}" transition="slide" I_ID="{{I_ID}}"></ps-slideshow>
+    </template>
+</template>
 
-  <script>
-  Polymer('ps-gallery',{
+<script>
+Polymer('ps-gallery',{
     /**
-     * The `G_ID` attribute is the gallery_id to be displayed.
-     *
-     * @attribute G_ID
-     * @type string
-     * @default false
-     */
+    * The `G_ID` attribute is the gallery_id to be displayed.
+    *
+    * @attribute G_ID
+    * @type string
+    * @default false
+    */
     G_ID: '',
     created: function() {
-      /**
-       * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
-       *
-       * @attribute gallery
-       * @type object
-       * @default {}
-       */
-      this.gallery = {};
-      /**
-       * The `extends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
-       *
-       * @attribute extends
-       * @type array
-       * @default ["KeyImage", "GalleryImage", "ImageLink", "Image", "Iptc", "Exif", "Profile"]
-       */
-      this.extends = [
-        "KeyImage",
-        "GalleryImage",
-        "ImageLink",
-        "Image",
-        "Iptc",
-        "Exif",
-        "Profile"
-      ]
+        /**
+        * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
+        *
+        * @attribute gallery
+        * @type object
+        * @default {}
+        */
+        this.gallery = {};
+        /**
+        * The `extends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
+        *
+        * @attribute extends
+        * @type array
+        * @default ["KeyImage", "GalleryImage", "ImageLink", "Image", "Iptc", "Exif", "Profile"]
+        */
+        this.extends = [
+            "KeyImage",
+            "GalleryImage",
+            "ImageLink",
+            "Image",
+            "Iptc",
+            "Exif",
+            "Profile"
+        ]
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>

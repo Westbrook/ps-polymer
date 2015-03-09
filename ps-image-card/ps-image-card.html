@@ -3,7 +3,7 @@
 <link rel="import" href="../core-icons/social-icons.html">
 <link rel="import" href="../ps-image-service/ps-image-service.html">
 <link rel="import" href="../ps-user-service/ps-user-service.html">
-<link rel="import" href="../ps-image-bkg/ps-image-bkg.html">
+<link rel="import" href="../ps-image/ps-image.html">
 <link rel="import" href="../ps-image-iptc/ps-image-iptc.html">
 <link rel="import" href="../ps-share/ps-share.html">
 <link rel="import" href="../ps-image-exif/ps-image-exif.html">
@@ -13,7 +13,7 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
 
 ##### Example
 
-    <ps-image-card></ps-image-card>
+<ps-image-card></ps-image-card>
 
 @element ps-image-card
 @blurb Element displaying an image and it's associated IPTC, Share, EXIF and Buy content from PhotoShelter.com
@@ -22,342 +22,342 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
 -->
 
 <polymer-element name="ps-image-card" attributes="I_ID G_ID image gallery user">
-  <template>
+    <template>
     <style>
     :host {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 300;
-      overflow: hidden;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 300;
+        overflow: hidden;
     }
     *, *:before, *:after {
-      -webkit-box-sizing: inherit;
-      -moz-box-sizing: inherit;
-      box-sizing: inherit;
+        -webkit-box-sizing: inherit;
+        -moz-box-sizing: inherit;
+        box-sizing: inherit;
     }
     h1 {
-      font-size: 2em;
+        font-size: 2em;
     }
-    ps-image-bkg {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      -webkit-transition-property: right;
-      -moz-transition-property: right;
-      -o-transition-property: right;
-      transition-property: right;
-      -webkit-transition-duration: 0.5s;
-      -moz-transition-duration: 0.5s;
-      -o-transition-duration: 0.5s;
-      transition-duration: 0.5s;
+    ps-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        -webkit-transition-property: right;
+        -moz-transition-property: right;
+        -o-transition-property: right;
+        transition-property: right;
+        -webkit-transition-duration: 0.5s;
+        -moz-transition-duration: 0.5s;
+        -o-transition-duration: 0.5s;
+        transition-duration: 0.5s;
     }
-    .tray:not([data-offscreen]) + ps-image-bkg {
-      right: 350px;
+    .tray:not([data-offscreen]) + ps-image {
+        right: 350px;
     }
     a {
-      color: #F2AFAF;
-      text-decoration: none;
+        color: #F2AFAF;
+        text-decoration: none;
     }
     a:hover {
-      text-decoration: underline;
+        text-decoration: underline;
     }
     button {
-      -webkit-appearance: none;
-      border: none;
-      line-height: inherit;
-      outline: none;
-      padding: 0;
-      text-decoration: none;
-      cursor: pointer;
-      background: transparent;
-      color: #fff;
+        -webkit-appearance: none;
+        border: none;
+        line-height: inherit;
+        outline: none;
+        padding: 0;
+        text-decoration: none;
+        cursor: pointer;
+        background: transparent;
+        color: #fff;
     }
     button core-icon {
         width: 50%;
         height: 50%;
     }
     .tray {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      max-width: 350px;
-      background: rgba(0, 0, 0, 0.55);
-      -webkit-transition-property: all;
-      -moz-transition-property: all;
-      -o-transition-property: all;
-      transition-property: all;
-      -webkit-transition-duration: 0.5s;
-      -moz-transition-duration: 0.5s;
-      -o-transition-duration: 0.5s;
-      transition-duration: 0.5s;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-width: 350px;
+        background: rgba(0, 0, 0, 0.55);
+        -webkit-transition-property: all;
+        -moz-transition-property: all;
+        -o-transition-property: all;
+        transition-property: all;
+        -webkit-transition-duration: 0.5s;
+        -moz-transition-duration: 0.5s;
+        -o-transition-duration: 0.5s;
+        transition-duration: 0.5s;
     }
     .tray[data-offscreen] {
-      -webkit-transform: translate3d(100%, 0, 0);
-      -moz-transform: translate3d(100%, 0, 0);
-      -ms-transform: translate3d(100%, 0, 0);
-      -o-transform: translate3d(100%, 0, 0);
-      transform: translate3d(100%, 0, 0);
+        -webkit-transform: translate3d(100%, 0, 0);
+        -moz-transform: translate3d(100%, 0, 0);
+        -ms-transform: translate3d(100%, 0, 0);
+        -o-transform: translate3d(100%, 0, 0);
+        transform: translate3d(100%, 0, 0);
     }
     .tray > article {
-      position: absolute;
-      top: 0;
-      right: 4em;
-      bottom: 0;
-      left: 0;
-      width: auto;
-      background: rgba(0, 0, 0, 0.55);
+        position: absolute;
+        top: 0;
+        right: 4em;
+        bottom: 0;
+        left: 0;
+        width: auto;
+        background: rgba(0, 0, 0, 0.55);
     }
     .nano-content {
-      top: 4em;
-      bottom: 4em;
-      padding: 0 4.5em 0 3em
+        top: 4em;
+        bottom: 4em;
+        padding: 0 4.5em 0 3em
     }
     .nano-content > * {
-      float: left;
-      width: 100%;
+        float: left;
+        width: 100%;
     }
     .tray > nav {
-      position: absolute;
-      right: 0;
-      bottom: 4em;
-      width: 4em;
+        position: absolute;
+        right: 0;
+        bottom: 4em;
+        width: 4em;
     }
     #scrolling {
         overflow: auto;
         padding: 3em 4em;
     }
     nav > button[data-tab] {
-      float: left;
-      width: 4em;
-      height: 4em;
-      line-height: 4em;
-      font-size: inherit;
-      position: relative;
+        float: left;
+        width: 4em;
+        height: 4em;
+        line-height: 4em;
+        font-size: inherit;
+        position: relative;
     }
     nav > button:hover {
-      background: rgba(0, 0, 0, 0.65);
+        background: rgba(0, 0, 0, 0.65);
     }
 
     [data-tab=iptc].iptc,
     [data-tab=share].share,
     [data-tab=exif].exif,
     [data-tab=buy].buy {
-      background: rgba(0, 0, 0, 0.55);
+        background: rgba(0, 0, 0, 0.55);
     }
     .toggle {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      width: 4em;
-      height: 4em;
-      line-height: 4em;
-      font-size: inherit;
-      cursor: pointer;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 4em;
+        height: 4em;
+        line-height: 4em;
+        font-size: inherit;
+        cursor: pointer;
     }
     .tray[data-offscreen] ~ .toggle {
-      background: rgba(0, 0, 0, 0.55);
+        background: rgba(0, 0, 0, 0.55);
     }
     .toggle:hover:after {
-      background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.6);
     }
     /** initial setup **/
     .nano {
-      position : relative;
-      width    : auto;
-      height   : 100%;
-      overflow : hidden;
+        position : relative;
+        width    : auto;
+        height   : 100%;
+        overflow : hidden;
     }
     .nano > .nano-content {
-      position      : absolute;
-      overflow      : scroll;
-      overflow-x    : hidden;
-      top           : 4em;
-      right         : 0;
-      bottom        : 4em;
-      left          : 0;
+        position      : absolute;
+        overflow      : scroll;
+        overflow-x    : hidden;
+        top           : 4em;
+        right         : 0;
+        bottom        : 4em;
+        left          : 0;
     }
-/*    .nano:before {
-      content: '';
-      position: absolute;
-      z-index: 2;
-      top: 4em;
-      left: 0;
-      right: 4.5em;
-      height: 20px;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(50, 50, 50, 1)), color-stop(100%, rgba(0, 0, 0, 0)));
-      background-image: -webkit-linear-gradient(rgba(50, 50, 50, 1),rgba(0, 0, 0, 0));
-      background-image: -moz-linear-gradient(rgba(50, 50, 50, 1),rgba(0,0,0,0));
-      background-image: -o-linear-gradient(rgba(50, 50, 50, 1),rgba(0,0,0,0));
-      background-image: linear-gradient(rgba(50, 50, 50, 1),rgba(0, 0, 0, 0));
-    }
-    .nano:after {
-      content: '';
-      position: absolute;
-      z-index: 2;
-      bottom: 4em;
-      left: 0;
-      right: 4.5em;
-      height: 20px;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(50, 50, 50, 1)));
-    background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0),rgba(50, 50, 50, 1));
-    background-image: -moz-linear-gradient(rgba(0,0,0,0),rgba(50, 50, 50, 1));
-    background-image: -o-linear-gradient(rgba(0,0,0,0),rgba(50, 50, 50, 1));
-    background-image: linear-gradient(rgba(0, 0, 0, 0),rgba(50, 50, 50, 1));
-    }*/
-    .nano > .nano-content:focus {
-      outline: none;
-    }
-    .nano > .nano-content::-webkit-scrollbar {
-      visibility: hidden;
-    }
-    .has-scrollbar > .nano-content::-webkit-scrollbar {
-      visibility: visible;
-    }
-    .nano > .nano-pane {
-      background : rgba(255,255,255,.1);
-      position   : absolute;
-      z-index: 5;
-      width      : 1em;
-      right      : 1.5em;
-      top        : 2em;
-      bottom     : 2em;
-      visibility : hidden\9; /* Target only IE7 and IE8 with this hack */
-      opacity    : .01;
-      -webkit-transition    : .2s;
-      -moz-transition       : .2s;
-      -o-transition         : .2s;
-      transition            : .2s;
-    }
-    .nano > .nano-pane > .nano-slider {
-      background: #fff;
-      background: rgba(255,255,255,.5);
-      position              : relative;
-      margin                : 0 1px;
-    }
-    .nano:hover > .nano-pane, .nano-pane.active, .nano-pane.flashed {
-      visibility : visible\9; /* Target only IE7 and IE8 with this hack */
-      opacity    : 0.99;
-    }
+    /*    .nano:before {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    top: 4em;
+    left: 0;
+    right: 4.5em;
+    height: 20px;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(50, 50, 50, 1)), color-stop(100%, rgba(0, 0, 0, 0)));
+    background-image: -webkit-linear-gradient(rgba(50, 50, 50, 1),rgba(0, 0, 0, 0));
+    background-image: -moz-linear-gradient(rgba(50, 50, 50, 1),rgba(0,0,0,0));
+    background-image: -o-linear-gradient(rgba(50, 50, 50, 1),rgba(0,0,0,0));
+    background-image: linear-gradient(rgba(50, 50, 50, 1),rgba(0, 0, 0, 0));
+}
+.nano:after {
+content: '';
+position: absolute;
+z-index: 2;
+bottom: 4em;
+left: 0;
+right: 4.5em;
+height: 20px;
+background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(50, 50, 50, 1)));
+background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0),rgba(50, 50, 50, 1));
+background-image: -moz-linear-gradient(rgba(0,0,0,0),rgba(50, 50, 50, 1));
+background-image: -o-linear-gradient(rgba(0,0,0,0),rgba(50, 50, 50, 1));
+background-image: linear-gradient(rgba(0, 0, 0, 0),rgba(50, 50, 50, 1));
+}*/
+.nano > .nano-content:focus {
+    outline: none;
+}
+.nano > .nano-content::-webkit-scrollbar {
+    visibility: hidden;
+}
+.has-scrollbar > .nano-content::-webkit-scrollbar {
+    visibility: visible;
+}
+.nano > .nano-pane {
+    background : rgba(255,255,255,.1);
+    position   : absolute;
+    z-index: 5;
+    width      : 1em;
+    right      : 1.5em;
+    top        : 2em;
+    bottom     : 2em;
+    visibility : hidden\9; /* Target only IE7 and IE8 with this hack */
+    opacity    : .01;
+    -webkit-transition    : .2s;
+    -moz-transition       : .2s;
+    -o-transition         : .2s;
+    transition            : .2s;
+}
+.nano > .nano-pane > .nano-slider {
+    background: #fff;
+    background: rgba(255,255,255,.5);
+    position              : relative;
+    margin                : 0 1px;
+}
+.nano:hover > .nano-pane, .nano-pane.active, .nano-pane.flashed {
+    visibility : visible\9; /* Target only IE7 and IE8 with this hack */
+    opacity    : 0.99;
+}
 
-    </style>
+</style>
 
-    <template if="{{!!I_ID}}">
-      <ps-image-service id="service-image" image="{{image}}" type="card" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
-    </template>
+<template if="{{!!I_ID}}">
+    <ps-image-service id="service-image" image="{{image}}" type="card" I_ID='{{I_ID}}' extends="{{extends}}"></ps-image-service>
+</template>
 
-    <template if="{{!!image}}">
-      <template if="{{!user}}" id="template-service-user">
+<template if="{{!!image}}">
+    <template if="{{!user}}" id="template-service-user">
         <ps-user-service id="service-user" user="{{user}}" U_ID='{{image.owner_id}}'></ps-user-service>
-      </template>
-
-      <template if="{{!!user}}">
-        <div class="tray" data-offscreen?="{{!tray}}">
-          <article id="scrolling">
-              <ps-image-iptc image="{{image}}" user="{{user}}" hidden?="{{showing != 'iptc'}}"></ps-image-iptc>
-              <ps-share image="{{image}}" user="{{user}}" hidden?="{{showing != 'share'}}"></ps-share>
-              <ps-image-exif image="{{image}}" hidden?="{{showing != 'exif'}}"></ps-image-exif>
-              <ps-image-buy image="{{image}}" user="{{user}}" hidden?="{{!image.Profile.length || showing != 'buy'}}"></ps-image-buy>
-              <ps-gallery-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery || !gallery.GalleryImage || showing != 'thumbs'}}"></ps-gallery-thumbs>
-          </article>
-          <nav>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="iptc"><core-icon icon="info"></core-icon></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="share"><core-icon icon="social:share"></core-icon></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="exif"><core-icon icon="more-horiz"></core-icon></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="buy" hidden?="{{!image.Profile.length}}"><core-icon icon="shopping-cart"></core-icon></button>
-            <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="thumbs" hidden?="{{!gallery || !gallery.GalleryImage}}"><core-icon icon="apps"></core-icon></button>
-          </nav>
-        </div>
-        <ps-image-bkg image="{{image}}"></ps-image-bkg>
-      </template>
     </template>
 
-    <button on-tap="{{toggle}}" class="toggle"><core-icon icon="info"></core-icon></button>
+    <template if="{{!!user}}">
+        <div class="tray" data-offscreen?="{{!tray}}">
+            <article id="scrolling">
+                <ps-image-iptc image="{{image}}" user="{{user}}" hidden?="{{showing != 'iptc'}}"></ps-image-iptc>
+                <ps-share image="{{image}}" user="{{user}}" hidden?="{{showing != 'share'}}"></ps-share>
+                <ps-image-exif image="{{image}}" hidden?="{{showing != 'exif'}}"></ps-image-exif>
+                <ps-image-buy image="{{image}}" user="{{user}}" hidden?="{{!image.Profile.length || showing != 'buy'}}"></ps-image-buy>
+                <ps-gallery-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery || !gallery.GalleryImage || showing != 'thumbs'}}"></ps-gallery-thumbs>
+            </article>
+            <nav>
+                <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="iptc"><core-icon icon="info"></core-icon></button>
+                <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="share"><core-icon icon="social:share"></core-icon></button>
+                <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="exif"><core-icon icon="more-horiz"></core-icon></button>
+                <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="buy" hidden?="{{!image.Profile.length}}"><core-icon icon="shopping-cart"></core-icon></button>
+                <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="thumbs" hidden?="{{!gallery || !gallery.GalleryImage}}"><core-icon icon="apps"></core-icon></button>
+            </nav>
+        </div>
+        <ps-image image="{{image}}" size="1440x1440" sizing="cover"></ps-image>
+    </template>
+</template>
 
-  </template>
+<button on-tap="{{toggle}}" class="toggle"><core-icon icon="info"></core-icon></button>
 
-  <script>
-  Polymer('ps-image-card',{
+</template>
+
+<script>
+Polymer('ps-image-card',{
     /**
-     * The `G_ID` attribute is the gallery_id to be displayed.
-     *
-     * @attribute G_ID
-     * @type string
-     * @default false
-     */
+    * The `G_ID` attribute is the gallery_id to be displayed.
+    *
+    * @attribute G_ID
+    * @type string
+    * @default false
+    */
     G_ID: '',
     /**
-     * The `I_ID` attribute is the image_id to be displayed.
-     *
-     * @attribute I_ID
-     * @type string
-     * @default ''
-     */
+    * The `I_ID` attribute is the image_id to be displayed.
+    *
+    * @attribute I_ID
+    * @type string
+    * @default ''
+    */
     I_ID: '',
     /**
-     * The `showing` attribute dictate which of the info panes is open.
-     *
-     * @attribute showing
-     * @type string
-     * @default "iptc"
-     */
+    * The `showing` attribute dictate which of the info panes is open.
+    *
+    * @attribute showing
+    * @type string
+    * @default "iptc"
+    */
     showing: 'iptc',
     /**
-     * The `tray` attribute outlines the open state of the info tray.
-     *
-     * @attribute tray
-     * @type boolean
-     * @default false
-     */
+    * The `tray` attribute outlines the open state of the info tray.
+    *
+    * @attribute tray
+    * @type boolean
+    * @default false
+    */
     tray: false,
     created: function() {
-      /**
-       * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
-       *
-       * @attribute gallery
-       * @type object
-       * @default {}
-       */
-      this.gallery = {};
-      /**
-       * The `image` attribute defines the PhotoShelter image to be displayed.
-       *
-       * @attribute image
-       * @type object
-       * @default {}
-       */
-      this.image = {};
-      /**
-       * The `user` attribute defines the PhotoShelter user who's account of which the image is a part.
-       *
-       * @attribute user
-       * @type object
-       * @default {}
-       */
-      this.user = {};
-      /**
-       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
-       *
-       * @attribute extends
-       * @type array
-       * @default ["ImageLink", "Iptc", "Profile", "Exif"]
-       */
-      this.extends = [
-        "ImageLink",
-        "Iptc",
-        "Profile",
-        "Exif"
-      ];
+        /**
+        * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
+        *
+        * @attribute gallery
+        * @type object
+        * @default {}
+        */
+        this.gallery = {};
+        /**
+        * The `image` attribute defines the PhotoShelter image to be displayed.
+        *
+        * @attribute image
+        * @type object
+        * @default {}
+        */
+        this.image = {};
+        /**
+        * The `user` attribute defines the PhotoShelter user who's account of which the image is a part.
+        *
+        * @attribute user
+        * @type object
+        * @default {}
+        */
+        this.user = {};
+        /**
+        * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+        *
+        * @attribute extends
+        * @type array
+        * @default ["ImageLink", "Iptc", "Profile", "Exif"]
+        */
+        this.extends = [
+            "ImageLink",
+            "Iptc",
+            "Profile",
+            "Exif"
+        ];
     },
-   /**
+    /**
     * The `trayChanged` method updates info pane scrolling when hanging to true.
     *
     * @method trayChanged
@@ -365,39 +365,39 @@ Element displaying an image and it's associated IPTC, Share, EXIF and Buy conten
     * @param {String} oldVal Pass in the new value of this.tray.
     */
     trayChanged: function(oldVal, newVal) {
-      if (oldVal === true) return;
+        if (oldVal === true) return;
     },
-   /**
+    /**
     * The `imageChanged` method updates info pane scrolling and manages the set state of this.user
     *
     * @method imageChanged
     */
     imageChanged: function() {
-      if (this.user !== {} && this.user.user_id !== this.image.owner_id) {
-        // document.querySelector('#template-service-user').model = {
-        //   user: false,
-        //   image: this.image
-        // };
-        this.user = false;
-      }
+        if (this.user !== {} && this.user.user_id !== this.image.owner_id) {
+            // document.querySelector('#template-service-user').model = {
+            //   user: false,
+            //   image: this.image
+            // };
+            this.user = false;
+        }
     },
-   /**
+    /**
     * The `changeTab` method updates the element currently showing in the info pane.
     *
     * @method changeTab
     * @param {Event} event Pass in the click event.
     */
     changeTab: function(event) {
-      this.showing = event.currentTarget.dataset.tab;
+        this.showing = event.currentTarget.dataset.tab;
     },
-   /**
+    /**
     * The `toggle` method manages the value of this.tray, and sets scrolling on the info pane.
     *
     * @method toggle
     */
     toggle: function() {
-      this.tray = !this.tray;
+        this.tray = !this.tray;
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>
