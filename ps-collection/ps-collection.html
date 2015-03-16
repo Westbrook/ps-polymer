@@ -39,7 +39,7 @@ Element displaying a PhotoShelter.com collection.
     <template if="{{!!collection}}">
       <template repeat="{{child in collection}}" id="children">
         <div class="child">
-          <ps-image image="{{child.KeyImage}}" relativeSize="true"></ps-image>
+          <ps-image image="{{child.KeyImage}}" sizeType="fill" sizing="relative"></ps-image>
           <h4>{{child.name}}</h4>
         </div>
       </template>

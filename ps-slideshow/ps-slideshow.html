@@ -15,7 +15,7 @@ Element displaying a PhotoShelter.com slideshow of images
 @homepage #
 -->
 
-<polymer-element name="ps-slideshow" attributes="G_ID I_IDs images I_ID image gallery">
+<polymer-element name="ps-slideshow" attributes="G_ID I_IDs images I_ID image gallery autoplay">
     <template>
     <style>
     :host {
@@ -110,8 +110,10 @@ Element displaying a PhotoShelter.com slideshow of images
     <ps-image onstage class="prev" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
     <ps-image onstage class="next" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
 
-    <button class="advance" on-tap={{forward}}></button>
-    <button class="retreat" on-tap={{back}}></button>
+    <template if="{{(!!I_IDs && I_IDs.length > 1) || (!!images && images.length > 1)}}">
+        <button class="advance" on-tap={{forward}}></button>
+        <button class="retreat" on-tap={{back}}></button>
+    </template>
 
 </template>
 
@@ -180,7 +182,9 @@ Polymer('ps-slideshow',{
     },
     setupImages: function() {
         var image;
-        if (this.I_ID) {
+        if (this.I_ID === 'random') {
+            this.current = Math.floor(Math.random() * this.images.length);
+        } else if (this.I_ID) {
             for (var i = 0, ct = this.images.length; i < ct; i++) {
                 image = this.images[i];
                 if (image.image_id === this.I_ID) {
@@ -197,7 +201,9 @@ Polymer('ps-slideshow',{
     },
     setupI_IDs: function() {
         var iid;
-        if (this.I_ID) {
+        if (this.I_ID === 'random') {
+            this.current = Math.floor(Math.random() * this.I_IDs.length);
+        } else if (this.I_ID) {
             for (var i = 0, ct = this.I_IDs.length; i < ct; i++) {
                 iid = this.I_IDs[i];
                 if (iid === this.I_ID) {
@@ -219,11 +225,36 @@ Polymer('ps-slideshow',{
         }
     },
     I_IDChanged: function() {
-        if (this.images.length) this.setupImages();
+        if (!!this.images && this.images.length) {
+            this.setupImages();
+            this.autoplayCheck();
+        }
     },
     I_IDsChanged: function() {
-        if (this.I_IDs.length) this.setupI_IDs();
-        console.log(this.I_IDs);
+        if (!!this.I_IDs && this.I_IDs.length) {
+            this.setupI_IDs();
+            this.autoplayCheck();
+        }
+    },
+    autoplayChanged: function() {
+        this.autoplayCheck();
+    },
+    autoplayCheck: function() {
+        if (this.autoplay &&
+                ((!!this.I_IDs && this.I_IDs.length > 1) ||
+                (!!this.images && this.images.length > 1))) {
+            if (!this.animLoop)
+                this.animLoop = window.requestAnimationFrame(this.auto.bind(this));
+        }
+    },
+    auto: function() {
+        this.loop = this.loop || 0;
+        this.loop++;
+        if (this.loop === 300) {
+            this.forward();
+            this.loop = 0;
+        }
+        this.animLoop = window.requestAnimationFrame(this.auto.bind(this));
     },
     back: function() {
         var images = this.shadowRoot.querySelectorAll('[onstage]');

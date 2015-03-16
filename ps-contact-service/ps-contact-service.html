@@ -1,0 +1,55 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--
+Element submitting a contact email to a PhotoShelter.com member.<br/>
+<strong>Usage requires</strong> a member specific baseurl from the globals component.
+
+##### Example
+
+    <ps-contact-service></ps-contact-service>
+
+@element ps-contact-service
+@blurb Element requesting User information from PhotoShelter.com.
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-contact-service" attributes="name email msg phone">
+    <template>
+    <style>
+    :host {
+        display: none;
+    }
+    </style>
+    <ps-globals id="globals"></ps-globals>
+    <core-ajax id="{{id}}"
+    url="{{url}}"
+    method="POST">
+</core-ajax>
+</template>
+<script>
+Polymer('ps-contact-service', {
+    ready: function() {
+        /**
+        * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+        *
+        * @attribute url
+        * @type string
+        * @default ''
+        */
+        this.url = this.$.globals.data.baseurl + this.$.globals.data.version +
+            '/photographer/email?api_key=' + this.$.globals.data.apikey;
+    },
+    send: function() {
+        this.$.service_contact.params = {
+            api_key: this.$.globals.data.apikey,
+            name: this.name,
+            email: this.email,
+            msg: this.msg,
+            phone: this.phone
+        };
+        this.$.service_contact.go();
+    }
+});
+</script>
+</polymer-element>
