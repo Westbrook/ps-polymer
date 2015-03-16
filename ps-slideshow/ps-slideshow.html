@@ -15,7 +15,7 @@ Element displaying a PhotoShelter.com slideshow of images
 @homepage #
 -->
 
-<polymer-element name="ps-slideshow" attributes="G_ID I_IDs images I_ID image gallery">
+<polymer-element name="ps-slideshow" attributes="G_ID I_IDs images I_ID image gallery autoplay">
     <template>
     <style>
     :host {
@@ -110,8 +110,10 @@ Element displaying a PhotoShelter.com slideshow of images
     <ps-image onstage class="prev" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
     <ps-image onstage class="next" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
 
-    <button class="advance" on-tap={{forward}}></button>
-    <button class="retreat" on-tap={{back}}></button>
+    <template if="{{(!!I_IDs && I_IDs.length > 1) || (!!images && images.length > 1)}}">
+        <button class="advance" on-tap={{forward}}></button>
+        <button class="retreat" on-tap={{back}}></button>
+    </template>
 
 </template>
 
@@ -178,9 +180,11 @@ Polymer('ps-slideshow',{
 
         this.current = 0;
     },
-    setup: function() {
+    setupImages: function() {
         var image;
-        if (this.I_ID) {
+        if (this.I_ID === 'random') {
+            this.current = Math.floor(Math.random() * this.images.length);
+        } else if (this.I_ID) {
             for (var i = 0, ct = this.images.length; i < ct; i++) {
                 image = this.images[i];
                 if (image.image_id === this.I_ID) {
@@ -195,14 +199,62 @@ Polymer('ps-slideshow',{
         this.shadowRoot.querySelector('.preload-prev').image = this.getImage('preload-prev');
         this.shadowRoot.querySelector('.preload-next').image = this.getImage('preload-next');
     },
+    setupI_IDs: function() {
+        var iid;
+        if (this.I_ID === 'random') {
+            this.current = Math.floor(Math.random() * this.I_IDs.length);
+        } else if (this.I_ID) {
+            for (var i = 0, ct = this.I_IDs.length; i < ct; i++) {
+                iid = this.I_IDs[i];
+                if (iid === this.I_ID) {
+                    this.current = i;
+                    break;
+                }
+            }
+        }
+        this.shadowRoot.querySelector('.current').I_ID = this.getImage('current');
+        this.shadowRoot.querySelector('.next').I_ID = this.getImage('next');
+        this.shadowRoot.querySelector('.prev').I_ID = this.getImage('prev');
+        this.shadowRoot.querySelector('.preload-prev').I_ID = this.getImage('preload-prev');
+        this.shadowRoot.querySelector('.preload-next').I_ID = this.getImage('preload-next');
+    },
     galleryChanged: function() {
         if (typeof this.gallery.GalleryImage !== 'undefined') {
             this.images = this.gallery.GalleryImage;
-            this.setup();
+            this.setupImages();
         }
     },
     I_IDChanged: function() {
-        if (this.images.length) this.setup();
+        if (!!this.images && this.images.length) {
+            this.setupImages();
+            this.autoplayCheck();
+        }
+    },
+    I_IDsChanged: function() {
+        if (!!this.I_IDs && this.I_IDs.length) {
+            this.setupI_IDs();
+            this.autoplayCheck();
+        }
+    },
+    autoplayChanged: function() {
+        this.autoplayCheck();
+    },
+    autoplayCheck: function() {
+        if (this.autoplay &&
+                ((!!this.I_IDs && this.I_IDs.length > 1) ||
+                (!!this.images && this.images.length > 1))) {
+            if (!this.animLoop)
+                this.animLoop = window.requestAnimationFrame(this.auto.bind(this));
+        }
+    },
+    auto: function() {
+        this.loop = this.loop || 0;
+        this.loop++;
+        if (this.loop === 300) {
+            this.forward();
+            this.loop = 0;
+        }
+        this.animLoop = window.requestAnimationFrame(this.auto.bind(this));
     },
     back: function() {
         var images = this.shadowRoot.querySelectorAll('[onstage]');
@@ -221,43 +273,49 @@ Polymer('ps-slideshow',{
         }
     },
     cleanup: function() {
-        var pane;
+        var pane,
+            type = ((!this.images || this.images.length === 0) && this.I_IDs.length)
+                ? 'I_ID' : 'image';
         this.shadowRoot.querySelector('.current').removeEventListener('transitionend', this.cleanup, false);
         for (var i = 0, ct = this.cleanups.length; i < ct; i++) {
             pane = this.shadowRoot.querySelector(this.cleanups[i].selector);
             if (pane !== null) {
                 pane.className = this.cleanups[i].dest;
                 if (this.cleanups[i].newImage) {
-                    pane.image = this.getImage(this.cleanups[i].dest);
+                    pane[type] = this.getImage(this.cleanups[i].dest);
                 }
             }
         }
         this.image = this.getImage('current');
-        this.shadowRoot.querySelector('.preload-prev').image = this.getImage('preload-prev');
-        this.shadowRoot.querySelector('.preload-next').image = this.getImage('preload-next');
+        this.shadowRoot.querySelector('.preload-prev')[type] = this.getImage('preload-prev');
+        this.shadowRoot.querySelector('.preload-next')[type] = this.getImage('preload-next');
     },
-    getIdx: function(offset) {
-        var index = this.current + offset;
+    getIdx: function(offset, I_IDs) {
+        var index = this.current + offset,
+            set = ((!this.images || this.images.length === 0) && this.I_IDs.length)
+                ? this.I_IDs : this.images;
         if (index < 0) {
-            index = this.images.length + index;
-        } else if (index >= this.images.length) {
-            index = index - this.images.length;
+            index = set.length + index;
+        } else if (index >= set.length) {
+            index = index - set.length;
         }
         return index;
     },
     getImage: function(step) {
-        var index;
+        var index,
+            set = ((!this.images || this.images.length === 0) && this.I_IDs.length)
+                ? this.I_IDs : this.images;
         switch (step) {
             case 'current':
-            return this.images[this.current];
+            return set[this.current];
         case 'next':
-            return this.images[this.getIdx(1)];
+            return set[this.getIdx(1)];
         case 'prev':
-            return this.images[this.getIdx(-1)];
+            return set[this.getIdx(-1)];
         case 'preload-next':
-            return this.images[this.getIdx(2)];
+            return set[this.getIdx(2)];
         case 'preload-prev':
-            return this.images[this.getIdx(-2)];
+            return set[this.getIdx(-2)];
         }
     }
 });

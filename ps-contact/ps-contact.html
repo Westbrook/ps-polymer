@@ -1,0 +1,86 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-contact-service/ps-contact-service.html">
+<!--
+Element collecting a contact message for a PhotoShelter.com member.
+
+##### Example
+
+    <ps-contact></ps-contact>
+
+@element ps-contact
+@blurb Element collecting a contact message for a PhotoShelter.com member.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-contact">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    button {
+        -webkit-appearance: none;
+        border: none;
+        line-height: inherit;
+        outline: none;
+        padding: 0;
+        text-decoration: none;
+        cursor: pointer;
+        background: transparent;
+    }
+    input,
+    textarea,
+    button {
+        width: 25%;
+        border: 1px solid #666;
+        background: #fff;
+        margin: 0 0 10px;
+        padding: 0;
+        box-sizing: border-box;
+        display: block;
+    }
+    input,
+    button {
+        padding: 5px 10px;
+        height: 40px;
+        line-height: 30px;
+    }
+    textarea {
+        padding: 13px 10px;
+        resize:vertical;
+    }
+    </style>
+
+    <ps-contact-service id="service_contact"></ps-contact-service>
+
+    <div class="field">
+        <input type="text" id="name" placeholder="Name">
+    </div>
+    <div class="field">
+        <input type="email" id="email" placeholder="Email" />
+    </div>
+    <div class="field">
+        <input type="phone" id="phone" placeholder="Phone" />
+    </div>
+    <div class="field">
+        <textarea id="note" placeholder="Note"></textarea>
+    </div>
+    <div class="field">
+        <button on-tap="{{validate}}">Send</button>
+    </div>
+
+  </template>
+
+  <script>
+  Polymer('ps-contact', {
+      validate: function() {
+          this.$.service_contact.name = this.$.name.value;
+          this.$.service_contact.email = this.$.email.value;
+          this.$.service_contact.phone = this.$.phone.value;
+          this.$.service_contact.msg = this.$.note.value;
+          this.$.service_contact.send();
+      }
+  });
+  </script>
+</polymer-element>
