@@ -21,11 +21,11 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
     }
     </style>
     <ps-globals id="globals"></ps-globals>
-    <core-ajax id="{{id}}"
-    auto
-    url="{{url}}"
-    on-core-response="{{galleryLoaded}}"
-    handleAs="json">
+    <core-ajax id="ajax"
+        auto
+        url="{{url}}"
+        on-core-response="{{galleryLoaded}}"
+        handleAs="json">
 </core-ajax>
 </template>
 <script>
@@ -100,7 +100,7 @@ Polymer('ps-gallery-service', {
     */
     galleryLoaded: function() {
         // Make a copy of the loaded data
-        this.gallery = this.$[this.id].response.data.Gallery;
+        this.gallery = this.$.ajax.response.data.Gallery;
         if (typeof this.gallery.KeyImage !== 'undefined')
         this.image = this.gallery.KeyImage.Image;
     },

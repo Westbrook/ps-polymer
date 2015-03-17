@@ -1,0 +1,60 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-vimeo-service/ps-vimeo-service.html">
+<!--
+Element displaying a Vimeo content stream.
+
+##### Example
+
+    <ps-vimeo></ps-vimeo>
+
+@element ps-vimeo
+@blurb Element displaying a Vimeo content stream.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-vimeo" attributes="username videos">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    .video {
+        float: left;
+        width: 100%;
+        height: 0;
+        position: relative;
+        margin: 0 0 20px;
+    }
+    iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+    <ps-vimeo-service username="{{username}}" videos="{{videos}}"></ps-vimeo-service>
+
+    <template repeat="{{video in videos}}">
+        <core-ajax
+            auto
+            on-core-response="{{videoLoaded}}"
+            url="{{'https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/' + video.id}}"
+            handleAs='json'></core-ajax>
+        <div class="video" id="video-{{video.id}}"></div>
+    </template>
+
+  </template>
+
+  <script>
+  Polymer('ps-vimeo', {
+      videoLoaded: function() {
+          var video = arguments[1].response,
+            elm = this.shadowRoot.querySelector('#video-' + video.video_id);
+          elm.innerHTML = video.html;
+          elm.style.paddingBottom = (video.height / video.width) * 100 + '%';
+      }
+  });
+  </script>
+</polymer-element>

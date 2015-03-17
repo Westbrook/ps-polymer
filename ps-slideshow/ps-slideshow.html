@@ -15,7 +15,7 @@ Element displaying a PhotoShelter.com slideshow of images
 @homepage #
 -->
 
-<polymer-element name="ps-slideshow" attributes="G_ID I_IDs images I_ID image gallery autoplay">
+<polymer-element name="ps-slideshow" attributes="G_IDs G_ID I_IDs images I_ID image gallery autoplay">
     <template>
     <style>
     :host {
@@ -110,7 +110,7 @@ Element displaying a PhotoShelter.com slideshow of images
     <ps-image onstage class="prev" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
     <ps-image onstage class="next" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
 
-    <template if="{{(!!I_IDs && I_IDs.length > 1) || (!!images && images.length > 1)}}">
+    <template if="{{!!set && set.length > 1}}">
         <button class="advance" on-tap={{forward}}></button>
         <button class="retreat" on-tap={{back}}></button>
     </template>
@@ -218,21 +218,54 @@ Polymer('ps-slideshow',{
         this.shadowRoot.querySelector('.preload-prev').I_ID = this.getImage('preload-prev');
         this.shadowRoot.querySelector('.preload-next').I_ID = this.getImage('preload-next');
     },
+    setupG_IDs: function() {
+        var iid;
+        if (this.I_ID === 'random') {
+            this.current = Math.floor(Math.random() * this.I_IDs.length);
+        } else if (this.I_ID) {
+            for (var i = 0, ct = this.I_IDs.length; i < ct; i++) {
+                iid = this.I_IDs[i];
+                if (iid === this.I_ID) {
+                    this.current = i;
+                    break;
+                }
+            }
+        }
+        this.shadowRoot.querySelector('.current').G_ID = this.getImage('current');
+        this.shadowRoot.querySelector('.next').G_ID = this.getImage('next');
+        this.shadowRoot.querySelector('.prev').G_ID = this.getImage('prev');
+        this.shadowRoot.querySelector('.preload-prev').G_ID = this.getImage('preload-prev');
+        this.shadowRoot.querySelector('.preload-next').G_ID = this.getImage('preload-next');
+    },
     galleryChanged: function() {
         if (typeof this.gallery.GalleryImage !== 'undefined') {
             this.images = this.gallery.GalleryImage;
+            this.type = 'image';
+            this.set = this.images;
             this.setupImages();
         }
     },
     I_IDChanged: function() {
         if (!!this.images && this.images.length) {
+            this.type = 'image';
+            this.set = this.images;
             this.setupImages();
             this.autoplayCheck();
         }
     },
     I_IDsChanged: function() {
         if (!!this.I_IDs && this.I_IDs.length) {
+            this.type = 'I_ID';
+            this.set = this.I_IDs;
             this.setupI_IDs();
+            this.autoplayCheck();
+        }
+    },
+    G_IDsChanged: function() {
+        if (!!this.G_IDs && this.G_IDs.length) {
+            this.type = 'G_ID';
+            this.set = this.G_IDs;
+            this.setupG_IDs();
             this.autoplayCheck();
         }
     },
@@ -274,8 +307,7 @@ Polymer('ps-slideshow',{
     },
     cleanup: function() {
         var pane,
-            type = ((!this.images || this.images.length === 0) && this.I_IDs.length)
-                ? 'I_ID' : 'image';
+            type = this.type;
         this.shadowRoot.querySelector('.current').removeEventListener('transitionend', this.cleanup, false);
         for (var i = 0, ct = this.cleanups.length; i < ct; i++) {
             pane = this.shadowRoot.querySelector(this.cleanups[i].selector);
@@ -292,8 +324,7 @@ Polymer('ps-slideshow',{
     },
     getIdx: function(offset, I_IDs) {
         var index = this.current + offset,
-            set = ((!this.images || this.images.length === 0) && this.I_IDs.length)
-                ? this.I_IDs : this.images;
+            set = this.set;
         if (index < 0) {
             index = set.length + index;
         } else if (index >= set.length) {
@@ -303,8 +334,7 @@ Polymer('ps-slideshow',{
     },
     getImage: function(step) {
         var index,
-            set = ((!this.images || this.images.length === 0) && this.I_IDs.length)
-                ? this.I_IDs : this.images;
+            set = this.set;
         switch (step) {
             case 'current':
             return set[this.current];
