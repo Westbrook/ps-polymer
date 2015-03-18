@@ -30,6 +30,22 @@ Element requesting keychain data
   <script>
   Polymer('ps-keychain-service', {
     /**
+     * The `U_ID` attribute is the user_id to be displayed and is a REQUIRED attribute.
+     *
+     * @attribute I_ID
+     * @type string
+     * @default ''
+     */
+    U_ID: '',
+    /**
+    * The `service` attribute defines which services keys to request
+    *
+    * @attribute service
+    * @type string
+    * @default ''
+    */
+    service: '',
+    /**
      * The `url` attribute is the URL from which PhotoShelter.com data is requested.
      *
      * @attribute url
