@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-image-service/ps-image-service.html">
 <link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
+<link rel="import" href="../ps-collection-children-service/ps-collection-children-service.html">
 <link rel="import" href="../ps-image/ps-image.html">
 <!--
 Element displaying a PhotoShelter.com slideshow of images
@@ -15,7 +16,7 @@ Element displaying a PhotoShelter.com slideshow of images
 @homepage #
 -->
 
-<polymer-element name="ps-slideshow" attributes="G_IDs G_ID I_IDs images I_ID image gallery autoplay">
+<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay">
     <template>
     <style>
     :host {
@@ -109,7 +110,11 @@ Element displaying a PhotoShelter.com slideshow of images
     </style>
 
     <template if="{{!!G_ID}}">
-        <ps-gallery-service id="service-gallery" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extends}}"></ps-gallery-service>
+        <ps-gallery-service id="service-gallery" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extendsGal}}"></ps-gallery-service>
+    </template>
+
+    <template if="{{!!C_ID}}">
+        <ps-collection-children-service id="service-collection" collectionChildren="{{collectionChildren}}" C_ID='{{C_ID}}' extends="{{extendsClc}}"></ps-collection-children-service>
     </template>
 
     <div class="stage" data-transition="{{transition}}">
@@ -140,15 +145,30 @@ Polymer('ps-slideshow',{
         */
         this.gallery = {};
         /**
-        * The `extends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
+        * The `extendsGal` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
         *
-        * @attribute extends
+        * @attribute extendsGal
         * @type array
         * @default ["KeyImage", "GalleryImage", "ImageLink", "Image", "Iptc", "Exif", "Profile"]
         */
-        this.extends = [
+        this.extendsGal = [
             "KeyImage",
             "GalleryImage",
+            "ImageLink",
+            "Image",
+            "Iptc",
+            "Exif",
+            "Profile"
+        ];
+        /**
+        * The `extendsGal` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
+        *
+        * @attribute extendsGal
+        * @type array
+        * @default ["KeyImage", "ImageLink", "Image", "Iptc", "Exif", "Profile"]
+        */
+        this.extendsClc = [
+            "KeyImage",
             "ImageLink",
             "Image",
             "Iptc",
@@ -280,6 +300,18 @@ Polymer('ps-slideshow',{
             this.autoplayCheck();
         }
     },
+    collectionChildrenChanged: function() {
+        var images = [];
+        for (var i = 0, ct = this.collectionChildren.length; i < ct; i++) {
+            if (this.collectionChildren[i].KeyImage)
+                images.push(this.collectionChildren[i].KeyImage);
+        }
+        this.images = images;
+        this.type = 'image';
+        this.set = this.images;
+        this.setupImages();
+        this.autoplayCheck();
+    },
     autoplayChanged: function() {
         this.autoplayCheck();
     },
@@ -347,7 +379,7 @@ Polymer('ps-slideshow',{
         var index,
             set = this.set;
         switch (step) {
-            case 'current':
+        case 'current':
             return set[this.current];
         case 'next':
             return set[this.getIdx(1)];
