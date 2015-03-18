@@ -1,0 +1,82 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--
+Element requesting keychain data
+
+##### Example
+
+    <ps-keychain-service></ps-keychain-service>
+
+@element ps-keychain-service
+@blurb Element requesting keychain data
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-keychain-service" attributes="U_ID service keys">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <ps-globals id="globals"></ps-globals>
+    <core-ajax id="{{id}}"
+      auto
+      url="{{url}}"
+      on-core-response="{{contentLoaded}}"
+      handleAs="json">
+  </template>
+  <script>
+  Polymer('ps-keychain-service', {
+    /**
+     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+     *
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
+
+    created: function() {
+      this.posts = [];
+      this.url = '';
+    },
+    ready: function() {
+      if (!!this.U_ID && !!this.service)
+        this.url = this.createUrl();
+    },
+
+   /**
+    * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
+    *
+    * @method createUrl
+    * @return {String} Returns a string URL to be sent to the core-ajax element.
+    */
+    createUrl: function() {
+        //TODO: version hardcoded because v3.0 doesn't support keychain?
+        return this.$.globals.data.baseurl + 'v2' +
+            '/mem/user/keychain/' + this.service +
+            '?api_key=' + this.$.globals.data.apikey +
+            '&fields=json&user_id=' + this.U_ID;
+    },
+    /**
+    * The `contentLoaded` method makes a copy of the loaded data.
+    *
+    * @method userLoaded
+    */
+    contentLoaded: function() {
+      // Make a copy of the loaded data
+      this.keys = JSON.parse(arguments[1].response.data.json);
+    },
+    U_IDChanged: function(attrName, oldVal, newVal) {
+      if (!!this.U_ID && !!this.service)
+        this.url = this.createUrl();
+    },
+    serviceChanged: function(attrName, oldVal, newVal) {
+      if (!!this.U_ID && !!this.service)
+        this.url = this.createUrl();
+    }
+  });
+  </script>
+</polymer-element>
