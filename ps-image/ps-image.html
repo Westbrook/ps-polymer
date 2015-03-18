@@ -47,7 +47,8 @@ Element displaying a PhotoShelter.com image.
         <core-image id="img" src="{{image.ImageLink.base}}/{{I_ID}}sec={{image.ImageLink.token}}/{{sizeType}}={{size}}"
             width="{{width}}" height="{{height}}" class="{{sizing}}"
             title="{{image.Iptc.title}}" sizing="{{sizing == 'relative' ? 'cover' : 'contain'}}"
-            style="padding-bottom: {{ratio()}}"></core-image>
+            style="padding-bottom: {{ratio()}}"
+            preload="true" fade="true"></core-image>
     </template>
 
 </template>

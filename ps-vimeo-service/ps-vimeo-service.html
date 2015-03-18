@@ -1,0 +1,92 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--
+Element requesting vimeo data
+
+##### Example
+
+    <ps-vimeo-service></ps-vimeo-service>
+
+@element ps-vimeo-service
+@blurb Element requesting vimeo data
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-vimeo-service" attributes="username videos">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <ps-globals id="globals"></ps-globals>
+    <core-ajax id="{{id}}"
+        auto
+        on-core-response="{{contentLoaded}}"
+        url="{{url}}"
+        contentType="application/vnd.vimeo.video+json"
+        handleAs='json'></core-ajax>
+  </template>
+  <script>
+  Polymer('ps-vimeo-service', {
+    /**
+     * The `label` attribute is the tumblr label who's blog will be requested
+     *
+     * @attribute label
+     * @type string
+     * @default ''
+     */
+    label: '',
+
+    /**
+     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+     *
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
+
+    created: function() {
+      this.posts = [];
+      this.url = '';
+    },
+    ready: function() {
+      if (!!this.username)
+        this.url = this.createUrl();
+    },
+
+   /**
+    * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
+    *
+    * @method createUrl
+    * @return {String} Returns a string URL to be sent to the core-ajax element.
+    */
+    createUrl: function() {
+        return 'https://api.vimeo.com/users/' + this.username +
+            '/videos?access_token=d89cb551786bf27f4e0cff9a1f117535&filter_embeddable=true';
+    },
+    /**
+    * The `contentLoaded` method makes a copy of the loaded data.
+    *
+    * @method userLoaded
+    */
+    contentLoaded: function() {
+      // Make a copy of the loaded data
+      var videos = arguments[1].response.data;
+      for (var i = 0, ct = videos.length; i < ct; i++) {
+          videos[i].id = videos[i].uri.replace('/videos/','');
+      }
+      this.videos = videos;
+    },
+    usernameChanged: function(attrName, oldVal, newVal) {
+      if (!!this.username)
+        this.url = this.createUrl();
+    },
+    videoLoaded: function() {
+        debugger;
+    }
+  });
+  </script>
+</polymer-element>

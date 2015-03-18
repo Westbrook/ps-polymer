@@ -6,14 +6,14 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
 
 ##### Example
 
-<ps-gallery-service></ps-gallery-service>
+<ps-collection-children-service></ps-collection-children-service>
 
-@element ps-gallery-service
-@blurb Element requesting Gallery information from PhotoShelter.com.
+@element ps-collection-children-service
+@blurb Element requesting Collection Children information from PhotoShelter.com.
 @status alpha
 @homepage #
 -->
-<polymer-element name="ps-gallery-service" attributes="gallery image G_ID extends" constructor="PsGalleryService">
+<polymer-element name="ps-collection-children-service" attributes="collectionChildren C_ID extends" constructor="PsGalleryService">
     <template>
     <style>
     :host {
@@ -24,20 +24,20 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
     <core-ajax id="ajax"
         auto
         url="{{url}}"
-        on-core-response="{{galleryLoaded}}"
+        on-core-response="{{childrenLoaded}}"
         handleAs="json">
 </core-ajax>
 </template>
 <script>
-Polymer('ps-gallery-service', {
+Polymer('ps-collection-children-service', {
     /**
-    * The `G_ID` attribute is the gallery_id to be displayed and is a REQUIRED attribute.
+    * The `C_ID` attribute is the collection_id to be displayed and is a REQUIRED attribute.
     *
-    * @attribute G_ID
+    * @attribute C_ID
     * @type string
     * @default ''
     */
-    G_ID: '',
+    C_ID: '',
     /**
     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
     *
@@ -54,7 +54,7 @@ Polymer('ps-gallery-service', {
         * @type object
         * @default null
         */
-        this.gallery = {};
+        this.collectionChildren = {};
         /**
         * The `extends` attribute outlines the extends that will be requested of PhotoShelter.com.
         *
@@ -65,8 +65,8 @@ Polymer('ps-gallery-service', {
         this.extends = [];
     },
     ready: function() {
-        if (this.G_ID)
-        this.url = this.extendUrl();
+        if (this.C_ID)
+            this.url = this.extendUrl();
     },
     /**
     * The `extendUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
@@ -77,7 +77,7 @@ Polymer('ps-gallery-service', {
     extendUrl: function() {
         var extend = '&extend={',
         url = this.$.globals.data.baseurl + this.$.globals.data.version +
-            '/gallery/' + this.G_ID + '?api_key=' + this.$.globals.data.apikey +
+            '/collection/' + this.C_ID + '/children?api_key=' + this.$.globals.data.apikey +
                 '&fields=*';
         for(var i = 0, ct = this.extends.length; i < ct; i ++) {
             if (i > 0 ) extend += ',';
@@ -94,15 +94,18 @@ Polymer('ps-gallery-service', {
         return url;
     },
     /**
-    * The `galleryLoaded` method makes a copy of the loaded data.
+    * The `childrenLoaded` method makes a copy of the loaded data.
     *
-    * @method galleryLoaded
+    * @method childrenLoaded
     */
-    galleryLoaded: function() {
+    childrenLoaded: function() {
         // Make a copy of the loaded data
-        this.gallery = this.$.ajax.response.data.Gallery;
-        if (typeof this.gallery.KeyImage !== 'undefined')
-        this.image = this.gallery.KeyImage.Image;
+        var children = this.$.ajax.response.data.Children,
+            collectionChildren = [];
+        for (var i = 0, ct = children.length; i < ct; i++) {
+            collectionChildren.push(children[i].ChildCollection || children[i].ChildGallery);
+        }
+        this.collectionChildren = collectionChildren;
     },
     /**
     * The `G_IDChanged` method updates the URL.
