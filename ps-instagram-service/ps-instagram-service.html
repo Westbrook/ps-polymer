@@ -1,0 +1,90 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../ps-keychain-service/ps-keychain-service.html">
+<link rel="import" href="../core-shared-lib/core-shared-lib.html">
+<!--
+Element requesting instagram data
+
+##### Example
+
+    <ps-instagram-service></ps-instagram-service>
+
+@element ps-instagram-service
+@blurb Element requesting instagram data
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-instagram-service" attributes="U_ID count posts">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <ps-globals id="globals"></ps-globals>
+	<ps-keychain-service U_ID="{{U_ID}}" service="instagram" keys="{{keys}}"></ps-keychain-service>
+    <template if="{{!!url}}">
+        <core-shared-lib on-core-shared-lib-load="{{contentLoaded}}"
+            callbackName="instagramCB"
+            url="{{url}}"></core-shared-lib>
+    </template>
+  </template>
+  <script>
+  Polymer('ps-instagram-service', {
+    /**
+     * The `label` attribute is the tumblr label who's blog will be requested
+     *
+     * @attribute label
+     * @type string
+     * @default ''
+     */
+    label: '',
+
+    /**
+     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+     *
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
+
+    count: 20,
+
+    created: function() {
+      this.posts = [];
+      this.url = '';
+    },
+    ready: function() {
+      if (!!this.keys && !!this.keys.instagram && !!this.keys.instagram.access_token)
+        this.url = this.createUrl();
+    },
+
+   /**
+    * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
+    *
+    * @method createUrl
+    * @return {String} Returns a string URL to be sent to the core-ajax element.
+    */
+    createUrl: function() {
+        return 'https://api.instagram.com/v1/users/self/media/recent?' +
+            'access_token=' + this.keys.instagram.access_token +
+            '&count=' + this.count + '&callback=instagramCB';
+    },
+    /**
+    * The `contentLoaded` method makes a copy of the loaded data.
+    *
+    * @method userLoaded
+    */
+    contentLoaded: function() {
+      // Make a copy of the loaded data
+      this.posts = arguments[1][1][0].data;
+      console.log(this.posts);
+    },
+    keysChanged: function(attrName, oldVal, newVal) {
+      if (!!this.keys && !!this.keys.instagram && !!this.keys.instagram.access_token)
+        this.url = this.createUrl();
+    }
+  });
+  </script>
+</polymer-element>
