@@ -1,0 +1,72 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-image/ps-image.html">
+<link rel="import" href="../ps-image-search-service/ps-image-search-service.html">
+<link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
+<link rel="import" href="../core-image/core-image.html">
+<!--
+Element displaying a PhotoShelter.com image.
+
+##### Example
+
+<ps-image></ps-image>
+
+@element ps-image
+@blurb Element displaying a PhotoShelter.com image.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-image-search" attributes="U_ID">
+    <template>
+    <style>
+    :host {
+        display: block;
+    }
+    .search-box {
+        float: left;
+        width: 100%;
+    }
+    ps-image {
+        width: 20%;
+        float: left;
+    }
+    ps-image:nth-of-type(0) {
+        clear: both;
+    }
+    ps-image:nth-of-type(5n+1) {
+        clear: both;
+    }
+    </style>
+    <div class="search-box">
+        <input id="terms" type="text" />
+        <button on-tap="{{search}}">Search</button>
+    </div>
+	<ps-image-search-service terms="{{terms}}" U_ID="{{U_ID}}" images="{{images}}" extends="{{extends}}"></ps-image-search-service>
+    <template repeat="{{image in images}}">
+        <ps-image image="{{image}}" width="null" height="null" sizing="relative"></ps-image>
+    </template>
+
+</template>
+
+<script>
+Polymer('ps-image-search', {
+    terms: '',
+    created: function() {
+        /**
+        * The `extends` attribute outlines the extends of the ps-image-search-service tag to support the content delivered.
+        *
+        * @attribute extends
+        * @type array
+        * @default ["ImageLink"]
+        */
+        this.extends = [
+            "ImageLink",
+            "Image"
+        ];
+    },
+    search: function() {
+        this.terms = this.$.terms.value;
+    }
+});
+</script>
+</polymer-element>
