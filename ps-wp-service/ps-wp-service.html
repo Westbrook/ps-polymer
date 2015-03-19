@@ -1,0 +1,108 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--
+Element requesting wordpress blog data
+
+##### Example
+
+    <ps-wp-service></ps-wp-service>
+
+@element ps-wp-service
+@blurb Element requesting tumblr blog data
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-wp-service" attributes="wpUrl posts">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <ps-globals id="globals"></ps-globals>
+    <core-ajax id="{{id}}"
+        auto
+        on-core-response="{{contentLoaded}}"
+        url="{{url}}"
+        handleAs="xml"
+        headers='{"Accept": "application/xml, text/xml, */*; q=0.01"}'></core-ajax>
+  </template>
+  <script>
+  Polymer('ps-wp-service', {
+    /**
+     * The `label` attribute is the tumblr label who's blog will be requested
+     *
+     * @attribute label
+     * @type string
+     * @default ''
+     */
+    label: '',
+
+    /**
+     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+     *
+     * @attribute url
+     * @type string
+     * @default ''
+     */
+    url: '',
+
+    created: function() {
+      this.posts = [];
+      this.url = '';
+    },
+    ready: function() {
+      if (!!this.wpUrl)
+        this.url = this.createUrl();
+    },
+
+   /**
+    * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
+    *
+    * @method createUrl
+    * @return {String} Returns a string URL to be sent to the core-ajax element.
+    */
+    createUrl: function() {
+        var url = this.wpUrl;
+        if (url[url.length-1] !== '/') url += '/'
+        return url + 'feed/';
+    },
+    /**
+    * The `contentLoaded` method makes a copy of the loaded data.
+    *
+    * @method userLoaded
+    */
+    contentLoaded: function() {
+        // Make a copy of the loaded data
+        var posts = [],
+            post,
+            items = arguments[1].response.getElementsByTagName('item'),
+            children;
+        for (var i = 0, ct = items.length; i < ct; i++) {
+            children = items[i].childNodes;
+            post = {};
+            for (var j = 0, ctj = children.length; j < ctj; j++) {
+                switch (children[j].nodeName) {
+                case 'title':
+                    post.title = children[j].innerHTML;
+                    break;
+                case 'link':
+                    post.link = children[j].innerHTML;
+                    break;
+                case 'content:encoded':
+                    post.content = children[j].innerHTML.replace('<!--[CDATA[<p-->','<p>').replace(']]>','');
+                    break;
+                }
+            }
+            posts.push(post);
+        }
+        this.posts = posts;
+    },
+    wpUrlChanged: function(attrName, oldVal, newVal) {
+      if (!!this.wpUrl)
+        this.url = this.createUrl();
+    }
+  });
+  </script>
+</polymer-element>
