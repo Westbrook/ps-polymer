@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	<title>ps-photog-card Demo</title>
+
+	<script src="../webcomponentsjs/webcomponents.js"></script>
+	<link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel="stylesheet" type="text/css">
+	<link rel="import" href="ps-photog-card.html">
+	<link rel="import" href="../ps-globals/ps-globals.html">
+	<link rel="stylesheet" href="../assets/demo.css" />
+	<style>
+	html {
+		font-family: Lato, sans-serif;
+	}
+	.demo-holder {
+		width: 100%;
+		max-width: 350px;
+		max-height: 300px;
+	}
+	</style>
+</head>
+<body unresolved>
+
+	<p>An example of using <code>&lt;ps-photog-card></code>:</p>
+	<ps-globals apikey="PS631731c7"></ps-globals>
+	<div class="demo-holder">
+		<ps-photog-card id="gids" U_ID='U00003chFxtPdnb0'></ps-photog-card>
+	</div>
+
+	<script>
+	window.addEventListener('polymer-ready', function(e) {
+		document.querySelector('#gids').G_IDs=["G0000l2e2S6bOpNc","G0000ubhN1a0B9oM","G0000xzL9201F7d4"];
+	}, false);
+	</script>
+
+</body>
+</html>

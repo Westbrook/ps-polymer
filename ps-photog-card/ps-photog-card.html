@@ -1,0 +1,159 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-image/core-image.html">
+<link rel="import" href="../ps-slideshow/ps-slideshow.html">
+<link rel="import" href="../ps-content/ps-content.html">
+<link rel="import" href="../ps-user-service/ps-user-service.html">
+<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../core-icons/core-icons.html">
+<!--
+Element displaying a PhotoShelter Photographer's Info Card
+
+##### Example
+
+<ps-photog-card></ps-photog-card>
+
+@element ps-gallery
+@blurb Element displaying a PhotoShelter Photographer's Info Card
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-photog-card" attributes="U_ID G_IDs user showText">
+    <template>
+    <style>
+    :host {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: white;
+        overflow: hidden;
+        padding: 10px;
+    }
+    ps-slideshow,
+    ps-content,
+    h2,
+    core-image {
+        -webkit-transition-property: all;
+        -moz-transition-property: all;
+        -o-transition-property: all;
+        transition-property: all;
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -webkit-transition-timing-function: ease-in-out;
+        -moz-transition-timing-function: ease-in-out;
+        -o-transition-timing-function: ease-in-out;
+        transition-timing-function: ease-in-out;
+    }
+    ps-slideshow {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        bottom: 70px;
+        left: 10px;
+        z-index: 2;
+    }
+    ps-content {
+        position: absolute;
+        top: 168px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: auto;
+        padding: 0 40px 10px;
+        opacity: 0;
+        z-index: 1;
+    }
+    polyfill-next-selector { content: ':host > h2'; }
+    ::content,
+    :host > h2 {
+        position: absolute;
+        left: 0px;
+        top: 100%;
+        margin: -70px 0 0;
+        padding: 0 10px 0 115px;
+        line-height: 48px;
+        z-index: 3;
+        cursor: pointer;
+    }
+    polyfill-next-selector { content: ':host > core-image'; }
+    ::content,
+    :host > core-image {
+        position: absolute;
+        top: 100%;
+        margin-top: -104px;
+        left: 25px;
+        width: 80px;
+        height: 80px;
+        border: 2px solid #fff;
+        z-index: 3;
+        cursor: pointer;
+        transform: translate3d(0,0,0) scale(1);
+    }
+    h2 a {
+        color: #999;
+    }
+    :host([showtext='true']) ps-content {
+        opacity: 1;
+        z-index: 2;
+    }
+    :host([showtext='true']) ps-slideshow {
+        opacity: 0;
+        z-index: 1;
+    }
+    polyfill-next-selector { content: ':host([showtext='true']) > core-image'; }
+    ::content,
+    :host([showtext='true']) > core-image {
+        top: 10px;
+        bottom: auto;
+        left: 50%;
+        margin: 10px 0 0 -42px;
+        transform: translate3d(0,0,0) scale(1.25);
+    }
+    polyfill-next-selector { content: ':host([showtext='true']) > h2'; }
+    ::content,
+    :host([showtext='true']) > h2 {
+        padding: 0 40px;
+        margin: 0;
+        top: 120px;
+    }
+    </style>
+    <template if="{{!!U_ID}}">
+        <ps-user-service U_ID="{{U_ID}}" user="{{user}}"></ps-user-service>
+    </template>
+    <ps-slideshow G_IDs="{{G_IDs}}" sizing="cover"></ps-slideshow>
+    <ps-content U_ID="{{U_ID}}" parameter="metadata" value="about"></ps-content>
+    <template if="{{!!user}}">
+        <h2 on-tap="{{toggle}}">
+            {{user.first_name + ' ' + user.last_name}}
+            <a href="{{'http://' + user.label + '.photoshelter.com'}}" title="{{'View ' + user.first_name + ' ' + user.last_name + '\'s Portfolio'}}">
+                <core-icon icon="link"></core-icon>
+            </a>
+        </h2>
+    </template>
+    <core-image on-tap="{{toggle}}" src="http://www.photoshelter.com/img-get/{{U_ID}}/t" sizing="cover"></core-image>
+</template>
+
+<script>
+Polymer('ps-photog-card',{
+    /**
+    * The `G_ID` attribute is the gallery_id to be displayed.
+    *
+    * @attribute G_ID
+    * @type string
+    * @default false
+    */
+    G_ID: '',
+    toggle: function() {
+        if(this.showText === 'true')
+            this.setAttribute('showText', 'false');
+        else
+            this.setAttribute('showText', 'true');
+    }
+});
+</script>
+</polymer-element>
