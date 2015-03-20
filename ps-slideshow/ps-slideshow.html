@@ -16,7 +16,7 @@ Element displaying a PhotoShelter.com slideshow of images
 @homepage #
 -->
 
-<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay">
+<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay sizing">
     <template>
     <style>
     :host {
@@ -118,11 +118,11 @@ Element displaying a PhotoShelter.com slideshow of images
     </template>
 
     <div class="stage" data-transition="{{transition}}">
-        <ps-image onstage class="current" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
-        <ps-image class="preload-prev" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
-        <ps-image class="preload-next" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
-        <ps-image onstage class="prev" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
-        <ps-image onstage class="next" size="1440x1440" sizing="cover" width="null" height="null"></ps-image>
+        <ps-image onstage class="current" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
+        <ps-image class="preload-prev" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
+        <ps-image class="preload-next" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
+        <ps-image onstage class="prev" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
+        <ps-image onstage class="next" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
     </div>
 
     <template if="{{!!set && set.length > 1}}">
@@ -135,6 +135,7 @@ Element displaying a PhotoShelter.com slideshow of images
 <script>
 Polymer('ps-slideshow',{
     transition: 'slide',
+    sizing: 'contain',
     created: function() {
         /**
         * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
