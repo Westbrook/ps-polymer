@@ -79,7 +79,6 @@ Element requesting instagram data
     contentLoaded: function() {
       // Make a copy of the loaded data
       this.posts = arguments[1][1][0].data;
-      console.log(this.posts);
     },
     keysChanged: function(attrName, oldVal, newVal) {
       if (!!this.keys && !!this.keys.instagram && !!this.keys.instagram.access_token)
