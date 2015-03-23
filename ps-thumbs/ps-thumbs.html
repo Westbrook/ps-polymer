@@ -1,0 +1,149 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
+<link rel="import" href="../ps-image/ps-image.html">
+<!--
+Element displaying a PhotoShelter.com gallery as thumbnails.
+
+##### Example
+
+<ps-thumbs></ps-thumbs>
+
+@element ps-thumbs
+@blurb Element displaying a PhotoShelter.com gallery as thumbnails.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-thumbs" attributes="image G_ID gallery images displayRatio showTitle spacing">
+    <template>
+    <style>
+    :host {
+        display: block;
+    }
+    .thumbs {
+        list-style: none;
+        float: left;
+        width: 100%;
+        margin: 0;
+        padding: 0;%;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .thumb {
+        position: relative;
+        float: left;
+        width: 33.33%;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .scaler {
+        float: left;
+        width: 100%;
+        position: relative;
+    }
+    .thumbs:not([data-ratio='natural']) .scaler {
+        height: 0;
+    }
+    .thumbs:not([data-ratio='natural']) ps-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+    [data-ratio="1:1"] .scaler {
+        padding-bottom: 100%;
+    }
+    [data-ratio="4:3"] .scaler {
+        padding-bottom: 75%;
+    }
+    [data-ratio="3:4"] .scaler {
+        padding-bottom: 133.33%;
+    }
+    [data-ratio="3:2"] .scaler {
+        padding-bottom: 66.66%;
+    }
+    [data-ratio="2:3"] .scaler {
+        padding-bottom: 150%;
+    }
+    [data-ratio="16:9"] .scaler {
+        padding-bottom: 56.25%;
+    }
+    </style>
+
+    <template if="{{!!G_ID}}">
+        <ps-gallery-service id="service" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extends}}"></ps-gallery-service>
+    </template>
+
+    <template if="{{!!images}}">
+        <ul class="thumbs" data-ratio="{{displayRatio ? displayRatio : 'natural'}}"> <!-- style here too? style="padding-left: {{spacing}}px;"-->
+            <template repeat="{{image, i in images}}" id="thumbs">
+                <li class="thumb" style="padding: {{spacing}}px {{spacing}}px {{spacing}}px 0;">
+                    <div class="scaler" style="margin-bottom: {{spacing}}px;">
+                        <ps-image image="{{image.KeyImage || image}}" sizing="{{displayRatio ? 'cover' : 'relative'}}"></ps-image>
+                    </div>
+                    <template if="{{!!image.name}}">
+                        <h3>{{image.name}}</h3>
+                    </template>
+                </li>
+            </template>
+        </ul>
+    </template>
+
+</template>
+
+<script>
+Polymer('ps-thumbs',{
+    spacing: 0,
+    showTitle: false,
+    created: function() {
+        /**
+        * The `G_ID` attribute is the gallery_id to be displayed.
+        *
+        * @attribute G_ID
+        * @type string
+        * @default ''
+        */
+        G_ID: '',
+        /**
+        * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
+        *
+        * @attribute gallery
+        * @type object
+        * @default {}
+        */
+        this.gallery = {};
+        /**
+        * The `extends` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
+        *
+        * @attribute extends
+        * @type array
+        * @default ["GalleryImage", "ImageLink", "Image"]
+        */
+        this.extends = [
+            "GalleryImage",
+            "ImageLink",
+            "Image"
+        ]
+    },
+    /**
+    * The `updateI_ID` method updates the currently displayed image from the available gallery data.
+    *
+    * @method updateI_ID
+    */
+    updateI_ID: function(e) {
+        var galleryImage = this.gallery.GalleryImage[e.currentTarget.dataset.idx],
+            image = galleryImage.Image;
+        if (typeof image.Profile === 'undefined' && typeof galleryImage.Profile !== 'undefined')
+        image.Profile = galleryImage.Profile;
+        this.image = image;
+    },
+    galleryChanged: function() {
+        if (!!this.gallery)
+        this.images = this.gallery.GalleryImage;
+    }
+});
+</script>
+</polymer-element>

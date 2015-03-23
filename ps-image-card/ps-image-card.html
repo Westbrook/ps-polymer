@@ -8,6 +8,8 @@
 <link rel="import" href="../ps-share/ps-share.html">
 <link rel="import" href="../ps-image-exif/ps-image-exif.html">
 <link rel="import" href="../ps-image-buy/ps-image-buy.html">
+<link rel="import" href="../ps-thumbs/ps-thumbs.html">
+
 <!--
 Element displaying an image and it's associated IPTC, Share, EXIF and Buy content from PhotoShelter.com
 
@@ -266,7 +268,7 @@ background-image: linear-gradient(rgba(0, 0, 0, 0),rgba(50, 50, 50, 1));
                 <ps-share image="{{image}}" user="{{user}}" hidden?="{{showing != 'share'}}"></ps-share>
                 <ps-image-exif image="{{image}}" hidden?="{{showing != 'exif'}}"></ps-image-exif>
                 <ps-image-buy image="{{image}}" user="{{user}}" hidden?="{{!image.Profile.length || showing != 'buy'}}"></ps-image-buy>
-                <ps-gallery-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery || !gallery.GalleryImage || showing != 'thumbs'}}"></ps-gallery-thumbs>
+                <ps-thumbs image="{{image}}" image="{{image}}" gallery="{{gallery}}" hidden?="{{!gallery || !gallery.GalleryImage || showing != 'thumbs'}}"></ps-thumbs>
             </article>
             <nav>
                 <button on-tap="{{changeTab}}" class="{{showing}}" data-tab="iptc"><core-icon icon="info"></core-icon></button>

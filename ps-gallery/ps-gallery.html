@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
 <link rel="import" href="../ps-slideshow/ps-slideshow.html">
-<link rel="import" href="../ps-gallery-thumbs/ps-gallery-thumbs.html">
+<link rel="import" href="../ps-thumbs/ps-thumbs.html">
 <!--
 Element displaying a PhotoShelter.com gallery.
 
@@ -15,7 +15,7 @@ Element displaying a PhotoShelter.com gallery.
 @homepage #
 -->
 
-<polymer-element name="ps-gallery" attributes="G_ID gallery user I_ID">
+<polymer-element name="ps-gallery" attributes="G_ID gallery user I_ID urlFormat">
     <template>
     <style no-shim="">
     :host {
@@ -33,7 +33,7 @@ Element displaying a PhotoShelter.com gallery.
     </template>
 
     <template if="{{!!gallery}}">
-        <ps-slideshow gallery="{{gallery}}" transition="slide" I_ID="{{I_ID}}"></ps-slideshow>
+        <ps-slideshow gallery="{{gallery}}" transition="slide" I_ID="{{I_ID}}" urlFormat="{{urlFormat}}"></ps-slideshow>
     </template>
 </template>
 
