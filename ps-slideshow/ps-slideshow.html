@@ -16,7 +16,7 @@ Element displaying a PhotoShelter.com slideshow of images
 @homepage #
 -->
 
-<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay sizing">
+<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay sizing urlFormat">
     <template>
     <style>
     :host {
@@ -118,11 +118,11 @@ Element displaying a PhotoShelter.com slideshow of images
     </template>
 
     <div class="stage" data-transition="{{transition}}">
-        <ps-image onstage class="current" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
-        <ps-image class="preload-prev" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
-        <ps-image class="preload-next" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
-        <ps-image onstage class="prev" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
-        <ps-image onstage class="next" size="1440x1440" sizing="{{sizing}}" width="null" height="null"></ps-image>
+        <ps-image onstage class="current" size="1440x1440" sizing="{{sizing}}"></ps-image>
+        <ps-image class="preload-prev" size="1440x1440" sizing="{{sizing}}"></ps-image>
+        <ps-image class="preload-next" size="1440x1440" sizing="{{sizing}}"></ps-image>
+        <ps-image onstage class="prev" size="1440x1440" sizing="{{sizing}}"></ps-image>
+        <ps-image onstage class="next" size="1440x1440" sizing="{{sizing}}"></ps-image>
     </div>
 
     <template if="{{!!set && set.length > 1}}">
@@ -224,6 +224,8 @@ Polymer('ps-slideshow',{
                     break;
                 }
             }
+        } else {
+            this.current = 0;
         }
         this.shadowRoot.querySelector('.current').image = this.getImage('current');
         this.shadowRoot.querySelector('.next').image = this.getImage('next');
@@ -278,7 +280,9 @@ Polymer('ps-slideshow',{
         }
     },
     I_IDChanged: function() {
-        if (!!this.images && this.images.length) {
+        if (!!this.type && this.I_ID === this.getImage('next').image_id) this.forward();
+        else if (!!this.type && this.I_ID === this.getImage('prev').image_id) this.back();
+        else if (!!this.images && this.images.length) {
             this.type = 'image';
             this.set = this.images;
             this.setupImages();
@@ -333,7 +337,27 @@ Polymer('ps-slideshow',{
         }
         this.animLoop = window.requestAnimationFrame(this.auto.bind(this));
     },
-    back: function() {
+    goToUrl: function(image) {
+        var urlParts = this.urlFormat.split('/'),
+            property, value;
+        for (var i = 0, ct = urlParts.length; i < ct; i++) {
+            if (urlParts[i][0] === ':') {
+                property = urlParts[i].substring(1).split('.');
+                value = image[property[0]];
+                for (var p = 1, pt = property.length; p < pt; p++) {
+                    value = value[property[p]];
+                }
+                if (value) urlParts[i] = value.replace(/ /g,'-');
+            }
+        }
+        if (urlParts[0] !== '#!')
+            window.location = urlParts.join('/');
+        else {
+            window.location.hash = urlParts.join('/')
+        }
+    },
+    back: function(e) {
+        if (typeof e === 'object' && !!this.urlFormat)  return this.goToUrl(this.getImage('prev'));
         var images = this.shadowRoot.querySelectorAll('[onstage]');
         this.current = this.getIdx(-1);
         this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanup.bind(this), false);
@@ -341,7 +365,8 @@ Polymer('ps-slideshow',{
             images[i].classList.add('anim','forward');
         }
     },
-    forward: function() {
+    forward: function(e) {
+        if (typeof e === 'object' && !!this.urlFormat)  return this.goToUrl(this.getImage('next'));
         var images = this.shadowRoot.querySelectorAll('[onstage]');
         this.current = this.getIdx(1);
         this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanup.bind(this), false);
