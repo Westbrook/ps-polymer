@@ -24,7 +24,7 @@ These elements are used to create:
 * ps-image-card
 
 Gallery information is used to create:
-* ps-gallery-thumbs
+* ps-thumbs
 * ps-slideshow
 
 And these elements join the image elements to form:

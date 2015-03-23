@@ -1,12 +1,14 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-root-service/ps-root-service.html">
-<link rel="import" href="../ps-image/ps-image.html">
+<link rel="import" href="../ps-collection-children-service/ps-collection-children-service.html">
+<link rel="import" href="../ps-thumbs/ps-thumbs.html">
+<link rel="import" href="../ps-share/ps-share.html">
 <!--
 Element displaying a PhotoShelter.com collection.
 
 ##### Example
 
-    <ps-collection></ps-collection>
+<ps-collection></ps-collection>
 
 @element ps-image
 @blurb Element displaying a PhotoShelter.com collection.
@@ -14,62 +16,64 @@ Element displaying a PhotoShelter.com collection.
 @homepage #
 -->
 
-<polymer-element name="ps-collection" attributes="collection U_ID C_ID">
-  <template>
+<polymer-element name="ps-collection" attributes="collection U_ID C_ID share">
+<template>
     <style>
     :host {
-      display: block;
+        display: block;
     }
     .child {
-      box-sizing: border-box;
-      float: left;
-      width: 25%;
-      padding: 10px;
-      line-height: 1.5;
+        box-sizing: border-box;
+        float: left;
+        width: 25%;
+        padding: 10px;
+        line-height: 1.5;
     }
     .child:nth-of-type(4n + 1) {
-      clear: both;
+        clear: both;
     }
     </style>
 
     <template if="{{!!U_ID}}">
-      <ps-root-service id="service-root-{{I_ID}}" root="{{collection}}" U_ID='{{U_ID}}' extends="{{extends}}"></ps-root-service>
+        <ps-root-service id="service-root-{{U_ID}}" root="{{collection}}" U_ID='{{U_ID}}' extends="{{extends}}"></ps-root-service>
+        <h1>Galleries</h1>
+    </template>
+
+    <template if="{{!!C_ID}}">
+        <ps-collection-children-service id="service-collection-{{C_ID}}" collectionChildren="{{collection}}" C_ID='{{C_ID}}' extends="{{extends}}"></ps-collection-children-service>
     </template>
 
     <template if="{{!!collection}}">
-      <template repeat="{{child in collection}}" id="children">
-        <div class="child">
-          <ps-image image="{{child.KeyImage}}" sizeType="fill" sizing="relative"></ps-image>
-          <h4>{{child.name}}</h4>
-        </div>
-      </template>
+        <ps-thumbs images="{{collection}}" displayRatio="4:3" spacing="10" showTitle="true"></ps-thumbs>
     </template>
 
-  </template>
+</template>
 
-  <script>
-  Polymer('ps-collection', {
+<script>
+Polymer('ps-collection', {
+    share: false,
     /**
-     * The `U_ID` attribute is the user_id to display root collections.
-     *
-     * @attribute U_ID
-     * @type string
-     * @default ''
-     */
+    * The `U_ID` attribute is the user_id to display root collections.
+    *
+    * @attribute U_ID
+    * @type string
+    * @default ''
+    */
     U_ID: '',
     created: function() {
-      /**
-       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
-       *
-       * @attribute extends
-       * @type array
-       * @default ["KeyImage"]
-       */
-      this.extends = [
-        "KeyImage",
-        "ImageLink"
-      ];
+        /**
+        * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+        *
+        * @attribute extends
+        * @type array
+        * @default ["KeyImage"]
+        */
+        this.extends = [
+            "KeyImage",
+            "ImageLink",
+            "Image"
+        ];
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>

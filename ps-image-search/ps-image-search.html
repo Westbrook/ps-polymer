@@ -2,6 +2,7 @@
 <link rel="import" href="../ps-image/ps-image.html">
 <link rel="import" href="../ps-image-search-service/ps-image-search-service.html">
 <link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
+<link rel="import" href="../ps-thumbs/ps-thumbs.html">
 <link rel="import" href="../core-image/core-image.html">
 <!--
 Element displaying a PhotoShelter.com image.
@@ -42,8 +43,8 @@ Element displaying a PhotoShelter.com image.
         <button on-tap="{{search}}">Search</button>
     </div>
 	<ps-image-search-service terms="{{terms}}" U_ID="{{U_ID}}" images="{{images}}" extends="{{extends}}"></ps-image-search-service>
-    <template repeat="{{image in images}}">
-        <ps-image image="{{image}}" width="null" height="null" sizing="relative"></ps-image>
+    <template if="{{!!images}}">
+        <ps-thumbs images="{{images}}"></ps-thumbs>
     </template>
 
 </template>
