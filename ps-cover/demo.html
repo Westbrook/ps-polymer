@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	<title>ps-cover Demo</title>
+
+	<script src="../webcomponentsjs/webcomponents.js"></script>
+	<link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel="stylesheet" type="text/css">
+	<link rel="import" href="ps-cover.html">
+	<link rel="import" href="../ps-globals/ps-globals.html">
+	<link rel="import" href="../core-icon/core-icon.html">
+	<link rel="import" href="../core-icons/core-icons.html">
+	<link rel="import" href="../core-icons/social-icons.html">
+	<link rel="stylesheet" href="../assets/demo.css" />
+	<style>
+	html {
+		font-family: Lato, sans-serif;
+	}
+	.demo-holder {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		overflow: hidden;
+		max-height: 100%;
+		max-width: 100%;
+		width: auto;
+		height: auto;
+	}
+	h1, h2, p, ps-follow {
+		position: relative;
+		z-index: 2;
+	}
+	h1, h2 {
+		position: absolute;
+		left: 60%;
+		margin: 0;
+		text-transform: uppercase;
+		line-height: 1;
+		font-weight: 700;
+		top: 4vw;
+		font-size: 3.35vw;
+	}
+	h2 {
+		top: 7vw;
+		color: red;
+		font-weight: 100;
+		font-size: 2.51vw;
+	}
+	ps-cover > p {
+		position: absolute;
+		left: 60%;
+		margin: 0.75em 0 1em 5px;
+		top: 9vw;
+		width: 28vw;
+		line-height: 1.5;
+		font-size: 1.2vw;
+	}
+	ps-follow {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		opacity: 0.9;
+		padding: 0 1.5em;
+	}
+	ps-follow a {
+		padding: 1.5em;
+		float: left;
+		color: #fff;
+	}
+	ps-follow core-icon {
+		width: 1.5em;
+		height: 1.5em;
+		float: left;
+	}
+	</style>
+</head>
+<body unresolved>
+
+	<p>An example of using <code>&lt;ps-cover></code>:</p>
+	<ps-globals apikey="PS631731c7"></ps-globals>
+	<div class="demo-holder">
+		<ps-cover G_ID="G0000xzL9201F7d4">
+			<h1>Todd Owyoung</h1>
+			<h2>Music Photographer</h2>
+			<p>Live music lifestyle, musician portraits &amp; concert photography by New York music photographer Todd Owyoung.</p>
+			<ps-follow>
+				<a href="https://twitter.com/toddowyoung" target="_blank">
+					<core-icon icon="social:post-twitter"></core-icon>
+				</a>
+				<a href="https://www.facebook.com/pages/Todd-Owyoung/122354411123629" target="_blank">
+					<core-icon icon="social:post-facebook"></core-icon>
+				</a>
+				<a href="https://instagram.com/toddowyoung" target="_blank">
+					<core-icon icon="social:post-instagram"></core-icon>
+				</a>
+				<a href="https://plus.google.com/u/0/+toddowyoung/posts" target="_blank">
+					<core-icon icon="social:post-gplus"></core-icon>
+				</a>
+			</ps-follow>
+		</ps-cover>
+	</div>
+
+</body>
+</html>

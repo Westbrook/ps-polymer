@@ -1,0 +1,64 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-image/ps-image.html">
+<!--
+Element displaying a PhotoShelter Photographer's Info Card
+
+##### Example
+
+<ps-photog-card></ps-photog-card>
+
+@element ps-gallery
+@blurb Element displaying a PhotoShelter Photographer's Info Card
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-cover" attributes="G_ID">
+<template>
+    <style>
+        :host {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+        ps-image {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 0.8;
+        }
+    </style>
+
+    <ps-image G_ID="{{G_ID}}" sizing="cover" size="1440x1440"></ps-image>
+    <!-- <content select="h1"></content>
+    <content select="h2"></content>
+    <content select="p"></content>
+    <content select="ps-follow"></content> -->
+    <shadow></shadow>
+
+</template>
+
+<script>
+Polymer('ps-cover',{
+    /**
+    * The `G_ID` attribute is the gallery_id to be displayed.
+    *
+    * @attribute G_ID
+    * @type string
+    * @default false
+    */
+    G_ID: '',
+    toggle: function() {
+        if(this.showText === 'true')
+            this.setAttribute('showText', 'false');
+        else
+            this.setAttribute('showText', 'true');
+    }
+});
+</script>
+</polymer-element>
