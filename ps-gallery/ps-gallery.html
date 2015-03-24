@@ -33,7 +33,7 @@ Element displaying a PhotoShelter.com gallery.
     </template>
 
     <template if="{{!!gallery}}">
-        <ps-slideshow gallery="{{gallery}}" transition="slide" I_ID="{{I_ID}}" urlFormat="{{urlFormat}}"></ps-slideshow>
+        <ps-slideshow id="slideshow" gallery="{{gallery}}" transition="slide" I_ID="{{I_ID}}" urlFormat={{processedUrlFormat}}></ps-slideshow>
     </template>
 </template>
 
@@ -72,6 +72,17 @@ Polymer('ps-gallery',{
             "Exif",
             "Profile"
         ]
+    },
+    processUrlFormat: function() {
+        return this.urlFormat.replace(':gallery_id',this.gallery.gallery_id);
+    },
+    urlFormatChanged: function() {
+        if (!!this.gallery.gallery_id && !!this.urlFormat)
+            this.processedUrlFormat = this.processUrlFormat();
+    },
+    galleryChanged: function() {
+        if (!!this.gallery.gallery_id && !!this.urlFormat)
+            this.processedUrlFormat = this.processUrlFormat();
     }
 });
 </script>
