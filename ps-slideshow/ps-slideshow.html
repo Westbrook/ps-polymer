@@ -56,6 +56,24 @@ Element displaying a PhotoShelter.com slideshow of images
         -o-transition-timing-function: ease-in-out;
         transition-timing-function: ease-in-out;
     }
+    .multi .anim {
+        -webkit-transition-timing-function: linear;
+        -moz-transition-timing-function: linear;
+        -o-transition-timing-function: linear;
+        transition-timing-function: linear;
+    }
+    .last .anim {
+        -webkit-transition-timing-function: ease-out;
+        -moz-transition-timing-function: ease-out;
+        -o-transition-timing-function: ease-out;
+        transition-timing-function: ease-out;
+    }
+    .fast .anim {
+        -webkit-transition-duration: 0.15s;
+        -moz-transition-duration: 0.15s;
+        -o-transition-duration: 0.15s;
+        transition-duration: 0.15s;
+    }
     [data-transition=slide] .prev,
     [data-transition=slide] .preload-prev,
     [data-transition=slide] .current.back {
@@ -107,6 +125,13 @@ Element displaying a PhotoShelter.com slideshow of images
         bottom: 0;
         left: 0;
     }
+    #controls {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
     </style>
 
     <template if="{{!!G_ID}}">
@@ -117,7 +142,7 @@ Element displaying a PhotoShelter.com slideshow of images
         <ps-collection-children-service id="service-collection" collectionChildren="{{collectionChildren}}" C_ID='{{C_ID}}' extends="{{extendsClc}}"></ps-collection-children-service>
     </template>
 
-    <div class="stage" data-transition="{{transition}}">
+    <div class="stage {{animType}}" data-transition="{{transition}}">
         <ps-image onstage class="current" size="1440x1440" sizing="{{sizing}}"></ps-image>
         <ps-image class="preload-prev" size="1440x1440" sizing="{{sizing}}"></ps-image>
         <ps-image class="preload-next" size="1440x1440" sizing="{{sizing}}"></ps-image>
@@ -126,8 +151,10 @@ Element displaying a PhotoShelter.com slideshow of images
     </div>
 
     <template if="{{!!set && set.length > 1}}">
-        <button class="advance" on-tap={{forward}}></button>
-        <button class="retreat" on-tap={{back}}></button>
+        <div id="controls" on-trackstart={{trackstart}} on-track={{track}} on-trackend={{trackend}}>
+            <button class="advance" on-tap={{forward}}></button>
+            <button class="retreat" on-tap={{back}}></button>
+        </div>
     </template>
 
 </template>
@@ -136,6 +163,9 @@ Element displaying a PhotoShelter.com slideshow of images
 Polymer('ps-slideshow',{
     transition: 'slide',
     sizing: 'contain',
+    animing: false,
+    current: 0,
+    animType: '',
     created: function() {
         /**
         * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
@@ -150,31 +180,25 @@ Polymer('ps-slideshow',{
         *
         * @attribute extendsGal
         * @type array
-        * @default ["KeyImage", "GalleryImage", "ImageLink", "Image", "Iptc", "Exif", "Profile"]
+        * @default ["KeyImage", "GalleryImage", "ImageLink", "Image"]
         */
         this.extendsGal = [
             "KeyImage",
             "GalleryImage",
             "ImageLink",
             "Image",
-            "Iptc",
-            "Exif",
-            "Profile"
         ];
         /**
         * The `extendsGal` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
         *
         * @attribute extendsGal
         * @type array
-        * @default ["KeyImage", "ImageLink", "Image", "Iptc", "Exif", "Profile"]
+        * @default ["KeyImage", "ImageLink", "Image"]
         */
         this.extendsClc = [
             "KeyImage",
             "ImageLink",
             "Image",
-            "Iptc",
-            "Exif",
-            "Profile"
         ];
 
         this.cleanups = [
@@ -209,8 +233,7 @@ Polymer('ps-slideshow',{
                 newImage: false
             }
         ];
-
-        this.current = 0;
+        this.animQueue = [];
     },
     setupImages: function() {
         var image;
@@ -317,6 +340,13 @@ Polymer('ps-slideshow',{
         this.setupImages();
         this.autoplayCheck();
     },
+    play: function() {
+        this.autoplay = true;
+        this.autoplayCheck();
+    },
+    pause: function() {
+        this.autoplay = false;
+    },
     autoplayChanged: function() {
         this.autoplayCheck();
     },
@@ -329,11 +359,11 @@ Polymer('ps-slideshow',{
         }
     },
     auto: function() {
+        if (!this.autoplay) return;
         this.loop = this.loop || 0;
         this.loop++;
         if (this.loop === 300) {
             this.forward();
-            this.loop = 0;
         }
         this.animLoop = window.requestAnimationFrame(this.auto.bind(this));
     },
@@ -357,7 +387,17 @@ Polymer('ps-slideshow',{
         }
     },
     back: function(e) {
-        if (typeof e === 'object' && !!this.urlFormat)  return this.goToUrl(this.getImage('prev'));
+        if (this.dragged && !!e) {
+            this.dragged = false;
+            return;
+        }
+        if (this.animing) {
+            this.animType = 'multi';
+            this.animQueue.push(['back', e]);
+            return;
+        }
+        if (!!e && !!this.urlFormat)  return this.goToUrl(this.getImage('prev'));
+        this.animing = true;
         var images = this.shadowRoot.querySelectorAll('[onstage]');
         this.current = this.getIdx(-1);
         this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanup.bind(this), false);
@@ -366,7 +406,17 @@ Polymer('ps-slideshow',{
         }
     },
     forward: function(e) {
-        if (typeof e === 'object' && !!this.urlFormat)  return this.goToUrl(this.getImage('next'));
+        if (this.dragged && !!e) {
+            this.dragged = false;
+            return;
+        }
+        if (this.animing) {
+            this.animType = 'multi';
+            this.animQueue.push(['forward', e]);
+            return;
+        }
+        if (!!e && !!this.urlFormat)  return this.goToUrl(this.getImage('next'));
+        this.animing = true;
         var images = this.shadowRoot.querySelectorAll('[onstage]');
         this.current = this.getIdx(1);
         this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanup.bind(this), false);
@@ -376,7 +426,8 @@ Polymer('ps-slideshow',{
     },
     cleanup: function() {
         var pane,
-            type = this.type;
+            type = this.type,
+            queuedNext = [];
         this.shadowRoot.querySelector('.current').removeEventListener('transitionend', this.cleanup, false);
         for (var i = 0, ct = this.cleanups.length; i < ct; i++) {
             pane = this.shadowRoot.querySelector(this.cleanups[i].selector);
@@ -390,6 +441,18 @@ Polymer('ps-slideshow',{
         this.image = this.getImage('current');
         this.shadowRoot.querySelector('.preload-prev')[type] = this.getImage('preload-prev');
         this.shadowRoot.querySelector('.preload-next')[type] = this.getImage('preload-next');
+        this.animing = false;
+        this.loop = 0;
+        window.requestAnimationFrame(this.checkQueue.bind(this));
+    },
+    checkQueue: function() {
+        if (this.animQueue.length) {
+            queuedNext = this.animQueue.shift();
+            if (!this.animQueue.lenght)
+                this.animType = 'last';
+            if (!this.animing)
+                window.requestAnimationFrame(this[queuedNext[0]].bind(this, queuedNext[1]));
+        }
     },
     getIdx: function(offset, I_IDs) {
         var index = this.current + offset,
@@ -416,6 +479,32 @@ Polymer('ps-slideshow',{
         case 'preload-prev':
             return set[this.getIdx(-2)];
         }
+    },
+    trackstart: function() {
+        this.width = this.getBoundingClientRect().width;
+        this.autoplaySaved = this.autoplay;
+        this.autoplay = false;
+    },
+    track: function(e) {
+        this.dragged = true;
+        this.shadowRoot.querySelector('.current').style.transform = 'translate3d(' + e.dx + 'px,0,0)';
+        this.shadowRoot.querySelector('.prev').style.transform = 'translate3d(' + ((-1 * this.width) + e.dx) + 'px,0,0)';
+        this.shadowRoot.querySelector('.next').style.transform = 'translate3d(' + (this.width + e.dx) + 'px,0,0)';
+    },
+    trackend: function(e) {
+        if (Math.abs(e.dx) < 5) {
+            this.dragged = false;
+        } else {
+            //return
+            this.animType = 'last fast';
+            if (e.dx > 15) this.back();
+            else if (e.dx < -15) this.forward();
+            this.shadowRoot.querySelector('.current').removeAttribute('style');
+            this.shadowRoot.querySelector('.prev').removeAttribute('style');
+            this.shadowRoot.querySelector('.next').removeAttribute('style');
+            this.dragged = false;
+        }
+        this.autoplay = this.autoplaySaved;
     }
 });
 </script>

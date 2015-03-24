@@ -62,7 +62,7 @@ Element requesting tumblr blog data
     createUrl: function() {
         return '//api.tumblr.com/v2/blog/' +
             this.label +
-            '.tumblr.com/posts/?api_key=VmUy8FNTTGOzaz9y7fB1qt9ECa3uBziyO5pVa5UIpqhx36kiLo&' +
+            '.tumblr.com/posts/?api_key=' + this.$.globals.data.tumblrapikey + '&' +
             'limit=' + this.limit + '&callback=%%callback%%';
     },
     /**
