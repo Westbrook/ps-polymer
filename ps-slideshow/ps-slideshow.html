@@ -359,7 +359,10 @@ Polymer('ps-slideshow',{
         }
     },
     auto: function() {
-        if (!this.autoplay) return;
+        if (!this.autoplay) {
+            this.animLoop = false;
+            return;
+        }
         this.loop = this.loop || 0;
         this.loop++;
         if (this.loop === 300) {
@@ -505,6 +508,7 @@ Polymer('ps-slideshow',{
             this.dragged = false;
         }
         this.autoplay = this.autoplaySaved;
+        this.autoplayCheck();
     }
 });
 </script>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	<title>ps-follow Demo</title>
+
+	<script src="../webcomponentsjs/webcomponents.js"></script>
+	<link rel="import" href="ps-follow.html">
+	<link rel="stylesheet" href="../assets/demo.css" />
+</head>
+<body unresolved>
+
+	<p>An example of using <code>&lt;ps-cover></code>:</p>
+	<ps-globals apikey="PS631731c7"></ps-globals>
+	<div class="demo-holder">
+		<ps-follow color="white"></ps-follow>
+	</div>
+
+	<script>
+	window.addEventListener('polymer-ready', function(e) {
+		document.querySelector('ps-follow').services = [
+			{"name":"instagram","data":"toddowyoung","order": 2},
+			{"name":"twitter","data":"toddowyoung","order": 0},
+			{"name":"facebook","data":"Todd-Owyoung/122354411123629","order": 1},
+			{"name":"gplus","data":"toddowyoung","order": 3}
+		];
+	}, false);
+	</script>
+
+</body>
+</html>

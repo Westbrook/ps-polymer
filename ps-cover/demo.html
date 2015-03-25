@@ -8,9 +8,7 @@
 	<link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel="stylesheet" type="text/css">
 	<link rel="import" href="ps-cover.html">
 	<link rel="import" href="../ps-globals/ps-globals.html">
-	<link rel="import" href="../core-icon/core-icon.html">
-	<link rel="import" href="../core-icons/core-icons.html">
-	<link rel="import" href="../core-icons/social-icons.html">
+	<link rel="import" href="../ps-follow/ps-follow.html">
 	<link rel="stylesheet" href="../assets/demo.css" />
 	<style>
 	html {
@@ -62,17 +60,6 @@
 		bottom: 0;
 		left: 0;
 		opacity: 0.9;
-		padding: 0 1.5em;
-	}
-	ps-follow a {
-		padding: 1.5em;
-		float: left;
-		color: #fff;
-	}
-	ps-follow core-icon {
-		width: 1.5em;
-		height: 1.5em;
-		float: left;
 	}
 	</style>
 </head>
@@ -85,22 +72,21 @@
 			<h1>Todd Owyoung</h1>
 			<h2>Music Photographer</h2>
 			<p>Live music lifestyle, musician portraits &amp; concert photography by New York music photographer Todd Owyoung.</p>
-			<ps-follow>
-				<a href="https://twitter.com/toddowyoung" target="_blank">
-					<core-icon icon="social:post-twitter"></core-icon>
-				</a>
-				<a href="https://www.facebook.com/pages/Todd-Owyoung/122354411123629" target="_blank">
-					<core-icon icon="social:post-facebook"></core-icon>
-				</a>
-				<a href="https://instagram.com/toddowyoung" target="_blank">
-					<core-icon icon="social:post-instagram"></core-icon>
-				</a>
-				<a href="https://plus.google.com/u/0/+toddowyoung/posts" target="_blank">
-					<core-icon icon="social:post-gplus"></core-icon>
-				</a>
+			<ps-follow layout vertical color="white">
 			</ps-follow>
 		</ps-cover>
 	</div>
+
+	<script>
+	window.addEventListener('polymer-ready', function(e) {
+		document.querySelector('ps-follow').services = [
+			{"name":"instagram","data":"toddowyoung","order": 2},
+			{"name":"twitter","data":"toddowyoung","order": 1},
+			{"name":"facebook","data":"Todd-Owyoung/122354411123629","order": 0},
+			{"name":"gplus","data":"toddowyoung","order": 3}
+		];
+	}, false);
+	</script>
 
 </body>
 </html>
