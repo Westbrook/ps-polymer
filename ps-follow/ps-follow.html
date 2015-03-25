@@ -41,6 +41,8 @@ Element displaying a links to social media profiles
 Polymer('ps-follow',{
     createUrl: function(service, data) {
         switch (service) {
+        case 'blogger':
+            return 'http://' + data + '.blogger.com/';
         case 'twitter':
             return 'https://twitter.com/' + data;
         case 'facebook':
@@ -49,13 +51,13 @@ Polymer('ps-follow',{
             return 'https://instagram.com/' + data;
         case 'linkedin':
             return 'https://www.linkedin.com/in/' + data;
-        case 'vimeo':
+        case 'vimeo': //no current icon
             return 'https://vimeo.com/' + data;
         case 'tumblr':
             return 'http://' + data + '.tumblr.com/';
         case 'pinterest':
             return 'https://www.pinterest.com/' + data;
-        case '500px':
+        case '500px': //no current icon
             return 'https://500px.com/' + data;
         case 'google+':
             return 'https://plus.google.com/' + data;
