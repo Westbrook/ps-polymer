@@ -65,7 +65,7 @@ Element requesting vimeo data
     */
     createUrl: function() {
         return 'https://api.vimeo.com/users/' + this.username +
-            '/videos?access_token=d89cb551786bf27f4e0cff9a1f117535&filter_embeddable=true';
+            '/videos?access_token=' + this.$.globals.data.vimeoapikey + '&filter_embeddable=true';
     },
     /**
     * The `contentLoaded` method makes a copy of the loaded data.
