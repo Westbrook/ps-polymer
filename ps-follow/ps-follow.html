@@ -1,0 +1,66 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../core-icons/social-icons.html">
+<!--
+Element displaying a links to social media profiles
+
+##### Example
+
+<ps-follow></ps-follow>
+
+@element ps-follow
+@blurb Element displaying a links to social media profiles
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-follow" attributes="color services">
+<template>
+    <style>
+        :host {
+            display: flex;
+        }
+        a {
+        	padding: 1.5em;
+        }
+        core-icon {
+    		width: 1.5em;
+    		height: 1.5em;
+        }
+    </style>
+
+    <template repeat="{{service in services}}">
+        <a href="{{createUrl(service.name, service.data)}}" target="_blank" style="color: {{color}}; order: {{service.order}};">
+            <core-icon icon="{{'social:post-' + service.name}}"></core-icon>
+        </a>
+    </template>
+
+</template>
+
+<script>
+Polymer('ps-follow',{
+    createUrl: function(service, data) {
+        switch (service) {
+        case 'twitter':
+            return 'https://twitter.com/' + data;
+        case 'facebook':
+            return 'https://www.facebook.com/' + data;
+        case 'instagram':
+            return 'https://instagram.com/' + data;
+        case 'linkedin':
+            return 'https://www.linkedin.com/in/' + data;
+        case 'vimeo':
+            return 'https://vimeo.com/' + data;
+        case 'tumblr':
+            return 'http://' + data + '.tumblr.com/';
+        case 'pinterest':
+            return 'https://www.pinterest.com/' + data;
+        case '500px':
+            return 'https://500px.com/' + data;
+        case 'google+':
+            return 'https://plus.google.com/' + data;
+        }
+    }
+});
+</script>
+</polymer-element>

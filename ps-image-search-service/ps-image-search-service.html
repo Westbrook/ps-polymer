@@ -1,12 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../ps-extend-validator/ps-extend-validator.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
 <!--
 Element requesting Image information from PhotoShelter.com. This element has no presence in the IU.
 
 ##### Example
 
-    <ps-image-service></ps-image-service>
+<ps-image-service></ps-image-service>
 
 @element ps-image-service
 @blurb Element for requesting PhotoShelter.com image data.
@@ -15,37 +16,37 @@ Element requesting Image information from PhotoShelter.com. This element has no 
 -->
 
 <polymer-element name="ps-image-search-service" attributes="images U_ID extends terms per_page page sort_by sort_dir">
-  <template>
+    <template>
     <style>
     :host {
-      display: none;
+        display: none;
     }
     </style>
     <ps-globals id="globals"></ps-globals>
     <core-ajax id="ajax"
-      auto
-      url="{{url}}"
-      on-core-response="{{imagesLoaded}}"
-      handleAs="json">
-    </core-ajax>
-  </template>
-  <script>
-  Polymer('ps-image-search-service', {
+    auto
+    url="{{url}}"
+    on-core-response="{{imagesLoaded}}"
+    handleAs="json">
+</core-ajax>
+</template>
+<script>
+Polymer('ps-image-search-service', Polymer.mixin({
     /**
-     * The `I_ID` attribute is the image_id to be displayed and is a REQUIRED attribute.
-     *
-     * @attribute I_ID
-     * @type string
-     * @default ''
-     */
+    * The `I_ID` attribute is the image_id to be displayed and is a REQUIRED attribute.
+    *
+    * @attribute I_ID
+    * @type string
+    * @default ''
+    */
     I_ID: '',
     /**
-     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
-     *
-     * @attribute url
-     * @type string
-     * @default ''
-     */
+    * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+    *
+    * @attribute url
+    * @type string
+    * @default ''
+    */
     url: '',
     per_page: 10,
     page: 1,
@@ -53,35 +54,35 @@ Element requesting Image information from PhotoShelter.com. This element has no 
     sort_dir: 'asc',
 
     created: function() {
-      /**
-       * The `image` attribute defines the PhotoShelter image to be displayed.
-       *
-       * @attribute image
-       * @type object
-       * @default {}
-       */
-      this.image = {};
-      /**
-       * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
-       *
-       * @attribute extends
-       * @type array
-       * @default []
-       */
-      this.extends = [];
+        /**
+        * The `image` attribute defines the PhotoShelter image to be displayed.
+        *
+        * @attribute image
+        * @type object
+        * @default {}
+        */
+        this.image = {};
+        /**
+        * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+        *
+        * @attribute extends
+        * @type array
+        * @default []
+        */
+        this.extends = [];
     },
     ready: function() {
-      if (!!this.terms)
-        this.url = this.extendUrl();
+        if (!!this.terms)
+        this.url = this.setUrl();
     },
     /**
-    * The `extendUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
+    * The `setUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
     *
-    * @method createUrl
+    * @method setUrl
     * @return {String} Returns a string URL to be sent to the core-ajax element.
     */
-    extendUrl: function() {
-      var extend = '&extend={',
+    setUrl: function() {
+        var extend = '&extend={',
         url = this.$.globals.data.baseurl + this.$.globals.data.version +
             '/image/search?api_key=' + this.$.globals.data.apikey +
             '&terms=' + this.terms +
@@ -90,14 +91,7 @@ Element requesting Image information from PhotoShelter.com. This element has no 
             '&sort_by=' + this.sort_by +
             '&sort_dir=' + this.sort_dir +
             '&user_id=' + this.U_ID;
-      for(var i = 0, ct = this.extends.length; i < ct; i ++) {
-        if (i > 0 ) extend += ',';
-        extend += '"' + this.extends[i] + '":{"fields":"*"}'
-      }
-      if (ct) {
-        url += extend + '}';
-      }
-      return url;
+        return url + this.extendUrl();
     },
     /**
     * The `imageLoaded` method makes a copy of the loaded data.
@@ -105,8 +99,8 @@ Element requesting Image information from PhotoShelter.com. This element has no 
     * @method imageLoaded
     */
     imagesLoaded: function() {
-      // Make a copy of the loaded data
-      this.images = this.$.ajax.response.data.Image;
+        // Make a copy of the loaded data
+        this.images = this.$.ajax.response.data.Image;
     },
     /**
     * The `I_IDChanged` method updates the URL.
@@ -114,9 +108,9 @@ Element requesting Image information from PhotoShelter.com. This element has no 
     * @method I_IDChanged
     */
     termsChanged: function(attrName, oldVal, newVal) {
-      if (!!this.terms)
-        this.url = this.extendUrl();
+        if (!!this.terms)
+        this.url = this.setUrl();
     }
-  });
-  </script>
+}, window.psExtendValidator));
+</script>
 </polymer-element>

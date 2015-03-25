@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-globals/ps-globals.html">
+<link rel="import" href="../ps-extend-validator/ps-extend-validator.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
 <!--
 Element requesting Gallery information from PhotoShelter.com. This element has no presence in the IU.
@@ -29,7 +30,7 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
 </core-ajax>
 </template>
 <script>
-Polymer('ps-gallery-service', {
+Polymer('ps-gallery-service', Polymer.mixin({
     /**
     * The `G_ID` attribute is the gallery_id to be displayed and is a REQUIRED attribute.
     *
@@ -66,32 +67,19 @@ Polymer('ps-gallery-service', {
     },
     ready: function() {
         if (this.G_ID)
-        this.url = this.extendUrl();
+        this.url = this.setUrl();
     },
     /**
-    * The `extendUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
+    * The `setUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
     *
-    * @method createUrl
+    * @method setUrl
     * @return {String} Returns a string URL to be sent to the core-ajax element.
     */
-    extendUrl: function() {
-        var extend = '&extend={',
-        url = this.$.globals.data.baseurl + this.$.globals.data.version +
+    setUrl: function() {
+        var url = this.$.globals.data.baseurl + this.$.globals.data.version +
             '/gallery/' + this.G_ID + '?api_key=' + this.$.globals.data.apikey +
                 '&fields=*';
-        for(var i = 0, ct = this.extends.length; i < ct; i ++) {
-            if (i > 0 ) extend += ',';
-            extend += '"' + this.extends[i];
-            if (this.extends[i] === 'GalleryImage') {
-                extend += '":{"params":{"sort_by":"display_order"},"fields":"*"}'
-            } else {
-                extend += '":{"fields":"*"}';
-            }
-        }
-        if (ct) {
-            url += extend + '}';
-        }
-        return url;
+        return url + this.extendUrl();
     },
     /**
     * The `galleryLoaded` method makes a copy of the loaded data.
@@ -111,8 +99,8 @@ Polymer('ps-gallery-service', {
     */
     G_IDChanged: function(attrName, oldVal, newVal) {
         if (this.G_ID)
-        this.url = this.extendUrl();
+        this.url = this.setUrl();
     }
-});
+}, window.psExtendValidator));
 </script>
 </polymer-element>
