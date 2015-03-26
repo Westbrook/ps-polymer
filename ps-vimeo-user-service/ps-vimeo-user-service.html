@@ -2,18 +2,18 @@
 <link rel="import" href="../ps-globals/ps-globals.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
 <!--
-Element requesting vimeo data
+Element requesting vimeo user video data
 
 ##### Example
 
-    <ps-vimeo-service></ps-vimeo-service>
+    <ps-vimeo-user-service></ps-vimeo-user-service>
 
-@element ps-vimeo-service
+@element ps-vimeo-user-service
 @blurb Element requesting vimeo data
 @status alpha
 @homepage #
 -->
-<polymer-element name="ps-vimeo-service" attributes="username videos">
+<polymer-element name="ps-vimeo-user-service" attributes="username videos">
   <template>
     <style>
     :host {
@@ -29,7 +29,7 @@ Element requesting vimeo data
         handleAs='json'></core-ajax>
   </template>
   <script>
-  Polymer('ps-vimeo-service', {
+  Polymer('ps-vimeo-user-service', {
     /**
      * The `label` attribute is the tumblr label who's blog will be requested
      *
@@ -83,9 +83,6 @@ Element requesting vimeo data
     usernameChanged: function(attrName, oldVal, newVal) {
       if (!!this.username)
         this.url = this.createUrl();
-    },
-    videoLoaded: function() {
-        debugger;
     }
   });
   </script>
