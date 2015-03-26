@@ -67,10 +67,6 @@ Polymer('ps-image-service', Polymer.mixin({
         */
         this.extends = [];
     },
-    ready: function() {
-        if (!!this.I_ID)
-        this.url = this.setUrl();
-    },
     /**
     * The `setUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
     *
@@ -79,8 +75,8 @@ Polymer('ps-image-service', Polymer.mixin({
     */
     setUrl: function() {
         var extend = '&extend={',
-        url = this.$.globals.data.baseurl + this.$.globals.data.version +
-            '/image/' + this.I_ID + '?api_key=' + this.$.globals.data.apikey + '&fields=*';
+            url = this.$.globals.data.baseurl + this.$.globals.data.version +
+                '/image/' + this.I_ID + '?api_key=' + this.$.globals.data.apikey + '&fields=*';
         return url + this.extendUrl();
     },
     /**
@@ -98,9 +94,9 @@ Polymer('ps-image-service', Polymer.mixin({
     *
     * @method I_IDChanged
     */
-    I_IDChanged: function(attrName, oldVal, newVal) {
-        if (!!this.I_ID)
-        this.url = this.setUrl();
+    I_IDChanged: function(oldVal, newVal) {
+        if (!!this.I_ID && !this.image.image_id)
+            this.url = this.setUrl();
     }
 }, window.psExtendValidator));
 </script>

@@ -1,11 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../ps-vimeo-service/ps-vimeo-service.html">
+<link rel="import" href="../ps-vimeo-user-service/ps-vimeo-user-service.html">
+<link rel="import" href="../ps-vimeo-video/ps-vimeo-video.html">
 <!--
 Element displaying a Vimeo content stream.
 
 ##### Example
 
-    <ps-vimeo></ps-vimeo>
+<ps-vimeo></ps-vimeo>
 
 @element ps-vimeo
 @blurb Element displaying a Vimeo content stream.
@@ -14,10 +15,10 @@ Element displaying a Vimeo content stream.
 -->
 
 <polymer-element name="ps-vimeo" attributes="username videos">
-  <template>
+    <template>
     <style>
     :host {
-      display: block;
+        display: block;
     }
     .video {
         float: left;
@@ -34,27 +35,66 @@ Element displaying a Vimeo content stream.
         height: 100%;
     }
     </style>
-    <ps-vimeo-service username="{{username}}" videos="{{videos}}"></ps-vimeo-service>
+    <ps-vimeo-user-service username="{{username}}" videos="{{videos}}"></ps-vimeo-user-service>
 
     <template repeat="{{video in videos}}">
-        <core-ajax
-            auto
-            on-core-response="{{videoLoaded}}"
-            url="{{'https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/' + video.id}}"
-            handleAs='json'></core-ajax>
-        <div class="video" id="video-{{video.id}}"></div>
+        <ps-vimeo-video V_ID="{{video.id}}"></ps-vimeo-video>
     </template>
 
-  </template>
+</template>
 
-  <script>
-  Polymer('ps-vimeo', {
-      videoLoaded: function() {
-          var video = arguments[1].response,
-            elm = this.shadowRoot.querySelector('#video-' + video.video_id);
-          elm.innerHTML = video.html;
-          elm.style.paddingBottom = (video.height / video.width) * 100 + '%';
-      }
-  });
-  </script>
+<script>
+Polymer('ps-vimeo', {
+    // ready: function() {
+    //     // Listen for messages from the player
+    //     if (window.addEventListener){
+    //         window.addEventListener('message', onMessageReceived, false);
+    //     }
+    //     else {
+    //         window.attachEvent('onmessage', onMessageReceived, false);
+    //     }
+    //
+    //     // Handle messages received from the player
+    //     function onMessageReceived(e) {
+    //         var data = JSON.parse(e.data);
+    //         console.log(data, e);
+    //
+    //
+    //         switch (data.event) {
+    //             case 'ready':
+    //                 //onReady();
+    //                 break;
+    //
+    //             case 'playProgress':
+    //                 //onPlayProgress(data.data);
+    //                 break;
+    //
+    //             case 'pause':
+    //                 //onPause();
+    //                 break;
+    //
+    //             case 'finish':
+    //                 //onFinish();
+    //                 break;
+    //         }
+    //     }
+    // },
+    // videoLoaded: function() {
+    //     var video = arguments[1].response,
+    //     elm = this.shadowRoot.querySelector('#video-' + video.video_id);
+    //     elm.innerHTML = video.html;
+    //     elm.style.paddingBottom = (video.height / video.width) * 100 + '%';
+    // },
+    // toggle: function(e) {
+    //     var player = this.shadowRoot.querySelector('#' + e.target.dataset.video + ' > iframe'),
+    //         url = player.src,
+    //         to = e.target.dataset.to || 'play';
+    //     player.contentWindow.postMessage({
+    //         method: to
+    //     }, url);
+    //     if (to === 'play') e.target.dataset.to = 'pause';
+    //     else e.target.dataset.to = 'play';
+    // }
+});
+</script>
 </polymer-element>
