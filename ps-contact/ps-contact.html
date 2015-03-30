@@ -1,11 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-contact-service/ps-contact-service.html">
+<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../core-icons/core-icons.html">
 <!--
 Element collecting a contact message for a PhotoShelter.com member.
 
 ##### Example
 
-    <ps-contact></ps-contact>
+<ps-contact></ps-contact>
 
 @element ps-contact
 @blurb Element collecting a contact message for a PhotoShelter.com member.
@@ -14,11 +16,33 @@ Element collecting a contact message for a PhotoShelter.com member.
 -->
 
 <polymer-element name="ps-contact">
-  <template>
+<template>
     <style>
     :host {
-      display: block;
-      margin: 0 auto;
+        display: block;
+        margin: 0 auto;
+    }
+    :host([columns]) .singles {
+        float: left;
+        width: 40%;
+    }
+    .field {
+        float: left;
+        width: 100%;
+        padding: 30px 30px 0 0;
+        box-sizing: border-box;
+        position: relative;
+    }
+    :host([labels="inside"]) .field {
+        padding: 15px 15px 0 0;
+    }
+    :host([columns]) .note, :host([columns]) .button {
+        width: 60%;
+        float: right;
+    }
+    :host([columns][submitAlone]) .button {
+        float: left;
+        width: 100%;
     }
     button {
         -webkit-appearance: none;
@@ -33,13 +57,42 @@ Element collecting a contact message for a PhotoShelter.com member.
     input,
     textarea,
     button {
-        width: 50%;
+        width: 100%;
         border: 1px solid #666;
         background: #fff;
-        margin: 0 0 10px;
         padding: 0;
         box-sizing: border-box;
         display: block;
+        position: relative;
+        z-index: 2;
+    }
+    input:focus,
+    textarea:focus {
+        outline: none;
+    }
+    :host([labels="outside"]) input::-webkit-input-placeholder { /* WebKit browsers */
+        text-indent: -999em;
+    }
+    :host([labels="outside"]) input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        text-indent: -999em;
+    }
+    :host([labels="outside"]) input::-moz-placeholder { /* Mozilla Firefox 19+ */
+        text-indent: -999em;
+    }
+    :host([labels="outside"]) input:-ms-input-placeholder { /* Internet Explorer 10+ */
+        text-indent: -999em;
+    }
+    :host([labels="outside"]) textarea::-webkit-input-placeholder { /* WebKit browsers */
+        text-indent: -999em;
+    }
+    :host([labels="outside"]) textarea:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        text-indent: -999em;
+    }
+    :host([labels="outside"]) textarea::-moz-placeholder { /* Mozilla Firefox 19+ */
+        text-indent: -999em;
+    }
+    :host([labels="outside"]) textarea:-ms-input-placeholder { /* Internet Explorer 10+ */
+        text-indent: -999em;
     }
     input,
     button {
@@ -48,40 +101,199 @@ Element collecting a contact message for a PhotoShelter.com member.
         line-height: 30px;
     }
     textarea {
-        padding: 13px 10px;
-        resize:vertical;
+        padding: 13px 35px 13px 10px;
+        resize: vertical;
+        height: 110px;
+    }
+    :host([columns][submitAlone]) textarea {
+        height: 180px;
+    }
+    :host([labels="inside"][columns]) textarea {
+        height: 95px;
+    }
+    :host([labels="inside"][columns][submitAlone]) textarea {
+        height: 150px;
+    }
+    label {
+        font-size: 11px;
+        font-family: sans-serif;
+        line-height: 28px;
+        position: absolute;
+        top: 2px;
+        left: 10px;
+        z-index: 1;
+        -webkit-transform: translate3d(0, 100%, 0);
+        -moz-transform: translate3d(0, 100%, 0);
+        -ms-transform: translate3d(0, 100%, 0);
+        -o-transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, 100%, 0);
+        -webkit-transition-property: transform;
+        -moz-transition-property: transform;
+        -o-transition-property: transform;
+        transition-property: transform;
+        -webkit-transition-duration: 0.3s;
+        -moz-transition-duration: 0.3s;
+        -o-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -webkit-transition-timing-function: ease-in-out;
+        -moz-transition-timing-function: ease-in-out;
+        -o-transition-timing-function: ease-in-out;
+        transition-timing-function: ease-in-out;
+    }
+    [filled=true] + label,
+    :host([labels="outside"]) label {
+        -webkit-transform: translate3d(0, 0, 0);
+        -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+        -o-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    :host([labels="inside"]) label {
+        display: none;
+    }
+    .field > core-icon {
+        position: absolute;
+        right: 40px;
+        top: 40px;
+        height: 20px;
+        width: 20px;
+        z-index: 3;
+        color: #A54F4F;
+        display: none;
+    }
+    :host([labels="inside"]) .field > core-icon {
+        right: 25px;
+        top: 25px;
+    }
+    [valid=true] ~ core-icon,
+    [valid=false] ~ core-icon {
+        display: block;
+    }
+    [valid=true] ~ core-icon {
+        color: #73CA3E;
     }
     </style>
 
     <ps-contact-service id="service_contact"></ps-contact-service>
 
-    <div class="field">
-        <input type="text" id="name" placeholder="Name">
+    <div class="singles">
+        <div class="field text">
+            <input filled="{{nameFilled}}" valid="{{nameValid}}" on-blur="{{validateName}}" type="text" id="name" name="name" placeholder="Name" value="{{name}}">
+            <label for="name">Name</label>
+            <core-icon id="iconName" icon="{{nameValid ? 'done' : 'close'}}"></core-icon>
+        </div>
+        <div class="field email">
+            <input filled="{{emailFilled}}" valid="{{emailValid}}" on-blur="{{validateEmail}}" type="email" id="email" name="email" placeholder="Email" value="{{email}}" />
+            <label for="email">Email</label>
+            <core-icon id="iconEmail" icon="{{emailValid ? 'done' : 'close'}}"></core-icon>
+        </div>
+        <div class="field phone">
+            <input filled="{{phoneFilled}}" valid="{{phoneValid}}" type="phone" id="phone" name="phone" placeholder="Phone" value="{{phone}}" />
+            <label for="phone">Phone</label>
+            <core-icon id="iconPhone" icon="{{phoneValid ? 'done' : 'close'}}"></core-icon>
+        </div>
     </div>
-    <div class="field">
-        <input type="email" id="email" placeholder="Email" />
+    <div class="field note">
+        <textarea filled="{{noteFilled}}" valid="{{noteValid}}" on-blur="{{validateNote}}" id="note" name="note" placeholder="Note" value="{{note}}"></textarea>
+        <label for="note">Note</label>
+        <core-icon id="iconNote" icon="{{noteValid ? 'done' : 'close'}}"></core-icon>
     </div>
-    <div class="field">
-        <input type="phone" id="phone" placeholder="Phone" />
-    </div>
-    <div class="field">
-        <textarea id="note" placeholder="Note"></textarea>
-    </div>
-    <div class="field">
+    <div class="field button">
         <button on-tap="{{validate}}">Send</button>
     </div>
 
-  </template>
+</template>
 
-  <script>
-  Polymer('ps-contact', {
-      validate: function() {
-          this.$.service_contact.name = this.$.name.value;
-          this.$.service_contact.email = this.$.email.value;
-          this.$.service_contact.phone = this.$.phone.value;
-          this.$.service_contact.msg = this.$.note.value;
-          this.$.service_contact.send();
-      }
-  });
-  </script>
+<script>
+Polymer('ps-contact', {
+    //Test for:
+    //xxx-xxx-xxxx
+    //xxx.xxx.xxxx
+    //xxx xxx xxxx
+    //xxxxxxxxxx
+    regexPhone: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
+    regexEmail: /[A-z][^@]+@([^@\.]+\.)+[^@\.]+/g,
+    name: '',
+    email: '',
+    phone: '',
+    note: '',
+    nameValid: '',
+    emailValid: '',
+    phoneValid: '',
+    noteValid: '',
+    nameFilled: false,
+    emailFilled: false,
+    phoneFilled: false,
+    noteFilled: false,
+    validate: function() {
+        var valid = true;
+        //rely on browser based email string validation
+        valid = this.validateName();
+        valid = this.validateEmail();
+        valid = this.validatePhone();
+        valid = this.validateNote();
+        if (valid) this.send();
+    },
+    validateName: function() {
+        if (this.name === '') {
+            this.nameValid = false;
+            return this.nameValid;
+        }
+        this.nameValid = true;
+        return this.nameValid;
+    },
+    validateEmail: function() {
+        if (this.email === '' || !this.email.match(this.regexEmail)) {
+            this.emailValid = false;
+            return this.emailValid;
+        }
+        this.emailValid = true;
+        return this.emailValid;
+    },
+    validatePhone: function() {
+        if (this.phone !== '' && !this.phone.match(this.regexPhone)) {
+            this.phoneValid = false;
+            return this.phoneValid;
+        }
+        this.phoneValid = true;
+        return this.phoneValid;
+    },
+    validateNote: function() {
+        if (this.note === '') {
+            this.noteValid = false;
+            return this.noteValid;
+        }
+        this.noteValid = true;
+        return this.noteValid;
+    },
+    send: function() {
+        this.$.service_contact.name = this.name;
+        this.$.service_contact.email = this.email;
+        if (!!this.phone)
+            this.$.service_contact.phone = this.phone;
+        this.$.service_contact.msg = this.msg;
+        this.$.service_contact.send();
+    },
+    isFilled: function(property) {
+        if (this[property] !== '') this[property + 'Filled'] = true;
+        else  this[property + 'Filled'] = false;
+    },
+    nameChanged: function() {
+        this.isFilled('name');
+        this.validateName();
+    },
+    emailChanged: function() {
+        this.isFilled('email');
+        this.validateEmail();
+    },
+    phoneChanged: function() {
+        this.isFilled('phone');
+        this.validatePhone();
+    },
+    noteChanged: function() {
+        this.isFilled('note');
+        this.validateNote();
+    }
+});
+</script>
 </polymer-element>

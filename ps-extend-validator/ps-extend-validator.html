@@ -1,96 +1,76 @@
 <script>
-    window.psExtendValidator = {
-        extendUrl: function() {
-            var extend = '&extend={';
-            for(var i = 0, ct = this.extends.length; i < ct; i ++) {
-                if (i > 0 ) extend += ',';
-                extend += '"' + this.extends[i];
-                if (this.extends[i] === 'GalleryImage') {
-                    extend += '":{"params":{"sort_by":"display_order"},"fields":"*"}'
+window.psExtendValidator = {
+    extendUrl: function() {
+        if (!this.extends.length) return '';
+        var extendString = '&extend={', extend, isObject, extendName, extendParams = [], extendFields;
+        for(var i = 0, ct = this.extends.length; i < ct; i ++) {
+            extend = this.extends[i];
+            if (i > 0 ) extendString += ',';
+            isObject = typeof extend === 'object';
+            extendName = (isObject) ? this.extends[0] : extend;
+            extendParams = (isObject) ? extend[1].params || '[]' : '[]';
+            if (extendName === 'GalleryImage') {
+                if (extend[1].params && extendParams.search('sort_by') === -1) {
+                    extendParams += ',"sort_by":"display_order"';
                 } else {
-                    extend += '":{"fields":"*"}';
+                    extendParams = '"sort_by":"display_order"';
                 }
             }
-            if (ct) {
-                extend += '}';
-                return extend;
-            }
-            return '';
+            extendFields = (isObject) ? extend[1].fields || '*' : '*';
+            extendString += '"' + extendName +
+            '":{"params":' + extendParams + ',"fields":"' + extendFields + '"}';
         }
-    };
+        extendString += '}';
+        return extendString;
+    }
+};
 
-    // extendAttributes: function() {
-	// 	var extendA = [], extendName = '', extendParams = '', extendFields = '',
-	// 		isObject = false, success = arguments[1];
-	// 	if (typeof arguments[0] !== 'object') extendA.push(arguments[0]);
-	// 	else extendA = arguments[0];
-	// 	//filter out false extends
-	// 	extendA = this.validateExtendAttributes(extendA);
-	// 	//return if no new extends
-	// 	if (!extendA.length) return;
-	// 	this.apiExtends = this.apiExtends || [];
-	// 	//merge with existing extends
-	// 	extendA = _.union(extendA, this.apiExtends);
-	// 	if (!_.difference(extendA, this.apiExtends).length) return;
-	// 	this.apiExtends = extendA;
-	// 	this.apiExtend = '{';
-	// 	_.each(this.apiExtends, function(extend, index, list) {
-	// 		if (index > 0) this.apiExtend += ',';
-	// 		isObject = typeof extend === 'object';
-	// 		extendName = (isObject) ? extend[0] : extend;
-	// 		extendParams = (isObject) ? extend[1].params || '[]' : '[]';
-	// 		extendFields = (isObject) ? extend[1].fields || '*' : '*';
-	// 		this.apiExtend += '"' + extendName +
-	// 			'":{"params":' + extendParams + ',"fields":"' + extendFields + '"}';
-	// 	}, this);
-	// 	this.apiExtend += '}';
-	// 	if (!!this.id && !this.apiExtended())
-	// 		this.fetch({success:success});
-	// 	else success();
-	// },
-	// apiExtended: function() {
-	// 	var extended = true;
-	// 	//Check the extended state of the data available
-	// 	_.each(this.apiExtends, function(extend) {
-	// 		switch (extend) {
-	// 		case 'GalleryImage':
-	// 			extended = extended && !!this.attributes.GalleryImage;
-	// 			break;
-	// 		case 'KeyImage':
-	// 			extended = extended && !!this.attributes.KeyImage;
-	// 			break;
-	// 		case 'Image':
-	// 			extended = extended && !!this.attributes.GalleryImage &&
-	// 				!!this.attributes.GalleryImage[0] && !!this.attributes.GalleryImage[0].Image;
-	// 			break;
-	// 		case 'Iptc':
-	// 			extended = extended && !!this.attributes.GalleryImage &&
-	// 				!!this.attributes.GalleryImage[0] && !!this.attributes.GalleryImage[0].Image &&
-	// 					!!this.attributes.GalleryImage[0].Image.Iptc;
-	// 			break;
-	// 		case 'Exif':
-	// 			extended = extended && !!this.attributes.GalleryImage &&
-	// 				!!this.attributes.GalleryImage[0] && !!this.attributes.GalleryImage[0].Image &&
-	// 					!!this.attributes.GalleryImage[0].Image.Exif;
-	// 			break;
-	// 		case 'ImageLink':
-	// 			extended = extended && !!this.attributes.GalleryImage &&
-	// 				!!this.attributes.GalleryImage[0] && !!this.attributes.GalleryImage[0].ImageLink;
-	// 			break;
-	// 		}
-	// 	}, this);
-	// 	return extended;
-	// },
-	// validateExtendAttributes: function() {
-	// 	var extendA = [], testA = [];
-	// 	//Validate ability to extened by requested
-	// 	_.each(arguments[0], function(extend) {
-	// 		if (typeof extend === 'object')
-	// 			testA = _.intersection([extend[0]], this.apiExtendTypes);
-	// 		else
-	// 			testA = _.intersection([extend], this.apiExtendTypes);
-	// 		if (testA.length) extendA.push(extend);
-	// 	}, this);
-	// 	return extendA;
-	// }
+// // // Couldn't be general unless we built a better checking object.
+// apiExtended: function() {
+// 	var extended = true;
+// 	//Check the extended state of the data available
+// 	_.each(this.apiExtends, function(extend) {
+// 		switch (extend) {
+// 		case 'GalleryImage':
+// 			extended = extended && !!this.attributes.GalleryImage;
+// 			break;
+// 		case 'KeyImage':
+// 			extended = extended && !!this.attributes.KeyImage;
+// 			break;
+// 		case 'Image':
+// 			extended = extended && !!this.attributes.GalleryImage &&
+// 				!!this.attributes.GalleryImage[0] && !!this.attributes.GalleryImage[0].Image;
+// 			break;
+// 		case 'Iptc':
+// 			extended = extended && !!this.attributes.GalleryImage &&
+// 				!!this.attributes.GalleryImage[0] && !!this.attributes.GalleryImage[0].Image &&
+// 					!!this.attributes.GalleryImage[0].Image.Iptc;
+// 			break;
+// 		case 'Exif':
+// 			extended = extended && !!this.attributes.GalleryImage &&
+// 				!!this.attributes.GalleryImage[0] && !!this.attributes.GalleryImage[0].Image &&
+// 					!!this.attributes.GalleryImage[0].Image.Exif;
+// 			break;
+// 		case 'ImageLink':
+// 			extended = extended && !!this.attributes.GalleryImage &&
+// 				!!this.attributes.GalleryImage[0] && !!this.attributes.GalleryImage[0].ImageLink;
+// 			break;
+// 		}
+// 	}, this);
+// 	return extended;
+// },
+// // // Compares to available list of extends so as not to send false extends to the server.
+// // // Doesn't currently check deep extensions... :'-\
+// validateExtendAttributes: function() {
+// 	var extendA = [], testA = [];
+// 	//Validate ability to extened by requested
+// 	_.each(arguments[0], function(extend) {
+// 		if (typeof extend === 'object')
+// 			testA = _.intersection([extend[0]], this.apiExtendTypes);
+// 		else
+// 			testA = _.intersection([extend], this.apiExtendTypes);
+// 		if (testA.length) extendA.push(extend);
+// 	}, this);
+// 	return extendA;
+// }
 </script>
