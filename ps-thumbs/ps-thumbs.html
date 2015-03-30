@@ -14,11 +14,12 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
 @homepage #
 -->
 
-<polymer-element name="ps-thumbs" attributes="image G_ID gallery images displayRatio showTitle spacing">
+<polymer-element name="ps-thumbs" attributes="image G_ID gallery images displayRatio showTitle spacing justified">
     <template>
     <style>
     :host {
         display: block;
+        margin-right: auto;
     }
     .thumbs {
         list-style: none;
@@ -33,10 +34,12 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
     .thumb {
         position: relative;
         float: left;
-        width: 33.33%;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
+    }
+    :host(:not([justified])) .thumb {
+        width: 33.33%;
     }
     .scaler {
         float: left;
@@ -71,23 +74,35 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
     [data-ratio="16:9"] .scaler {
         padding-bottom: 56.25%;
     }
+    :host([justified]) ul {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    .fill-row {
+        height: 0;
+    }
     </style>
 
     <template if="{{!!G_ID}}">
         <ps-gallery-service id="service" gallery="{{gallery}}" G_ID='{{G_ID}}' extends="{{extends}}"></ps-gallery-service>
     </template>
 
-    <template if="{{!!images}}">
+    <template if="{{!!processedImages}}">
         <ul class="thumbs" data-ratio="{{displayRatio ? displayRatio : 'natural'}}"> <!-- style here too? style="padding-left: {{spacing}}px;"-->
-            <template repeat="{{image, i in images}}" id="thumbs">
-                <li class="thumb" style="padding: {{spacing}}px {{spacing}}px {{spacing}}px 0;">
-                    <div class="scaler" style="margin-bottom: {{spacing}}px;">
+            <template repeat="{{image, i in processedImages}}" id="thumbs">
+                <li class="thumb" style="width: {{image.display_width}}px; height: {{image.display_height}}px; margin: 0 {{justified ? 0 : spacing}}px {{spacing}}px 0;">
+                    <div class="scaler">
                         <ps-image image="{{image.KeyImage || image}}" sizing="{{displayRatio ? 'cover' : 'relative'}}"></ps-image>
                     </div>
                     <template if="{{!!image.name}}">
                         <h3>{{image.name}}</h3>
                     </template>
                 </li>
+            </template>
+            <template if="{{!!justified && !!fillRow()}}">
+                <li class="thumb fill-row" style="{{fillRow()}}"></li>
             </template>
         </ul>
     </template>
@@ -142,8 +157,166 @@ Polymer('ps-thumbs',{
     },
     galleryChanged: function() {
         if (!!this.gallery)
-        this.images = this.gallery.GalleryImage;
-    }
+            this.images = this.gallery.GalleryImage;
+    },
+    imagesChanged: function() {
+        if (this.justified) {
+            this.justifyImages();
+        } else {
+            this.processedImages = this.images;
+        }
+    },
+    justifyImages: function() {
+        this.displayWidth = this.getBoundingClientRect().width - this.getScrollWidth();
+        console.log(this.displayWidth);
+        var max_height = Math.max(100, Math.min(this.displayWidth/3, 350)),
+            slice = [],
+            idx = 0, h = 0;
+
+        w: while (idx < this.images.length) {
+			for (var i = idx + 1; i < this.images.length + 1; ++i) {
+				slice = this.images.slice(idx, i);
+				h = this.getHeight(slice, this.displayWidth, this.spacing);
+				if (h < max_height) {
+					this.setHeight(slice, h);
+                    idx = i;
+					continue w;
+				}
+			}
+			this.setHeight(slice, Math.min(max_height, h), idx);
+            idx = i;
+			break;
+		}
+
+        this.processedImages = this.images;
+    },
+    getHeight: function(images, width, margin) {
+        width -= (images.length - 1) * margin;
+        var h = 0, image;
+        for (var i = 0; i < images.length; ++i) {
+            image = images[i].Image;
+            h += image.screen_width / image.screen_height;
+        }
+        return width / h;
+    },
+    setHeight: function(images, height, row) {
+        var width = 0, image, rowWidth = 0;
+		for (var i = 0; i < images.length; ++i) {
+			image = images[i];
+			width = height * image.Image.screen_width / image.Image.screen_height;
+			image.display_width = Math.round(width * 100) / 100; //not precision rounding.
+            rowWidth += image.display_width + this.spacing;
+			image.display_height = Math.round(height * 100) / 100; //not precision rounding.
+		}
+        this.lastWidth = rowWidth;
+    },
+    fillRow: function() {
+        if (this.displayWidth - this.lastWidth > 0)
+            return 'width: ' + this.displayWidth - this.lastWidth + 'px;';
+        else
+            return false;
+    },
+    getScrollWidth: function() {
+		var outer = document.createElement('div'),
+            inner, widthNoScroll, widthWithScroll;
+		outer.style.visibility = 'hidden';
+		outer.style.width = '100px';
+        // add innerdiv
+		inner = document.createElement('div');
+		inner.style.width = '100%';
+		outer.appendChild(inner);
+		document.body.appendChild(outer);
+
+		widthNoScroll = outer.offsetWidth;
+		// force scrollbars
+		outer.style.overflow = 'scroll';
+
+		widthWithScroll = inner.offsetWidth;
+
+		// remove divs
+		outer.parentNode.removeChild(outer);
+		return widthNoScroll - widthWithScroll;
+	},
+
+
+
+    // Justify functions
+
+	_getheight: function(images, width, margin) {
+		width -= images.length * margin;
+		var h = 0, imgD;
+		for (var i = 0; i < images.length; ++i) {
+			imgD = $(images[i]).data();
+			h +=  imgD.width / imgD.height;
+		}
+		return width / h;
+	},
+
+	_setheight: function(images, height, row) {
+		var width = 0,
+			$img, imgD;
+		this.HEIGHTS = this.HEIGHTS || [];
+		this.HEIGHTS.push(height);
+		for (var i = 0; i < images.length; ++i) {
+			$img = $(images[i]);
+			imgD = $img.data();
+			width = height * imgD.width / imgD.height;
+			width = Math.round(width * 100) / 100; //not precision rounding.
+			height = Math.round(height * 100) / 100; //not precision rounding.
+			$img
+				.css({
+					width: width,
+					height: height
+				})
+				.data({
+					setWidth: width,
+					setHeight: height,
+					row: row
+				});
+		}
+	},
+
+	_justify: function($html, max_height) {
+        //get holder width
+		this.displayWidth = this.displayWidth ||
+			this.$elem.width() - 1;
+		var holder = this.$elem.find('.holder'),
+			size = this.displayWidth -
+				parseFloat(holder.css('padding-left')) -
+				parseFloat(holder.css('padding-right')),
+			margin = 0,
+			$marginTest = $('<div class="holder"><a class="margin-test"/></div>');
+            //set row height
+		max_height = Math.max(100, Math.min(size/4, 250));
+		var n = 0,
+			images = $html.find('.scaler'),
+			slice = [],
+			h = 0;
+        //test margins and set
+		this.$elem.append($marginTest);
+		margin = parseFloat($marginTest.find('.margin-test').css('margin-right'));
+		margin += parseFloat($marginTest.find('.margin-test').css('margin-left'));
+		$marginTest.remove();
+		w: while (images.length > 0) {
+			for (var i = 1; i < images.length + 1; ++i) {
+				slice = images.slice(0, i);
+				h = this._getheight(slice, size, margin);
+				if (h < max_height) {
+					this.setheight(slice, h, n);
+					n++;
+					images = images.slice(i);
+					continue w;
+				}
+			}
+			this.setheight(slice, Math.min(max_height, h), n);
+			n++;
+			break;
+		}
+
+		this.firstI = false;
+
+		return $html;
+	},
 });
 </script>
 </polymer-element>
