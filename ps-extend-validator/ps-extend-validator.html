@@ -8,7 +8,7 @@ window.psExtendValidator = {
             if (i > 0 ) extendString += ',';
             isObject = typeof extend === 'object';
             extendName = (isObject) ? this.extends[0] : extend;
-            extendParams = (isObject) ? extend[1].params || '[]' : '[]';
+            extendParams = (isObject) ? extend[1].params || false : false;
             if (extendName === 'GalleryImage') {
                 if (extend[1].params && extendParams.search('sort_by') === -1) {
                     extendParams += ',"sort_by":"display_order"';
@@ -17,8 +17,9 @@ window.psExtendValidator = {
                 }
             }
             extendFields = (isObject) ? extend[1].fields || '*' : '*';
-            extendString += '"' + extendName +
-            '":{"params":' + extendParams + ',"fields":"' + extendFields + '"}';
+            extendString += '"' + extendName + '":{';
+            if (!!extendParams) extendString += '"params":{' + extendParams + '},';
+            extendString += '"fields":"' + extendFields + '"}';
         }
         extendString += '}';
         return extendString;
