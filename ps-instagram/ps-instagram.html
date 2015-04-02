@@ -16,7 +16,7 @@ Element displaying a tumblr blog.
 @homepage #
 -->
 
-<polymer-element name="ps-instagram" attributes="U_ID">
+<polymer-element name="ps-instagram" attributes="U_ID likes caption">
     <template>
     <style>
     :host {
@@ -27,9 +27,12 @@ Element displaying a tumblr blog.
     }
     :host > a {
         display: block;
-        margin: 0 auto;
+        margin: 1em auto 0;
         width: 100%;
         max-width: 640px;
+    }
+    :host > a:first-of-type {
+        margin-top: 0;
     }
     core-image {
         width: 100%;
@@ -42,7 +45,7 @@ Element displaying a tumblr blog.
     }
     p {
         max-width: 620px;
-        margin: 0.5em auto 1em;
+        margin: 0.5em auto 0;
     }
     </style>
     <ps-instagram-service U_ID="{{U_ID}}" posts="{{posts}}"></ps-instagram-service>
@@ -51,11 +54,15 @@ Element displaying a tumblr blog.
         <a href="{{post.link}}" target="_blank">
             <core-image sizing="contain" preload="true" fade="true" src="{{post.images.standard_resolution.url}}"></core-image>
         </a>
-        <div class="likes">
-            {{post.likes.count}}
-            <core-icon icon="favorite"></core-icon>
-        </div>
-        <p>{{post.caption.text}}</p>
+        <template if="{{!!likes}}">
+            <div class="likes">
+                {{post.likes.count}}
+                <core-icon icon="favorite"></core-icon>
+            </div>
+        </template>
+        <template if="{{!!caption}}">
+            <p>{{post.caption.text}}</p>
+        </template>
     </template>
 
 </template>
@@ -69,7 +76,9 @@ Polymer('ps-instagram', {
     * @type string
     * @default ''
     */
-    U_ID: ''
+    U_ID: '',
+    likes: true,
+    caption: true
 });
 </script>
 </polymer-element>
