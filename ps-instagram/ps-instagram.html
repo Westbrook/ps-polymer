@@ -16,7 +16,7 @@ Element displaying a tumblr blog.
 @homepage #
 -->
 
-<polymer-element name="ps-instagram" attributes="U_ID">
+<polymer-element name="ps-instagram" attributes="U_ID likes caption size">
     <template>
     <style>
     :host {
@@ -24,12 +24,12 @@ Element displaying a tumblr blog.
         text-align: center;
         max-width: 100%;
         line-height: 1.5;
+        max-width: 640px;
+        margin: 0 auto;
     }
     :host > a {
         display: block;
-        margin: 0 auto;
         width: 100%;
-        max-width: 640px;
     }
     core-image {
         width: 100%;
@@ -42,20 +42,50 @@ Element displaying a tumblr blog.
     }
     p {
         max-width: 620px;
-        margin: 0.5em auto 1em;
+        margin: 0.5em auto 0;
+        padding: 0 5px;
+    }
+    :host(:not([size="standard"])) {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    :host([size="low"]) .post {
+        max-width: 306px;
+        width: 50%;
+    }
+    :host([size="thumbnail"]) .post {
+        max-width: 150px;
+        width: 25%;
+    }
+    .post {
+        max-width: 640px;
+        margin-bottom: 1em;
+    }
+    .post:nth-child(4n) {
+        clear: both;
     }
     </style>
     <ps-instagram-service U_ID="{{U_ID}}" posts="{{posts}}"></ps-instagram-service>
 
     <template repeat="{{post in posts}}">
-        <a href="{{post.link}}" target="_blank">
-            <core-image sizing="contain" preload="true" fade="true" src="{{post.images.standard_resolution.url}}"></core-image>
-        </a>
-        <div class="likes">
-            {{post.likes.count}}
-            <core-icon icon="favorite"></core-icon>
+        <div class="post">
+            <a href="{{post.link}}" target="_blank">
+                <template bind="{{size == 'thumbnail' ? post.images[size] : post.images[size + '_resolution'] }}">
+                    <core-image sizing="contain" preload="true" fade="true" src="{{url}}"></core-image>
+                </template>
+            </a>
+            <template if="{{!!likes}}">
+                <div class="likes">
+                    {{post.likes.count}}
+                    <core-icon icon="favorite"></core-icon>
+                </div>
+            </template>
+            <template if="{{!!caption}}">
+                <p>{{post.caption.text}}</p>
+            </template>
         </div>
-        <p>{{post.caption.text}}</p>
     </template>
 
 </template>
@@ -69,7 +99,10 @@ Polymer('ps-instagram', {
     * @type string
     * @default ''
     */
-    U_ID: ''
+    U_ID: '',
+    likes: true,
+    caption: true,
+    size: 'standard'
 });
 </script>
 </polymer-element>
