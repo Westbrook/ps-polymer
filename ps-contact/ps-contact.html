@@ -199,13 +199,38 @@ Element collecting a contact message for a PhotoShelter.com member.
         <core-icon id="iconNote" icon="{{noteValid ? 'done' : 'close'}}"></core-icon>
     </div>
     <div class="field button">
-        <button on-tap="{{validate}}">Send</button>
+        <button on-tap="{{send}}">Send</button>
     </div>
 
 </template>
 
 <script>
 Polymer('ps-contact', {
+    /**
+    * The `columns` attribute will cause the form to display as two columns when present.
+    *
+    * @attribute columns
+    * @type boolean
+    * @default ''
+    */
+    columns: '',
+    /**
+    * The `submitAlone` attribute will cause the submit button to display after both columns.
+    *
+    * @attribute submitAlone
+    * @type boolean
+    * @default ''
+    */
+    submitAlone: '',
+    /**
+    * The `labels` attribute sets the labels to be "inside" or "outside" at all times instead of the
+    * transitional default.
+    *
+    * @attribute labels
+    * @type string
+    * @default ''
+    */
+    labels: '',
     //Test for:
     //xxx-xxx-xxxx
     //xxx.xxx.xxxx
@@ -225,15 +250,25 @@ Polymer('ps-contact', {
     emailFilled: false,
     phoneFilled: false,
     noteFilled: false,
+    /**
+    * The `validate` method confirms the validity of the name, email, phone and note fields.
+    *
+    * @method validate
+    */
     validate: function() {
         var valid = true;
         //rely on browser based email string validation
-        valid = this.validateName();
-        valid = this.validateEmail();
-        valid = this.validatePhone();
-        valid = this.validateNote();
-        if (valid) this.send();
+        valid = valid && this.validateName();
+        valid = valid && this.validateEmail();
+        valid = valid && this.validatePhone();
+        valid = valid && this.validateNote();
+        return valid;
     },
+    /**
+    * The `validateName` method confirms the validity of the name field.
+    *
+    * @method validateName
+    */
     validateName: function() {
         if (this.name === '') {
             this.nameValid = false;
@@ -242,6 +277,11 @@ Polymer('ps-contact', {
         this.nameValid = true;
         return this.nameValid;
     },
+    /**
+    * The `validateEmail` method confirms the validity of the email field.
+    *
+    * @method validateEmail
+    */
     validateEmail: function() {
         if (this.email === '' || !this.email.match(this.regexEmail)) {
             this.emailValid = false;
@@ -250,6 +290,11 @@ Polymer('ps-contact', {
         this.emailValid = true;
         return this.emailValid;
     },
+    /**
+    * The `validatePhone` method confirms the validity of the phone field.
+    *
+    * @method validatePhone
+    */
     validatePhone: function() {
         if (this.phone !== '' && !this.phone.match(this.regexPhone)) {
             this.phoneValid = false;
@@ -258,6 +303,11 @@ Polymer('ps-contact', {
         this.phoneValid = true;
         return this.phoneValid;
     },
+    /**
+    * The `validateNote` method confirms the validity of the note field.
+    *
+    * @method validateNote
+    */
     validateNote: function() {
         if (this.note === '') {
             this.noteValid = false;
@@ -266,7 +316,13 @@ Polymer('ps-contact', {
         this.noteValid = true;
         return this.noteValid;
     },
+    /**
+    * The `send` method sends the contact message when the form is valid.
+    *
+    * @method send
+    */
     send: function() {
+        if (!this.validate()) return;
         this.$.service_contact.name = this.name;
         this.$.service_contact.email = this.email;
         if (!!this.phone)

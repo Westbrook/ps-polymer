@@ -7,7 +7,7 @@ Element requesting instagram data
 
 ##### Example
 
-    <ps-instagram-service></ps-instagram-service>
+<ps-instagram-service></ps-instagram-service>
 
 @element ps-instagram-service
 @blurb Element requesting instagram data
@@ -15,52 +15,63 @@ Element requesting instagram data
 @homepage #
 -->
 <polymer-element name="ps-instagram-service" attributes="U_ID count posts">
-  <template>
+    <template>
     <style>
     :host {
-      display: none;
+        display: none;
     }
     </style>
     <ps-globals id="globals"></ps-globals>
-	<ps-keychain-service U_ID="{{U_ID}}" service="instagram" keys="{{keys}}"></ps-keychain-service>
+    <ps-keychain-service U_ID="{{U_ID}}" service="instagram" keys="{{keys}}"></ps-keychain-service>
     <template if="{{!!url}}">
         <core-shared-lib on-core-shared-lib-load="{{contentLoaded}}"
-            callbackName="instagramCB"
-            url="{{url}}"></core-shared-lib>
+        callbackName="instagramCB"
+        url="{{url}}"></core-shared-lib>
     </template>
-  </template>
-  <script>
-  Polymer('ps-instagram-service', {
+</template>
+<script>
+Polymer('ps-instagram-service', {
     /**
-     * The `label` attribute is the tumblr label who's blog will be requested
-     *
-     * @attribute label
-     * @type string
-     * @default ''
-     */
-    label: '',
-
+    * The `U_ID` attribute is the PhotoShelter.com user_id against which to request keychain access
+    * to Instagram with.
+    *
+    * @attribute U_ID
+    * @type string
+    * @default ''
+    */
+    U_ID: '',
     /**
-     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
-     *
-     * @attribute url
-     * @type string
-     * @default ''
-     */
-    url: '',
-
+    * The `count` attribute is the number of images to return per page.
+    *
+    * @attribute count
+    * @type number
+    * @default 20
+    */
     count: 20,
-
+    /**
+    * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+    *
+    * @attribute url
+    * @type string
+    * @default ''
+    */
+    url: '',
     created: function() {
-      this.posts = [];
-      this.url = '';
+        /**
+        * The `posts` attribute is the instagram images returned by the request.
+        *
+        * @posts posts
+        * @type array
+        * @default []
+        */
+        this.posts = [];
     },
     ready: function() {
-      if (!!this.keys && !!this.keys.instagram && !!this.keys.instagram.access_token)
-        this.url = this.createUrl();
+        if (!!this.keys && !!this.keys.instagram && !!this.keys.instagram.access_token)
+            this.url = this.createUrl();
     },
 
-   /**
+    /**
     * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
     *
     * @method createUrl
@@ -69,7 +80,7 @@ Element requesting instagram data
     createUrl: function() {
         return 'https://api.instagram.com/v1/users/self/media/recent?' +
             'access_token=' + this.keys.instagram.access_token +
-            '&count=' + this.count + '&callback=instagramCB';
+                '&count=' + this.count + '&callback=instagramCB';
     },
     /**
     * The `contentLoaded` method makes a copy of the loaded data.
@@ -77,13 +88,18 @@ Element requesting instagram data
     * @method userLoaded
     */
     contentLoaded: function() {
-      // Make a copy of the loaded data
-      this.posts = arguments[1][1][0].data;
+        // Make a copy of the loaded data
+        this.posts = arguments[1][1][0].data;
     },
+    /**
+    * The `keysChanged` method uses the retrived keychain data to create the request URL.
+    *
+    * @method keysChanged
+    */
     keysChanged: function(attrName, oldVal, newVal) {
-      if (!!this.keys && !!this.keys.instagram && !!this.keys.instagram.access_token)
-        this.url = this.createUrl();
+        if (!!this.keys && !!this.keys.instagram && !!this.keys.instagram.access_token)
+            this.url = this.createUrl();
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>

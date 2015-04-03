@@ -39,6 +39,24 @@ Element displaying a links to social media profiles
 
 <script>
 Polymer('ps-follow',{
+    /**
+    * The `color` attribute the link color.
+    *
+    * @attribute color
+    * @type string
+    * @default 'red'
+    */
+    color: 'red',
+    created: function() {
+        /**
+        * The `services` attribute contains an array of social properties with their name, data (user name, etc) and order for display.
+        *
+        * @attribute services
+        * @type array
+        * @default []
+        */
+        this.services = [];
+    }
     createUrl: function(service, data) {
         switch (service) {
         case 'blogger':

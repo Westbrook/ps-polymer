@@ -45,56 +45,24 @@ Element displaying a Vimeo content stream.
 
 <script>
 Polymer('ps-vimeo', {
-    // ready: function() {
-    //     // Listen for messages from the player
-    //     if (window.addEventListener){
-    //         window.addEventListener('message', onMessageReceived, false);
-    //     }
-    //     else {
-    //         window.attachEvent('onmessage', onMessageReceived, false);
-    //     }
-    //
-    //     // Handle messages received from the player
-    //     function onMessageReceived(e) {
-    //         var data = JSON.parse(e.data);
-    //         console.log(data, e);
-    //
-    //
-    //         switch (data.event) {
-    //             case 'ready':
-    //                 //onReady();
-    //                 break;
-    //
-    //             case 'playProgress':
-    //                 //onPlayProgress(data.data);
-    //                 break;
-    //
-    //             case 'pause':
-    //                 //onPause();
-    //                 break;
-    //
-    //             case 'finish':
-    //                 //onFinish();
-    //                 break;
-    //         }
-    //     }
-    // },
-    // videoLoaded: function() {
-    //     var video = arguments[1].response,
-    //     elm = this.shadowRoot.querySelector('#video-' + video.video_id);
-    //     elm.innerHTML = video.html;
-    //     elm.style.paddingBottom = (video.height / video.width) * 100 + '%';
-    // },
-    // toggle: function(e) {
-    //     var player = this.shadowRoot.querySelector('#' + e.target.dataset.video + ' > iframe'),
-    //         url = player.src,
-    //         to = e.target.dataset.to || 'play';
-    //     player.contentWindow.postMessage({
-    //         method: to
-    //     }, url);
-    //     if (to === 'play') e.target.dataset.to = 'pause';
-    //     else e.target.dataset.to = 'play';
-    // }
+    /**
+    * The `username` attribute is the vimeo user name to request data against.
+    *
+    * @attribute username
+    * @type string
+    * @default ''
+    */
+    username: '',
+    created: function() {
+        /**
+        * The `videos` attribute the the video data that will be displayed.
+        *
+        * @attribute videos
+        * @type array
+        * @default []
+        */
+        videos: []
+    }
 });
 </script>
 </polymer-element>

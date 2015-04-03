@@ -35,10 +35,6 @@ Element displaying a PhotoShelter Photographer's Info Card
     </style>
 
     <ps-image G_ID="{{G_ID}}" sizing="cover" size="1440x1440"></ps-image>
-    <!-- <content select="h1"></content>
-    <content select="h2"></content>
-    <content select="p"></content>
-    <content select="ps-follow"></content> -->
     <shadow></shadow>
 
 </template>
@@ -52,13 +48,7 @@ Polymer('ps-cover',{
     * @type string
     * @default false
     */
-    G_ID: '',
-    toggle: function() {
-        if(this.showText === 'true')
-            this.setAttribute('showText', 'false');
-        else
-            this.setAttribute('showText', 'true');
-    }
+    G_ID: ''
 });
 </script>
 </polymer-element>

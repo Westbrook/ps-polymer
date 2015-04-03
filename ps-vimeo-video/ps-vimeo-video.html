@@ -46,6 +46,14 @@ Element displaying a Vimeo video
 
 <script>
 Polymer('ps-vimeo-video', {
+    /**
+    * The `V_ID` attribute is the video to be displayed and is a REQUIRED attribute.
+    *
+    * @attribute V_ID
+    * @type string
+    * @default ''
+    */
+    V_ID: '',
     ready: function() {
         // Listen for messages from the player
         if (window.addEventListener){
@@ -55,37 +63,41 @@ Polymer('ps-vimeo-video', {
             window.attachEvent('onmessage', this.onMessageReceived.bind(this), false);
         }
     },
-    // Handle messages received from the player
+    /**
+    * The `onMessageReceived` method handles messages from the video Iframe.
+    *
+    * @method onMessageReceived
+    */
     onMessageReceived: function(e) {
         var data = JSON.parse(e.data);
         if (data.player_id !== 'player-' + this.V_ID) return;
 
         switch (data.method) {
-            case 'ready':
-                //onReady();
-                break;
-
-            case 'playProgress':
-                //onPlayProgress(data.data);
-                break;
-
-            case 'paused':
-                this.onPaused(data.value);
-                break;
-
-            case 'finish':
-                //onFinish();
-                break;
-
-            case 'getCurrentTime':
-                this.setCurrentTime(data.value);
-                break;
-
-            case 'getDurration':
-                this.setDurration(data.value);
-                break;
+        case 'ready':
+            //onReady();
+            break;
+        case 'playProgress':
+            //onPlayProgress(data.data);
+            break;
+        case 'paused':
+            this.onPaused(data.value);
+            break;
+        case 'finish':
+            //onFinish();
+            break;
+        case 'getCurrentTime':
+            this.setCurrentTime(data.value);
+            break;
+        case 'getDurration':
+            this.setDurration(data.value);
+            break;
         }
     },
+    /**
+    * The `onPaused` method takes the video's paused state to local state or for toggling.
+    *
+    * @method onPaused
+    */
     onPaused: function(value) {
         if (this.toToggle) {
             if (value) this.play();
@@ -93,6 +105,11 @@ Polymer('ps-vimeo-video', {
             this.toToggle = false;
         }
     },
+    /**
+    * The `videoLoaded` method stamps the video's Iframe to the DOM.
+    *
+    * @method videoLoaded
+    */
     videoLoaded: function() {
         var video = arguments[1].response,
         elm = this.shadowRoot.querySelector('#video');
@@ -100,39 +117,92 @@ Polymer('ps-vimeo-video', {
         elm.innerHTML = video.html;
         this.player = this.shadowRoot.querySelector('iframe')
     },
+    /**
+    * The `post` method stamps the video's Iframe to the DOM.
+    *
+    * @method post
+    * @param {string} method Pass in the post method.
+    * @param {string} value Pass in the post value.
+    */
     post: function(method, value) {
         var url = this.player.src,
-            data = {
-                method: method
-            };
+        data = {
+            method: method
+        };
         if (!!value) data.value = value;
         this.player.contentWindow.postMessage(data, url);
     },
+    /**
+    * The `toggle` method toggles the play state.
+    *
+    * @method toggle
+    */
     toggle: function() {
         this.toToggle = true;
         this.paused();
     },
+    /**
+    * The `paused` method requests the paused state from the video's Iframe.
+    *
+    * @method paused
+    */
     paused: function() {
         this.post('paused');
     },
+    /**
+    * The `pause` method pauses the video.
+    *
+    * @method pause
+    */
     pause: function() {
         this.post('pause');
     },
+    /**
+    * The `play` method plays the video.
+    *
+    * @method play
+    */
     play: function() {
         this.post('play');
     },
+    /**
+    * The `seekTo` method seeks the video to 'time'.
+    *
+    * @method seekTo
+    * @param {number} time Seek target time in seconds.
+    */
     seekTo: function(time) {
         this.post('seekTo',time);
     },
+    /**
+    * The `getCurrentTime` method requests the currentTime from the video's Iframe.
+    *
+    * @method getCurrentTime
+    */
     getCurrentTime: function() {
         this.post('getCurrentTime');
     },
+    /**
+    * The `setCurrentTime` method manages the local reference of current time.
+    *
+    * @method setCurrentTime
+    */
     setCurrentTime: function(value) {
         this.currentTime = value;
     },
+    /**
+    * The `getDurration` method requests the durration from the video's Iframe.
+    *
+    * @method getDurration
+    */
     getDurration: function() {
         this.post('getDurration');
     },
+    /**
+    * The `setDurration` method manages the local reference of durration.
+    *
+    * @method setDurration
+    */
     setDurration: function(value) {
         this.durration = value;
     }

@@ -1,5 +1,12 @@
 <script>
 window.psExtendValidator = {
+  /**
+   * The `extendUrl` method appends API extends to the request URL.
+   *
+   * @attribute extendUrl
+   * @type method
+   * @default ''
+   */
     extendUrl: function() {
         if (!this.extends.length) return '';
         var extendString = '&extend={', extend, isObject, extendName, extendParams = [], extendFields;

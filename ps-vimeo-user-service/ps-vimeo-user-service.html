@@ -6,7 +6,7 @@ Element requesting vimeo user video data
 
 ##### Example
 
-    <ps-vimeo-user-service></ps-vimeo-user-service>
+<ps-vimeo-user-service></ps-vimeo-user-service>
 
 @element ps-vimeo-user-service
 @blurb Element requesting vimeo data
@@ -14,50 +14,45 @@ Element requesting vimeo user video data
 @homepage #
 -->
 <polymer-element name="ps-vimeo-user-service" attributes="username videos">
-  <template>
+    <template>
     <style>
     :host {
-      display: none;
+        display: none;
     }
     </style>
     <ps-globals id="globals"></ps-globals>
     <core-ajax id="{{id}}"
-        auto
-        on-core-response="{{contentLoaded}}"
-        url="{{url}}"
-        contentType="application/vnd.vimeo.video+json"
-        handleAs='json'></core-ajax>
-  </template>
-  <script>
-  Polymer('ps-vimeo-user-service', {
+    auto
+    on-core-response="{{contentLoaded}}"
+    url="{{url}}"
+    contentType="application/vnd.vimeo.video+json"
+    handleAs='json'></core-ajax>
+</template>
+<script>
+Polymer('ps-vimeo-user-service', {
     /**
-     * The `label` attribute is the tumblr label who's blog will be requested
-     *
-     * @attribute label
-     * @type string
-     * @default ''
-     */
-    label: '',
-
-    /**
-     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
-     *
-     * @attribute url
-     * @type string
-     * @default ''
-     */
-    url: '',
-
+    * The `username` attribute is the Vimeo user name to request info against
+    *
+    * @attribute username
+    * @type string
+    * @default ''
+    */
+    username: '',
     created: function() {
-      this.posts = [];
-      this.url = '';
+        /**
+        * The `videos` attribute is the Vimeo videos returned for the user.
+        *
+        * @attribute videos
+        * @type object
+        * @default {}
+        */
+        this.videos = [];
     },
     ready: function() {
-      if (!!this.username)
+        if (!!this.username)
         this.url = this.createUrl();
     },
-
-   /**
+    /**
     * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
     *
     * @method createUrl
@@ -65,7 +60,7 @@ Element requesting vimeo user video data
     */
     createUrl: function() {
         return 'https://api.vimeo.com/users/' + this.username +
-            '/videos?access_token=' + this.$.globals.data.vimeoapikey + '&filter_embeddable=true';
+        '/videos?access_token=' + this.$.globals.data.vimeoapikey + '&filter_embeddable=true';
     },
     /**
     * The `contentLoaded` method makes a copy of the loaded data.
@@ -73,17 +68,22 @@ Element requesting vimeo user video data
     * @method userLoaded
     */
     contentLoaded: function() {
-      // Make a copy of the loaded data
-      var videos = arguments[1].response.data;
-      for (var i = 0, ct = videos.length; i < ct; i++) {
-          videos[i].id = videos[i].uri.replace('/videos/','');
-      }
-      this.videos = videos;
+        // Make a copy of the loaded data
+        var videos = arguments[1].response.data;
+        for (var i = 0, ct = videos.length; i < ct; i++) {
+            videos[i].id = videos[i].uri.replace('/videos/','');
+        }
+        this.videos = videos;
     },
+    /**
+    * The `usernameChanged` method manages the request URl.
+    *
+    * @method usernameChanged
+    */
     usernameChanged: function(attrName, oldVal, newVal) {
-      if (!!this.username)
-        this.url = this.createUrl();
+        if (!!this.username)
+            this.url = this.createUrl();
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>
