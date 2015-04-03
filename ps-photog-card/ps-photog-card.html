@@ -148,6 +148,11 @@ Polymer('ps-photog-card',{
     * @default false
     */
     G_ID: '',
+    /**
+    * The `toggle` method goes between the two UI states, bio/slideshow
+    *
+    * @method toggle
+    */
     toggle: function() {
         if(this.showText === 'true')
             this.setAttribute('showText', 'false');

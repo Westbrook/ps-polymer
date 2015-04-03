@@ -8,7 +8,7 @@ Element displaying a PhotoShelter.com collection.
 
 ##### Example
 
-<ps-collection></ps-collection>
+<ps-collection C_ID="C0000xxxxxxxxxxx"></ps-collection>
 
 @element ps-image
 @blurb Element displaying a PhotoShelter.com collection.
@@ -51,6 +51,13 @@ Element displaying a PhotoShelter.com collection.
 
 <script>
 Polymer('ps-collection', {
+    /**
+    * The `share` attribute outlines whether to include share functionality for the collection.
+    *
+    * @attribute share
+    * @type boolean
+    * @default ''
+    */
     share: false,
     /**
     * The `U_ID` attribute is the user_id to display root collections.
@@ -60,7 +67,23 @@ Polymer('ps-collection', {
     * @default ''
     */
     U_ID: '',
+    /**
+    * The `C_ID` attribute is the collection_id to display.
+    *
+    * @attribute C_ID
+    * @type string
+    * @default ''
+    */
+    C_ID: '',
     created: function() {
+        /**
+        * The `collection` attribute defines the PhotoShelter collection.
+        *
+        * @attribute collection
+        * @type object
+        * @default {}
+        */
+        this.collection = {};
         /**
         * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
         *

@@ -100,9 +100,41 @@ Polymer('ps-instagram', {
     * @default ''
     */
     U_ID: '',
+    /**
+    * The `likes` attribute displays the image's likes count.
+    *
+    * @attribute likes
+    * @type boolean
+    * @default true
+    */
     likes: true,
+    /**
+    * The `caption` attribute displays the image's caption.
+    *
+    * @attribute caption
+    * @type boolean
+    * @default true
+    */
     caption: true,
-    size: 'standard'
+    /**
+    * The `size` attribute outlines whether the image should be shown at 'standard' resolution (100%),
+    * 'low' resolution (50%), or 'thumbnail' resolution (25%).
+    *
+    * @attribute size
+    * @type string
+    * @default 'standard'
+    */
+    size: 'standard',
+    created: function() {
+        /**
+        * The `posts` attribute contains the Instagram posts to display.
+        *
+        * @attribute posts
+        * @type object
+        * @default {}
+        */
+        this.posts = {};
+    }
 });
 </script>
 </polymer-element>

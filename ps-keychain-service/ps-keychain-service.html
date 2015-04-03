@@ -53,11 +53,16 @@ Element requesting keychain data
      * @default ''
      */
     url: '',
-
     created: function() {
-      this.posts = [];
-      this.url = '';
-    },
+        /**
+         * The `keys` attribute is the service access data returned form the API.
+         *
+         * @attribute keys
+         * @type object
+         * @default {}
+         */
+        this.keys = {};
+    }
     ready: function() {
       if (!!this.U_ID && !!this.service)
         this.url = this.createUrl();

@@ -5,19 +5,19 @@
 <link rel="import" href="../ps-thumbs/ps-thumbs.html">
 <link rel="import" href="../core-image/core-image.html">
 <!--
-Element displaying a PhotoShelter.com image.
+Element making the PhotoShelter.com search API availabel by search terms input to the UI.
 
 ##### Example
 
 <ps-image></ps-image>
 
 @element ps-image
-@blurb Element displaying a PhotoShelter.com image.
+@blurb Element making the PhotoShelter.com search API availabel by search terms input to the UI.
 @status alpha
 @homepage #
 -->
 
-<polymer-element name="ps-image-search" attributes="U_ID">
+<polymer-element name="ps-image-search" attributes="U_ID displayRatio spacing">
     <template>
     <style>
     :host {
@@ -44,14 +44,45 @@ Element displaying a PhotoShelter.com image.
     </div>
 	<ps-image-search-service terms="{{terms}}" U_ID="{{U_ID}}" images="{{images}}" extends="{{extends}}"></ps-image-search-service>
     <template if="{{!!images}}">
-        <ps-thumbs images="{{images}}"></ps-thumbs>
+        <ps-thumbs images="{{images}}" displayRatio="{{displayRatio}}" spacing="{{spacing ? spacing: 0}}"></ps-thumbs>
     </template>
 
 </template>
 
 <script>
 Polymer('ps-image-search', {
+    /**
+    * The `U_ID` attribute describes the PhotoShelter.com user account in which to search for images.
+    *
+    * @attribute U_ID
+    * @type string
+    * @default ''
+    */
+    U_ID: '',
+    /**
+    * The `terms` attribute describes the content against which to search for images.
+    *
+    * @attribute terms
+    * @type string
+    * @default ''
+    */
     terms: '',
+    /**
+    * The `displatRatio` attribute describes the ratio at which images will be displayed in the results.
+    *
+    * @attribute displatRatio
+    * @type string
+    * @default '1:1'
+    */
+    displayRatio: '1:1',
+    /**
+    * The `spacing` attribute creates an image layout gutter.
+    *
+    * @attribute spacing
+    * @type string
+    * @default '15'
+    */
+    spacing: '15',
     created: function() {
         /**
         * The `extends` attribute outlines the extends of the ps-image-search-service tag to support the content delivered.
@@ -65,6 +96,11 @@ Polymer('ps-image-search', {
             "Image"
         ];
     },
+    /**
+    * The `search` method requests results from the ps-image-search-service element.
+    *
+    * @method search
+    */
     search: function() {
         this.terms = this.$.terms.value;
     }

@@ -6,7 +6,7 @@ Element requesting tumblr blog data
 
 ##### Example
 
-    <ps-tumblr-service></ps-tumblr-service>
+<ps-tumblr-service></ps-tumblr-service>
 
 @element ps-tumblr-service
 @blurb Element requesting tumblr blog data
@@ -14,46 +14,57 @@ Element requesting tumblr blog data
 @homepage #
 -->
 <polymer-element name="ps-tumblr-service" attributes="label posts limit">
-  <template>
+    <template>
     <style>
     :host {
-      display: none;
+        display: none;
     }
     </style>
     <ps-globals id="globals"></ps-globals>
     <core-shared-lib on-core-shared-lib-load="{{contentLoaded}}"
-        url="{{url}}"></core-shared-lib>
-  </template>
-  <script>
-  Polymer('ps-tumblr-service', {
+    url="{{url}}"></core-shared-lib>
+</template>
+<script>
+Polymer('ps-tumblr-service', {
     /**
-     * The `label` attribute is the tumblr label who's blog will be requested
-     *
-     * @attribute label
-     * @type string
-     * @default ''
-     */
+    * The `label` attribute is the tumblr label who's blog will be requested
+    *
+    * @attribute label
+    * @type string
+    * @default ''
+    */
     label: '',
-
     /**
-     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
-     *
-     * @attribute url
-     * @type string
-     * @default ''
-     */
+    * The `limit` attribute is the number of posts to request per page
+    *
+    * @attribute limit
+    * @type number
+    * @default 10
+    */
+    limit: 10,
+    /**
+    * The `url` attribute is the URL from which tumblr data will be requested.
+    *
+    * @attribute url
+    * @type string
+    * @default ''
+    */
     url: '',
-
     created: function() {
-      this.posts = [];
-      this.url = '';
+        /**
+        * The `posts` attribute is the data returned from the Tumblr blog.
+        *
+        * @attribute posts
+        * @type array
+        * @default []
+        */
+        this.posts = [];
     },
     ready: function() {
-      if (!!this.label)
+        if (!!this.label)
         this.url = this.createUrl();
     },
-
-   /**
+    /**
     * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
     *
     * @method createUrl
@@ -62,8 +73,8 @@ Element requesting tumblr blog data
     createUrl: function() {
         return '//api.tumblr.com/v2/blog/' +
             this.label +
-            '.tumblr.com/posts/?api_key=' + this.$.globals.data.tumblrapikey + '&' +
-            'limit=' + this.limit + '&callback=%%callback%%';
+                '.tumblr.com/posts/?api_key=' + this.$.globals.data.tumblrapikey + '&' +
+                    'limit=' + this.limit + '&callback=%%callback%%';
     },
     /**
     * The `contentLoaded` method makes a copy of the loaded data.
@@ -71,14 +82,14 @@ Element requesting tumblr blog data
     * @method userLoaded
     */
     contentLoaded: function() {
-      // Make a copy of the loaded data
+        // Make a copy of the loaded data
 
-      this.posts = arguments[1][1][0].response.posts;
+        this.posts = arguments[1][1][0].response.posts;
     },
     labelChanged: function(attrName, oldVal, newVal) {
-      if (!!this.label)
+        if (!!this.label)
         this.url = this.createUrl();
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>

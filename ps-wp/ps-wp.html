@@ -5,7 +5,7 @@ Element displaying a tumblr blog.
 
 ##### Example
 
-    <ps-tumblr></ps-tumblr>
+<ps-tumblr></ps-tumblr>
 
 @element ps-tumblr
 @blurb Element displaying a tumblr blog.
@@ -14,10 +14,10 @@ Element displaying a tumblr blog.
 -->
 
 <polymer-element name="ps-wp" attributes="wpUrl">
-  <template>
+    <template>
     <style>
     :host {
-      display: block;
+        display: block;
     }
     img {
         max-width: 100%;
@@ -26,6 +26,9 @@ Element displaying a tumblr blog.
     div {
         max-width: 100%;
     }
+    iframe {
+        width: 100%;
+    }
     </style>
     <ps-wp-service wpUrl="{{wpUrl}}" posts="{{posts}}"></ps-wp-service>
     <template repeat="{{post, i in posts}}">
@@ -33,43 +36,38 @@ Element displaying a tumblr blog.
         <div id="post-{{i}}" class="post"></div>
     </template>
 
-  </template>
+</template>
 
-  <script>
-  Polymer('ps-wp', {
+<script>
+Polymer('ps-wp', {
     /**
-     * The `U_ID` attribute is the user_id who's content will be displayed.
-     *
-     * @attribute U_ID
-     * @type string
-     * @default ''
-     */
-    U_ID: '',
-    /**
-    * The `parameter` attribute defines by what parameter the content will be requested
+    * The `wpUrl` attribute is the WordPress blog URL to request data from.
     *
-    * @attribute parameter
+    * @attribute wpUrl
     * @type string
     * @default ''
     */
-    parameter: '',
+    wpUrl: '',
     /**
-    * The `value` attribute defines what value of content will be requested
+    * The `postsChanged` method uses rAF to wait till the template has stamped to print inner HTML
+    * to the DOM.
     *
-    * @attribute value
-    * @type string
-    * @default ''
+    * @method postsChanged
     */
-    value: '',
     postsChanged: function() {
         if (!!this.posts)
             window.requestAnimationFrame(this.write.bind(this));
     },
+    /**
+    * The `write` method sets the posts' content to their innerHTML.
+    *
+    * @method write
+    */
     write: function() {
         for (var i = 0, ct = this.posts.length; i < ct; i++) {
             this.shadowRoot.querySelector('#post-'+i).innerHTML = this.posts[i].content;
         }
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>

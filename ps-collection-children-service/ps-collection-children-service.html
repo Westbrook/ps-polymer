@@ -3,14 +3,14 @@
 <link rel="import" href="../ps-extend-validator/ps-extend-validator.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
 <!--
-Element requesting Gallery information from PhotoShelter.com. This element has no presence in the IU.
+Element requesting collection children information from PhotoShelter.com. This element has no presence in the IU.
 
 ##### Example
 
 <ps-collection-children-service></ps-collection-children-service>
 
 @element ps-collection-children-service
-@blurb Element requesting Collection Children information from PhotoShelter.com.
+@blurb Element requesting collection children information from PhotoShelter.com. This element has no presence in the IU.
 @status alpha
 @homepage #
 -->
@@ -49,9 +49,9 @@ Polymer('ps-collection-children-service', Polymer.mixin({
     url: '',
     created: function() {
         /**
-        * The `gallery` attribute describes the gallery that is returned from PhotoShelter.com.
+        * The `collectionChildren` attribute describes the children of the collection that is returned from PhotoShelter.com.
         *
-        * @attribute gallery
+        * @attribute collectionChildren
         * @type object
         * @default null
         */
@@ -103,7 +103,7 @@ Polymer('ps-collection-children-service', Polymer.mixin({
     */
     G_IDChanged: function(attrName, oldVal, newVal) {
         if (this.G_ID)
-        this.url = this.setUrl();
+            this.url = this.setUrl();
     }
 }, window.psExtendValidator));
 </script>

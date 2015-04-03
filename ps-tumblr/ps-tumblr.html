@@ -13,7 +13,7 @@ Element displaying a tumblr blog.
 @homepage #
 -->
 
-<polymer-element name="ps-tumblr" attributes="label">
+<polymer-element name="ps-tumblr" attributes="label limit">
   <template>
     <style>
     :host {
@@ -24,7 +24,7 @@ Element displaying a tumblr blog.
         height: auto;
     }
     </style>
-    <ps-tumblr-service limit="10" label="{{label}}" posts="{{posts}}"></ps-tumblr-service>
+    <ps-tumblr-service limit="{{limit}}" label="{{label}}" posts="{{posts}}"></ps-tumblr-service>
     <template repeat="{{post, i in posts}}">
         <template if="{{post.type=='photo'}}">
             <template repeat="{{photo in post.photos}}">
@@ -62,10 +62,23 @@ Element displaying a tumblr blog.
     * @default ''
     */
     value: '',
+    /**
+    * The `limit` attribute is the number of posts to request per page
+    *
+    * @attribute limit
+    * @type number
+    * @default 10
+    */
+    limit: 10,
     postsChanged: function() {
         if (!!this.posts)
             window.requestAnimationFrame(this.write.bind(this));
     },
+    /**
+    * The `write` method stamps the post content into the DOM.
+    *
+    * @method write
+    */
     write: function() {
         for (var i = 0, ct = this.posts.length; i < ct; i++) {
             this.shadowRoot.querySelector('#post-'+i).innerHTML = this.posts[i].caption;

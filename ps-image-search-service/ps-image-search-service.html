@@ -48,20 +48,34 @@ Polymer('ps-image-search-service', Polymer.mixin({
     * @default ''
     */
     url: '',
+    /**
+    * The `per_page` attribute is the number of images to return by page
+    *
+    * @attribute per_page
+    * @type number
+    * @default 10
+    */
     per_page: 10,
+    /**
+    * The `page` attribute is the page in the search results to request
+    *
+    * @attribute page
+    * @type number
+    * @default 1
+    */
     page: 1,
     sort_by: 'relevance',
     sort_dir: 'asc',
 
     created: function() {
         /**
-        * The `image` attribute defines the PhotoShelter image to be displayed.
+        * The `images` attribute defines the PhotoShelter images returned by the API.
         *
-        * @attribute image
+        * @attribute images
         * @type object
         * @default {}
         */
-        this.image = {};
+        this.images = {};
         /**
         * The `extends` attribute outlines the extends of the ps-image-service tag to support the content delivered.
         *
@@ -73,7 +87,7 @@ Polymer('ps-image-search-service', Polymer.mixin({
     },
     ready: function() {
         if (!!this.terms)
-        this.url = this.setUrl();
+            this.url = this.setUrl();
     },
     /**
     * The `setUrl` method will merge the given U_ID with the API endpoint, it's extends and API_KEY so that data can be requested.
@@ -94,22 +108,22 @@ Polymer('ps-image-search-service', Polymer.mixin({
         return url + this.extendUrl();
     },
     /**
-    * The `imageLoaded` method makes a copy of the loaded data.
+    * The `imagesLoaded` method makes a copy of the loaded data.
     *
-    * @method imageLoaded
+    * @method imagesLoaded
     */
     imagesLoaded: function() {
         // Make a copy of the loaded data
         this.images = this.$.ajax.response.data.Image;
     },
     /**
-    * The `I_IDChanged` method updates the URL.
+    * The `termsChanged` method updates the URL.
     *
-    * @method I_IDChanged
+    * @method termsChanged
     */
     termsChanged: function(attrName, oldVal, newVal) {
         if (!!this.terms)
-        this.url = this.setUrl();
+            this.url = this.setUrl();
     }
 }, window.psExtendValidator));
 </script>

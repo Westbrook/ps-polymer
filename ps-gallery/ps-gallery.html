@@ -15,7 +15,7 @@ Element displaying a PhotoShelter.com gallery.
 @homepage #
 -->
 
-<polymer-element name="ps-gallery" attributes="G_ID gallery user I_ID urlFormat">
+<polymer-element name="ps-gallery" attributes="G_ID gallery I_ID urlFormat">
     <template>
     <style no-shim="">
     :host {
@@ -47,6 +47,14 @@ Polymer('ps-gallery',{
     * @default false
     */
     G_ID: '',
+    /**
+    * The `I_ID` attribute is the image_id to be displayed by default.
+    *
+    * @attribute I_ID
+    * @type string
+    * @default false
+    */
+    I_ID: '',
     created: function() {
         /**
         * The `gallery` attribute defines the PhotoShelter gallery to be displayed.

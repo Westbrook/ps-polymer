@@ -6,7 +6,7 @@ Element requesting wordpress blog data
 
 ##### Example
 
-    <ps-wp-service></ps-wp-service>
+<ps-wp-service></ps-wp-service>
 
 @element ps-wp-service
 @blurb Element requesting tumblr blog data
@@ -14,50 +14,54 @@ Element requesting wordpress blog data
 @homepage #
 -->
 <polymer-element name="ps-wp-service" attributes="wpUrl posts">
-  <template>
+    <template>
     <style>
     :host {
-      display: none;
+        display: none;
     }
     </style>
     <ps-globals id="globals"></ps-globals>
     <core-ajax id="{{id}}"
-        auto
-        on-core-response="{{contentLoaded}}"
-        url="{{url}}"
-        handleAs="xml"
-        headers='{"Accept": "application/xml, text/xml, */*; q=0.01"}'></core-ajax>
-  </template>
-  <script>
-  Polymer('ps-wp-service', {
+    auto
+    on-core-response="{{contentLoaded}}"
+    url="{{url}}"
+    handleAs="xml"
+    headers='{"Accept": "application/xml, text/xml, */*; q=0.01"}'></core-ajax>
+</template>
+<script>
+Polymer('ps-wp-service', {
     /**
-     * The `label` attribute is the tumblr label who's blog will be requested
-     *
-     * @attribute label
-     * @type string
-     * @default ''
-     */
-    label: '',
-
+    * The `wpUrl` attribute is the address for the WordPress blog in question.
+    *
+    * @attribute wpUrl
+    * @type string
+    * @default ''
+    */
+    wpUrl: '',
     /**
-     * The `url` attribute is the URL from which PhotoShelter.com data is requested.
-     *
-     * @attribute url
-     * @type string
-     * @default ''
-     */
+    * The `url` attribute is the URL from which PhotoShelter.com data is requested.
+    *
+    * @attribute url
+    * @type string
+    * @default ''
+    */
     url: '',
-
     created: function() {
-      this.posts = [];
-      this.url = '';
+        /**
+        * The `posts` attribute is the posts delivered from the blog.
+        *
+        * @attribute posts
+        * @type array
+        * @default {}
+        */
+        this.posts = [];
     },
     ready: function() {
-      if (!!this.wpUrl)
+        if (!!this.wpUrl)
         this.url = this.createUrl();
     },
 
-   /**
+    /**
     * The `createUrl` method will merge the given label with the API endpoint and API_KEY so that data can be requested.
     *
     * @method createUrl
@@ -66,6 +70,7 @@ Element requesting wordpress blog data
     createUrl: function() {
         var url = this.wpUrl;
         if (url[url.length-1] !== '/') url += '/'
+        if (url.search('//') === -1) url = '//' + url;
         return url + 'feed/';
     },
     /**
@@ -76,9 +81,9 @@ Element requesting wordpress blog data
     contentLoaded: function() {
         // Make a copy of the loaded data
         var posts = [],
-            post,
-            items = arguments[1].response.getElementsByTagName('item'),
-            children;
+        post,
+        items = (!arguments[1].response) ? [] : arguments[1].response.getElementsByTagName('item'),
+        children;
         for (var i = 0, ct = items.length; i < ct; i++) {
             children = items[i].childNodes;
             post = {};
@@ -91,7 +96,7 @@ Element requesting wordpress blog data
                     post.link = children[j].innerHTML;
                     break;
                 case 'content:encoded':
-                    post.content = children[j].innerHTML.replace('<!--[CDATA[<p-->','<p>').replace(']]>','');
+                    post.content = children[j].innerHTML.replace('<![CDATA[','').replace(']]>','');
                     break;
                 }
             }
@@ -99,10 +104,15 @@ Element requesting wordpress blog data
         }
         this.posts = posts;
     },
+    /**
+    * The `wpUrlChanged` method updates the request URL with the users WordPress blog URL.
+    *
+    * @method wpUrlChanged
+    */
     wpUrlChanged: function(attrName, oldVal, newVal) {
-      if (!!this.wpUrl)
-        this.url = this.createUrl();
+        if (!!this.wpUrl)
+            this.url = this.createUrl();
     }
-  });
-  </script>
+});
+</script>
 </polymer-element>
