@@ -13,11 +13,11 @@ Element displaying a Vimeo video
 @homepage #
 -->
 
-<polymer-element name="ps-vimeo-video" attributes="V_ID">
+<polymer-element name="ps-vimeo-video" attributes="V_ID size">
     <template>
     <style>
     :host {
-        display: block;
+        display: flex;
     }
     #video {
         float: left;
@@ -25,6 +25,10 @@ Element displaying a Vimeo video
         height: 0;
         position: relative;
         margin: 0 0 20px;
+        padding-bottom: 56.25%;
+    }
+    :host(:not([size="standard"])) #video {
+        padding-bottom: 56.25% !important;
     }
     iframe {
         position: absolute;
@@ -33,6 +37,17 @@ Element displaying a Vimeo video
         width: 100%;
         height: 100%;
     }
+    .list {
+        float: left;
+        width: 25%;
+        flex: 1 0 215px;
+    }
+    .list #video {
+        margin: 0;
+    }
+    .info {
+        flex: 0 1 75%;
+    }
     </style>
 
     <core-ajax
@@ -40,7 +55,14 @@ Element displaying a Vimeo video
         on-core-response="{{videoLoaded}}"
         url="{{'https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/' + V_ID +'&api=1&player_id=player-' + V_ID}}"
         handleAs='json'></core-ajax>
-    <div id="video"></div>
+    <div class="post {{size}}">
+        <div id="video"></div>
+    </div>
+    <template if="{{size === 'list'}}">
+        <div class="info">
+            <content></content>
+        </div>
+    </template>
 
 </template>
 

@@ -14,31 +14,67 @@ Element displaying a Vimeo content stream.
 @homepage #
 -->
 
-<polymer-element name="ps-vimeo" attributes="username videos">
+<polymer-element name="ps-vimeo" attributes="username videos size">
     <template>
     <style>
     :host {
         display: block;
     }
-    .video {
+    ps-vimeo-video {
         float: left;
         width: 100%;
-        height: 0;
-        position: relative;
-        margin: 0 0 20px;
+        box-sizing: border-box;
     }
-    iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+    :host([size="list"]) ps-vimeo-video {
+        padding: 0 0 2%;
+    }
+    :host(:not([size="standard"]):not([size="list"])) {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    :host([size="low"]) ps-vimeo-video {
+        width: 50%;
+        padding-right: 10px;
+    }
+    :host([size="low"]) ps-vimeo-video:nth-child(odd) {
+        padding: 0 0 0 10px;
+    }
+    :host([size="thumbnail"]) ps-vimeo-video {
+        width: 25%;
+    }
+    :host([size="thumbnail"]) ps-vimeo-video:nth-child(4n) {
+        padding-right: 15px;
+    }
+    :host([size="thumbnail"]) ps-vimeo-video:nth-child(4n+1) {
+        padding-right: 10px;
+        padding-left: 5px;
+    }
+    :host([size="thumbnail"]) ps-vimeo-video:nth-child(4n+2) {
+        padding-right: 5px;
+        padding-left: 10px;
+    }
+    :host([size="thumbnail"]) ps-vimeo-video:nth-child(4n+3) {
+        padding-left: 15px;
+    }
+    h1 {
+        margin: 0;
+        padding: 1% 0 1% 3%;
+        font-size: 24px;
+    }
+    p {
+        margin: 0;
+        padding: 0 0 0 3%;
+        line-height: 1.5;
     }
     </style>
     <ps-vimeo-user-service username="{{username}}" videos="{{videos}}"></ps-vimeo-user-service>
 
     <template repeat="{{video in videos}}">
-        <ps-vimeo-video V_ID="{{video.id}}"></ps-vimeo-video>
+        <ps-vimeo-video V_ID="{{video.id}}" size="{{size}}">
+            <h1>{{video.name}}</h1>
+            <p>{{video.description}}</p>
+        </ps-vimeo-video>
     </template>
 
 </template>
