@@ -14,7 +14,7 @@ Element requesting Gallery information from PhotoShelter.com. This element has n
 @status alpha
 @homepage #
 -->
-<polymer-element name="ps-gallery-service" attributes="gallery image G_ID extends" constructor="PsGalleryService">
+<polymer-element name="ps-gallery-service" attributes="gallery image G_ID extends callback" constructor="PsGalleryService">
     <template>
     <style>
     :host {
@@ -91,6 +91,7 @@ Polymer('ps-gallery-service', Polymer.mixin({
         this.gallery = this.$.ajax.response.data.Gallery;
         if (typeof this.gallery.KeyImage !== 'undefined')
         this.image = this.gallery.KeyImage.Image;
+        if (this.callback) this.callback(this.image);
     },
     /**
     * The `G_IDChanged` method updates the URL.

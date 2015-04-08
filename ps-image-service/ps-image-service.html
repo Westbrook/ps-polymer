@@ -15,7 +15,7 @@ Element requesting Image information from PhotoShelter.com. This element has no 
 @homepage #
 -->
 
-<polymer-element name="ps-image-service" attributes="image I_ID extends type" constructor="PsImageService">
+<polymer-element name="ps-image-service" attributes="image I_ID extends type callback" constructor="PsImageService">
     <template>
     <style>
     :host {
@@ -88,6 +88,7 @@ Polymer('ps-image-service', Polymer.mixin({
         // Make a copy of the loaded data
         var id = this.type + '-' + this.I_ID;
         this.image = this.$.ajax.response.data.Image;
+        if (this.callback) this.callback(this.image);
     },
     /**
     * The `I_IDChanged` method updates the URL.

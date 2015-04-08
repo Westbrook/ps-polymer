@@ -2,7 +2,7 @@
 <link rel="import" href="../ps-image-service/ps-image-service.html">
 <link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
 <link rel="import" href="../ps-collection-children-service/ps-collection-children-service.html">
-<link rel="import" href="../ps-image/ps-image.html">
+<link rel="import" href="../ps-pane/ps-pane.html">
 <!--
 Element displaying a PhotoShelter.com slideshow of images
 
@@ -16,7 +16,7 @@ Element displaying a PhotoShelter.com slideshow of images
 @homepage #
 -->
 
-<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay sizing urlFormat">
+<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay sizing urlFormat twoup">
     <template>
     <style>
     :host {
@@ -35,7 +35,7 @@ Element displaying a PhotoShelter.com slideshow of images
         left: 0;
         overflow: hidden;
     }
-    ps-image {
+    ps-pane {
         position: absolute;
         top: 0;
         right: 0;
@@ -143,11 +143,11 @@ Element displaying a PhotoShelter.com slideshow of images
     </template>
 
     <div class="stage {{animType}}" data-transition="{{transition}}">
-        <ps-image onstage class="current" size="1440x1440" sizing="{{sizing}}"></ps-image>
-        <ps-image class="preload-prev" size="1440x1440" sizing="{{sizing}}"></ps-image>
-        <ps-image class="preload-next" size="1440x1440" sizing="{{sizing}}"></ps-image>
-        <ps-image onstage class="prev" size="1440x1440" sizing="{{sizing}}"></ps-image>
-        <ps-image onstage class="next" size="1440x1440" sizing="{{sizing}}"></ps-image>
+        <ps-pane onstage class="current" size="1440x1440" sizing="{{sizing}}"></ps-pane>
+        <ps-pane class="preload-prev" size="1440x1440" sizing="{{sizing}}"></ps-pane>
+        <ps-pane class="preload-next" size="1440x1440" sizing="{{sizing}}"></ps-pane>
+        <ps-pane onstage class="prev" size="1440x1440" sizing="{{sizing}}"></ps-pane>
+        <ps-pane onstage class="next" size="1440x1440" sizing="{{sizing}}"></ps-pane>
     </div>
 
     <template if="{{!!set && set.length > 1}}">
@@ -175,6 +175,17 @@ Polymer('ps-slideshow',{
         * @default {}
         */
         this.gallery = {};
+        /**
+        * The `extendsImg` attribute outlines the extends of the ps-image-service tag to support the content delivered.
+        *
+        * @attribute extendsGal
+        * @type array
+        * @default ["ImageLink", "Image"]
+        */
+        this.extendsImg = [
+            "ImageLink",
+            "Image",
+        ];
         /**
         * The `extendsGal` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
         *
@@ -236,7 +247,7 @@ Polymer('ps-slideshow',{
         this.animQueue = [];
     },
     setupImages: function() {
-        var image;
+        var image, image = [];
         if (this.I_ID === 'random') {
             this.current = Math.floor(Math.random() * this.images.length);
         } else if (this.I_ID) {
@@ -250,63 +261,35 @@ Polymer('ps-slideshow',{
         } else {
             this.current = 0;
         }
-        this.shadowRoot.querySelector('.current').image = this.getImage('current');
-        this.shadowRoot.querySelector('.next').image = this.getImage('next');
-        this.shadowRoot.querySelector('.prev').image = this.getImage('prev');
-        this.shadowRoot.querySelector('.preload-prev').image = this.getImage('preload-prev');
-        this.shadowRoot.querySelector('.preload-next').image = this.getImage('preload-next');
+        images = this.getImages();
+        this.shadowRoot.querySelector('.current').images = images.current;
+        this.shadowRoot.querySelector('.next').images = images.next;
+        this.shadowRoot.querySelector('.prev').images = images.prev;
+        this.shadowRoot.querySelector('.preload-next').images = images.preloadNext;
+        this.shadowRoot.querySelector('.preload-prev').images = images.preloadPrev;
     },
-    setupI_IDs: function() {
-        var iid;
-        if (this.I_ID === 'random') {
-            this.current = Math.floor(Math.random() * this.I_IDs.length);
-        } else if (this.I_ID) {
-            for (var i = 0, ct = this.I_IDs.length; i < ct; i++) {
-                iid = this.I_IDs[i];
-                if (iid === this.I_ID) {
-                    this.current = i;
-                    break;
-                }
-            }
+    imagesChanged: function() {
+        if (this.images.length) {
+            this.type = 'images';
+            this.set = this.images;
+            this.setupImages();
+            this.autoplayCheck();
         }
-        this.shadowRoot.querySelector('.current').I_ID = this.getImage('current');
-        this.shadowRoot.querySelector('.next').I_ID = this.getImage('next');
-        this.shadowRoot.querySelector('.prev').I_ID = this.getImage('prev');
-        this.shadowRoot.querySelector('.preload-prev').I_ID = this.getImage('preload-prev');
-        this.shadowRoot.querySelector('.preload-next').I_ID = this.getImage('preload-next');
-    },
-    setupG_IDs: function() {
-        var iid;
-        if (this.I_ID === 'random') {
-            this.current = Math.floor(Math.random() * this.I_IDs.length);
-        } else if (this.I_ID) {
-            for (var i = 0, ct = this.I_IDs.length; i < ct; i++) {
-                iid = this.I_IDs[i];
-                if (iid === this.I_ID) {
-                    this.current = i;
-                    break;
-                }
-            }
-        }
-        this.shadowRoot.querySelector('.current').G_ID = this.getImage('current');
-        this.shadowRoot.querySelector('.next').G_ID = this.getImage('next');
-        this.shadowRoot.querySelector('.prev').G_ID = this.getImage('prev');
-        this.shadowRoot.querySelector('.preload-prev').G_ID = this.getImage('preload-prev');
-        this.shadowRoot.querySelector('.preload-next').G_ID = this.getImage('preload-next');
     },
     galleryChanged: function() {
         if (typeof this.gallery.GalleryImage !== 'undefined') {
             this.images = this.gallery.GalleryImage;
-            this.type = 'image';
+            this.type = 'images';
             this.set = this.images;
             this.setupImages();
+            this.autoplayCheck();
         }
     },
     I_IDChanged: function() {
         if (!!this.type && this.I_ID === this.getImage('next').image_id) this.forward();
         else if (!!this.type && this.I_ID === this.getImage('prev').image_id) this.back();
         else if (!!this.images && this.images.length) {
-            this.type = 'image';
+            this.type = 'images';
             this.set = this.images;
             this.setupImages();
             this.autoplayCheck();
@@ -314,19 +297,48 @@ Polymer('ps-slideshow',{
     },
     I_IDsChanged: function() {
         if (!!this.I_IDs && this.I_IDs.length) {
-            this.type = 'I_ID';
-            this.set = this.I_IDs;
-            this.setupI_IDs();
-            this.autoplayCheck();
+            this.promiseI_IDs();
         }
+    },
+    promiseI_IDs: function() {
+        var images = [],
+            I_IDs = this.I_IDs,
+            that = this;
+        for (var i = 0, ct = this.I_IDs.length; i < ct; i++) {
+            images.push(new Promise(function(resolve, reject) {
+                var image = document.createElement('ps-image-service');
+                image.callback = resolve;
+                image.extends = that.extendsImg;
+                image.setAttribute('I_ID', I_IDs[i]);
+            }))
+        }
+        Promise.all(images)
+            .then(function(models) {
+                that.images = models;
+            })
     },
     G_IDsChanged: function() {
         if (!!this.G_IDs && this.G_IDs.length) {
-            this.type = 'G_ID';
-            this.set = this.G_IDs;
-            this.setupG_IDs();
-            this.autoplayCheck();
+            this.promiseG_IDs();
         }
+    },
+    promiseG_IDs: function() {
+        var images = [],
+            galleries = [],
+            G_IDs = this.G_IDs,
+            that = this;
+        for (var i = 0, ct = this.G_IDs.length; i < ct; i++) {
+            galleries.push(new Promise(function(resolve, reject) {
+                var gal = document.createElement('ps-gallery-service');
+                gal.callback = resolve;
+                gal.extends = that.extendsGal;
+                gal.setAttribute('G_ID', G_IDs[i]);
+            }))
+        }
+        Promise.all(galleries)
+            .then(function(models) {
+                that.images = models;
+            })
     },
     collectionChildrenChanged: function() {
         var images = [];
@@ -335,7 +347,7 @@ Polymer('ps-slideshow',{
                 images.push(this.collectionChildren[i].KeyImage);
         }
         this.images = images;
-        this.type = 'image';
+        this.type = 'images';
         this.set = this.images;
         this.setupImages();
         this.autoplayCheck();
@@ -402,8 +414,9 @@ Polymer('ps-slideshow',{
         if (!!e && !!this.urlFormat)  return this.goToUrl(this.getImage('prev'));
         this.animing = true;
         var images = this.shadowRoot.querySelectorAll('[onstage]');
-        this.current = this.getIdx(-1);
-        this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanup.bind(this), false);
+        this.current = this.getIdx((this.twoup && this.canTwoup(this.set, this.getIdx(-2))) ? -2 : -1);
+        this.cleanupFunction = this.cleanup.bind(this);
+        this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanupFunction, false);
         for (var i = 0, ct = images.length; i < ct; i++) {
             images[i].classList.add('anim','forward');
         }
@@ -421,29 +434,31 @@ Polymer('ps-slideshow',{
         if (!!e && !!this.urlFormat)  return this.goToUrl(this.getImage('next'));
         this.animing = true;
         var images = this.shadowRoot.querySelectorAll('[onstage]');
-        this.current = this.getIdx(1);
-        this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanup.bind(this), false);
+        this.current = this.getIdx((this.twoup && this.canTwoup(this.set, this.current)) ? 2 : 1);
+        this.cleanupFunction = this.cleanup.bind(this);
+        this.shadowRoot.querySelector('.current').addEventListener('transitionend', this.cleanupFunction, false);
         for (var i = 0, ct = images.length; i < ct; i++) {
             images[i].classList.add('anim','back');
         }
     },
-    cleanup: function() {
+    cleanup: function(e) {
         var pane,
             type = this.type,
-            queuedNext = [];
-        this.shadowRoot.querySelector('.current').removeEventListener('transitionend', this.cleanup, false);
+            queuedNext = [],
+            images = this.getImages();
+        e.currentTarget.removeEventListener('transitionend', this.cleanupFunction, false);
         for (var i = 0, ct = this.cleanups.length; i < ct; i++) {
             pane = this.shadowRoot.querySelector(this.cleanups[i].selector);
             if (pane !== null) {
                 pane.className = this.cleanups[i].dest;
                 if (this.cleanups[i].newImage) {
-                    pane[type] = this.getImage(this.cleanups[i].dest);
+                    pane[type] = images[this.cleanups[i].dest];
                 }
             }
         }
-        this.image = this.getImage('current');
-        this.shadowRoot.querySelector('.preload-prev')[type] = this.getImage('preload-prev');
-        this.shadowRoot.querySelector('.preload-next')[type] = this.getImage('preload-next');
+        this.image = images.current;
+        this.shadowRoot.querySelector('.preload-prev')[type] = images.preloadPrev;
+        this.shadowRoot.querySelector('.preload-next')[type] = images.preloadNext;
         this.animing = false;
         this.loop = 0;
         window.requestAnimationFrame(this.checkQueue.bind(this));
@@ -457,8 +472,9 @@ Polymer('ps-slideshow',{
                 window.requestAnimationFrame(this[queuedNext[0]].bind(this, queuedNext[1]));
         }
     },
-    getIdx: function(offset, I_IDs) {
-        var index = this.current + offset,
+    getIdx: function(offset, origin) {
+        origin = origin || this.current;
+        var index = origin + offset,
             set = this.set;
         if (index < 0) {
             index = set.length + index;
@@ -468,20 +484,99 @@ Polymer('ps-slideshow',{
         return index;
     },
     getImage: function(step) {
-        var index,
-            set = this.set;
+        var index, images = [],
+            set = this.set,
+            offset = {
+                next: (this.twoup && this.canTwoup(set, this.current)) ? 2 : 1,
+                prev: (this.twoup && this.canTwoup(set, this.getIdx(-2))) ? -2 : -1,
+            };
+        offset.preloadNext = (this.twoup && this.canTwoup(set, this.getIdx(offset.next))) ? offset.next + 2 : offset.next + 1;
+        offset.preloadPrev = (this.twoup && this.canTwoup(set, this.getIdx(offset.prev - 2))) ? offset.prev - 2 : offset.prev - 1;
         switch (step) {
         case 'current':
-            return set[this.current];
+            images.push(set[this.current]);
+            if (offset.next > 1) {
+                images.push(set[this.getIdx(1)]);
+            }
+            break;
         case 'next':
-            return set[this.getIdx(1)];
+            images.push(set[this.getIdx(offset.next)]);
+            if (offset.preloadNext > offset.next + 1) {
+                images.push(set[this.getIdx(offset.next + 1)]);
+            }
+            break;
         case 'prev':
-            return set[this.getIdx(-1)];
+            images.push(set[this.getIdx(offset.prev)]);
+            if (offset.prev < -1) {
+                images.push(set[this.getIdx(offset.prev + 1)]);
+            }
+            break;
         case 'preload-next':
-            return set[this.getIdx(2)];
+            images.push(set[this.getIdx(offset.preloadNext)]);
+            if (this.twoup && this.canTwoup(set, this.getIdx(offset.preloadNext))) {
+                images.push(set[this.getIdx(offset.preloadNext + 1)]);
+            }
+            break;
         case 'preload-prev':
-            return set[this.getIdx(-2)];
+            images.push(set[this.getIdx(offset.preloadPrev)]);
+            if (offset.preloadPrev < offset.prev - 1) {
+                images.push(set[this.getIdx(offset.preloadPrev + 1)]);
+            }
+            break;
         }
+        return images;
+    },
+    getImages: function(step) {
+        var index,
+            images = {
+                current: [],
+                next: [],
+                prev: [],
+                preloadNext: [],
+                preloadPrev: []
+            },
+            set = this.set,
+            offset = {
+                next: (this.twoup && this.canTwoup(set, this.current)) ? 2 : 1,
+                prev: (this.twoup && this.canTwoup(set, this.getIdx(-2))) ? -2 : -1,
+            };
+        offset.preloadNext = (this.twoup && this.canTwoup(set, this.getIdx(offset.next))) ? offset.next + 2 : offset.next + 1;
+        offset.preloadPrev = (this.twoup && this.canTwoup(set, this.getIdx(offset.prev - 2))) ? offset.prev - 2 : offset.prev - 1;
+        images.current.push(set[this.current]);
+        if (offset.next > 1) {
+            images.current.push(set[this.getIdx(1)]);
+        }
+        images.next.push(set[this.getIdx(offset.next)]);
+        if (offset.preloadNext > offset.next + 1) {
+            images.next.push(set[this.getIdx(offset.next + 1)]);
+        }
+        images.prev.push(set[this.getIdx(offset.prev)]);
+        if (offset.prev < -1) {
+            images.prev.push(set[this.getIdx(offset.prev + 1)]);
+        }
+        images.preloadNext.push(set[this.getIdx(offset.preloadNext)]);
+        if (this.twoup && this.canTwoup(set, this.getIdx(offset.preloadNext))) {
+            images.preloadNext.push(set[this.getIdx(offset.preloadNext + 1)]);
+        }
+        images.preloadPrev.push(set[this.getIdx(offset.preloadPrev)]);
+        if (offset.preloadPrev < offset.prev - 1) {
+            images.preloadPrev.push(set[this.getIdx(offset.preloadPrev + 1)]);
+        }
+        return images;
+    },
+    canTwoup: function(set, idx) {
+        var container = this.getBoundingClientRect(),
+            cRatio = container.height / container.width,
+            first = set[idx], second = set[this.getIdx(1, idx)],
+            fRatio = this.imageHeight(first) / this.imageWidth(first),
+            sRatio = this.imageHeight(second) / this.imageWidth(second);
+        return fRatio > cRatio * 2 && sRatio > cRatio * 2;
+    },
+    imageHeight: function(image) {
+        return image.screen_height_max || image.Image.screen_height_max;
+    },
+    imageWidth: function(image) {
+        return image.screen_width_max || image.Image.screen_width_max;
     },
     trackstart: function() {
         this.width = this.getBoundingClientRect().width;

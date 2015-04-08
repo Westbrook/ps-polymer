@@ -133,9 +133,10 @@ Polymer('ps-image', {
     * @method ratio
     */
     ratio: function() {
-        var displaySize = this.size.split('x');
+        var displaySize = [];;
         if (this.sizing !== 'relative') return 0;
         if (this.sizeType === 'fill') {
+            displaySize = this.size.split('x');
             return (displaySize[1] / displaySize[0] * 100) + '%';
         }
         var iWidth = this.image.screen_width_max || this.image.Image.screen_width_max,

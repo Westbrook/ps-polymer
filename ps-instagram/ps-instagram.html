@@ -51,6 +51,11 @@ Element displaying a tumblr blog.
         flex-wrap: wrap;
         justify-content: space-between;
     }
+    .post {
+        width: 100%;
+        max-width: 640px;
+        margin-bottom: 1em;
+    }
     :host([size="low"]) .post {
         max-width: 306px;
         width: 50%;
@@ -59,12 +64,16 @@ Element displaying a tumblr blog.
         max-width: 150px;
         width: 25%;
     }
-    .post {
-        max-width: 640px;
-        margin-bottom: 1em;
+    :host([size="list"]) .post {
+        display: flex;
+        text-align: left;
     }
-    .post:nth-child(4n) {
-        clear: both;
+    :host([size="list"]) a {
+        flex: 0 0 25%;
+        margin-right: 20px;
+    }
+    :host([size="list"]) p {
+        padding: 0;
     }
     </style>
     <ps-instagram-service U_ID="{{U_ID}}" posts="{{posts}}"></ps-instagram-service>
@@ -72,18 +81,22 @@ Element displaying a tumblr blog.
     <template repeat="{{post in posts}}">
         <div class="post">
             <a href="{{post.link}}" target="_blank">
-                <template bind="{{size == 'thumbnail' ? post.images[size] : post.images[size + '_resolution'] }}">
+                <template bind="{{(size == 'thumbnail' || size == 'list') ? post.images.thumbnail : post.images[size + '_resolution'] }}">
                     <core-image sizing="contain" preload="true" fade="true" src="{{url}}"></core-image>
                 </template>
             </a>
-            <template if="{{!!likes}}">
-                <div class="likes">
-                    {{post.likes.count}}
-                    <core-icon icon="favorite"></core-icon>
+            <template if="{{!!likes || !!caption}}">
+                <div class="info">
+                    <template if="{{!!likes}}">
+                        <div class="likes">
+                            {{post.likes.count}}
+                            <core-icon icon="favorite"></core-icon>
+                        </div>
+                    </template>
+                    <template if="{{!!caption}}">
+                        <p>{{post.caption.text}}</p>
+                    </template>
                 </div>
-            </template>
-            <template if="{{!!caption}}">
-                <p>{{post.caption.text}}</p>
             </template>
         </div>
     </template>

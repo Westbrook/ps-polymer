@@ -14,7 +14,7 @@ Element displaying a Vimeo content stream.
 @homepage #
 -->
 
-<polymer-element name="ps-vimeo" attributes="username videos size">
+<polymer-element name="ps-vimeo" attributes="username videos size thumbs">
     <template>
     <style>
     :host {
@@ -71,7 +71,8 @@ Element displaying a Vimeo content stream.
     <ps-vimeo-user-service username="{{username}}" videos="{{videos}}"></ps-vimeo-user-service>
 
     <template repeat="{{video in videos}}">
-        <ps-vimeo-video V_ID="{{video.id}}" size="{{size}}">
+        <ps-vimeo-video V_ID="{{video.id}}" size="{{size}}"
+            thumb="{{thumb(video)}}">
             <h1>{{video.name}}</h1>
             <p>{{video.description}}</p>
         </ps-vimeo-video>
@@ -98,6 +99,14 @@ Polymer('ps-vimeo', {
         * @default []
         */
         videos: []
+    },
+    thumb: function(video) {
+        if (!!this.thumbs)
+            return 'background-image: url(' +
+                video.pictures.sizes[(this.size == 'thumbnail' || this.size == 'low') ? 1 : 3].link +
+                ')';
+        else
+            return '';
     }
 });
 </script>
