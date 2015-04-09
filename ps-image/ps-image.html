@@ -15,7 +15,7 @@ Element displaying a PhotoShelter.com image.
 @homepage #
 -->
 
-<polymer-element name="ps-image" attributes="image I_ID G_ID size sizing sizeType height width">
+<polymer-element name="ps-image" attributes="image I_ID G_ID size sizing sizeType height width position">
     <template>
     <style>
     :host {
@@ -33,6 +33,17 @@ Element displaying a PhotoShelter.com image.
         width: 100%;
         height: 100%;
     }
+    :host .right-side {
+        background-position: right center !important;
+        border-right: 1px solid transparent;
+    }
+    :host .left-side {
+        background-position: left center !important;
+        border-left: 1px solid transparent;
+    }
+    core-image {
+        background-color: #fff;
+    }
     </style>
 
     <template if="{{!!I_ID}}">
@@ -45,7 +56,7 @@ Element displaying a PhotoShelter.com image.
 
     <template if="{{!!image && !!image.ImageLink}}">
         <core-image id="img" src="{{image.ImageLink.base}}/{{I_ID}}sec={{image.ImageLink.token}}/{{sizeType}}={{size}}"
-            width="{{width}}" height="{{height}}" class="{{sizing === 'contain' ? 'cover' : sizing}}"
+            width="{{width}}" height="{{height}}" class="{{sizing === 'contain' ? 'cover' : sizing}}{{position}}"
             title="{{image.Iptc.title}}" sizing="{{sizing === 'relative' ? 'cover' : sizing}}"
             style="padding-bottom: {{ratio()}}"
             preload="true" fade="true"></core-image>

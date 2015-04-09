@@ -1,0 +1,78 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ps-image/ps-image.html">
+<!--
+Element displaying a PhotoShelter.com image.
+
+##### Example
+
+<ps-image></ps-image>
+
+@element ps-image
+@blurb Element displaying a PhotoShelter.com image.
+@status alpha
+@homepage #
+-->
+
+<polymer-element name="ps-pane" attributes="images sizing size twoupsClose">
+    <template>
+    <style>
+    :host {
+        display: block;
+    }
+    ps-image {
+        float: left;
+        height: 100%;
+        width: 50%;
+    }
+    ps-image:last-child {
+        width: 100%;
+    }
+    ps-image ~ ps-image:last-child {
+        width: 50%;
+    }
+    </style>
+
+    <template repeat="{{image, i in images}}">
+        <ps-image position="{{position(i)}}" image="{{image}}" size="{{size}}" sizing="{{sizing}}" />
+    </template>
+
+</template>
+
+<script>
+Polymer('ps-pane', {
+    //TODO: should probably take I_IDs/G_IDs/C_IDs for more broad reusability
+    //however, ps-slideshow doesn't need that now.
+    /**
+    * The `sizing` attribute describes the sizing type of the images.
+    *
+    * @attribute sizing
+    * @type string
+    * @default 'contain'
+    */
+    sizing: 'contain',
+    /**
+    * The `size` attribute defines size to be requsted.
+    *
+    * @attribute size
+    * @type string
+    * @default ''
+    */
+    size: '',
+    created: function() {
+        /**
+        * The `images` attribute defines the images to de displayed.
+        *
+        * @attribute images
+        * @type array
+        * @default []
+        */
+        this.images = [];
+    },
+    position: function(i) {
+        if (!this.twoupsClose || this.images.length === 1) return '';
+        else if (i === 0) return ' right-side';
+        else if (i === 1) return ' left-side'
+    }
+});
+</script>
+</polymer-element>

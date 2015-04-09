@@ -2,6 +2,8 @@
 <link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
 <link rel="import" href="../ps-slideshow/ps-slideshow.html">
 <link rel="import" href="../ps-thumbs/ps-thumbs.html">
+<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../core-icons/core-icons.html">
 <!--
 Element displaying a PhotoShelter.com gallery.
 
@@ -15,7 +17,7 @@ Element displaying a PhotoShelter.com gallery.
 @homepage #
 -->
 
-<polymer-element name="ps-gallery" attributes="G_ID gallery I_ID urlFormat">
+<polymer-element name="ps-gallery" attributes="G_ID gallery I_ID urlFormat showing image twoup twoupsClose">
     <template>
     <style no-shim="">
     :host {
@@ -26,6 +28,22 @@ Element displaying a PhotoShelter.com gallery.
         bottom: 0;
         left: 0;
     }
+    ps-thumbs,
+    ps-slideshow {
+        transform: translate3d(-100%,-100%,0);
+    }
+    ps-thumbs.thumbs,
+    ps-slideshow.slideshow {
+        transform: translate3d(0,0,0);
+    }
+    core-icon {
+        color: black;
+        position: absolute !important;
+        left: 0;
+        bottom: 0;
+        border: 1em solid transparent;
+        cursor: pointer;
+    }
     </style>
 
     <template if="{{!!G_ID}}">
@@ -33,12 +51,16 @@ Element displaying a PhotoShelter.com gallery.
     </template>
 
     <template if="{{!!gallery}}">
-        <ps-slideshow id="slideshow" gallery="{{gallery}}" transition="slide" I_ID="{{I_ID}}" urlFormat={{processedUrlFormat}}></ps-slideshow>
+        <ps-slideshow class="{{showing}}" id="slideshow" gallery="{{gallery}}" transition="slide" I_ID="{{image.image_id || I_ID}}" urlFormat={{processedUrlFormat}} twoup={{twoup}} twoupsClose="{{twoupsClose}}"></ps-slideshow>
+        <ps-thumbs image="{{image}}" class="{{showing}}" gallery="{{gallery}}" spacing="15" columns="true"></ps-thumbs>
+        <core-icon icon="apps" on-tap="{{toggle}}"></core-icon>
     </template>
 </template>
 
 <script>
 Polymer('ps-gallery',{
+    twoup: false,
+    twoupsClose: false,
     /**
     * The `G_ID` attribute is the gallery_id to be displayed.
     *
@@ -55,6 +77,7 @@ Polymer('ps-gallery',{
     * @default false
     */
     I_ID: '',
+    showing: 'slideshow',
     created: function() {
         /**
         * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
@@ -79,7 +102,8 @@ Polymer('ps-gallery',{
             "Iptc",
             "Exif",
             "Profile"
-        ]
+        ];
+        this.image = {};
     },
     processUrlFormat: function() {
         return this.urlFormat.replace(':gallery_id',this.gallery.gallery_id);
@@ -91,6 +115,16 @@ Polymer('ps-gallery',{
     galleryChanged: function() {
         if (!!this.gallery.gallery_id && !!this.urlFormat)
             this.processedUrlFormat = this.processUrlFormat();
+    },
+    toggle: function() {
+        if (this.showing === 'slideshow') {
+            this.showing = 'thumbs';
+        } else {
+            this.showing = 'slideshow';
+        }
+    },
+    imageChanged: function() {
+        this.showing = 'slideshow';
     }
 });
 </script>

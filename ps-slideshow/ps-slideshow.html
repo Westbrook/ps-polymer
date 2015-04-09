@@ -16,7 +16,7 @@ Element displaying a PhotoShelter.com slideshow of images
 @homepage #
 -->
 
-<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay sizing urlFormat twoup">
+<polymer-element name="ps-slideshow" attributes="C_ID G_IDs G_ID I_IDs images I_ID image gallery autoplay sizing urlFormat twoup twoupsClose">
     <template>
     <style>
     :host {
@@ -143,11 +143,11 @@ Element displaying a PhotoShelter.com slideshow of images
     </template>
 
     <div class="stage {{animType}}" data-transition="{{transition}}">
-        <ps-pane onstage class="current" size="1440x1440" sizing="{{sizing}}"></ps-pane>
-        <ps-pane class="preload-prev" size="1440x1440" sizing="{{sizing}}"></ps-pane>
-        <ps-pane class="preload-next" size="1440x1440" sizing="{{sizing}}"></ps-pane>
-        <ps-pane onstage class="prev" size="1440x1440" sizing="{{sizing}}"></ps-pane>
-        <ps-pane onstage class="next" size="1440x1440" sizing="{{sizing}}"></ps-pane>
+        <ps-pane onstage class="current" size="1440x1440" sizing="{{sizing}}" twoupsClose="{{twoupsClose}}"></ps-pane>
+        <ps-pane class="preload-prev" size="1440x1440" sizing="{{sizing}}" twoupsClose="{{twoupsClose}}"></ps-pane>
+        <ps-pane class="preload-next" size="1440x1440" sizing="{{sizing}}" twoupsClose="{{twoupsClose}}"></ps-pane>
+        <ps-pane onstage class="prev" size="1440x1440" sizing="{{sizing}}" twoupsClose="{{twoupsClose}}"></ps-pane>
+        <ps-pane onstage class="next" size="1440x1440" sizing="{{sizing}}" twoupsClose="{{twoupsClose}}"></ps-pane>
     </div>
 
     <template if="{{!!set && set.length > 1}}">
@@ -166,6 +166,7 @@ Polymer('ps-slideshow',{
     animing: false,
     current: 0,
     animType: '',
+    twoupsClose: false,
     created: function() {
         /**
         * The `gallery` attribute defines the PhotoShelter gallery to be displayed.
@@ -211,7 +212,7 @@ Polymer('ps-slideshow',{
             "ImageLink",
             "Image",
         ];
-
+        this.set = [];
         this.cleanups = [
             {
                 selector: '.current.forward',
@@ -476,6 +477,7 @@ Polymer('ps-slideshow',{
         origin = origin || this.current;
         var index = origin + offset,
             set = this.set;
+        if (typeof set === 'undefined') debugger;
         if (index < 0) {
             index = set.length + index;
         } else if (index >= set.length) {
