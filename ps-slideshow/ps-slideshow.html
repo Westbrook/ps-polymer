@@ -186,6 +186,7 @@ Polymer('ps-slideshow',{
         this.extendsImg = [
             "ImageLink",
             "Image",
+            "Iptc"
         ];
         /**
         * The `extendsGal` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
@@ -199,6 +200,7 @@ Polymer('ps-slideshow',{
             "GalleryImage",
             "ImageLink",
             "Image",
+            "Iptc"
         ];
         /**
         * The `extendsGal` attribute outlines the extends of the ps-gallery-service tag to support the content delivered.
@@ -211,6 +213,7 @@ Polymer('ps-slideshow',{
             "KeyImage",
             "ImageLink",
             "Image",
+            "Iptc"
         ];
         this.set = [];
         this.cleanups = [
@@ -386,6 +389,7 @@ Polymer('ps-slideshow',{
     goToUrl: function(image) {
         var urlParts = this.urlFormat.split('/'),
             property, value;
+        image = image[0];
         for (var i = 0, ct = urlParts.length; i < ct; i++) {
             if (urlParts[i][0] === ':') {
                 property = urlParts[i].substring(1).split('.');
