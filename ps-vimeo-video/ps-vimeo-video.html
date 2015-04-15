@@ -15,11 +15,12 @@ Element displaying a Vimeo video
 @homepage #
 -->
 
-<polymer-element name="ps-vimeo-video" attributes="V_ID size thumb">
+<polymer-element name="ps-vimeo-video" attributes="V_ID size thumb headline caption">
     <template>
     <style>
     :host {
         display: flex;
+        flex-wrap: wrap;
     }
     #video {
         float: left;
@@ -30,9 +31,7 @@ Element displaying a Vimeo video
         background-size: cover;
         background-position: center center;
         cursor: pointer;
-    }
-    :host(:not([size="standard"])) #video {
-        padding-bottom: 56.25% !important;
+        position: relative;
     }
     iframe {
         position: absolute;
@@ -42,8 +41,14 @@ Element displaying a Vimeo video
         height: 100%;
         cursor: default;
     }
-    .list {
+    #video {
+        height: 0;
+    }
+    .post {
+        width: 100%;
         float: left;
+    }
+    .list {
         width: 25%;
         flex: 1 0 215px;
         position: relative;
@@ -52,6 +57,10 @@ Element displaying a Vimeo video
         margin: 0;
     }
     .info {
+        width: 100%;
+    }
+    .list ~ .info {
+        width: auto;
         flex: 0 1 75%;
     }
     :host .post core-icon {
@@ -93,7 +102,7 @@ Element displaying a Vimeo video
             <core-icon icon="av:play-arrow"></core-icon>
         </div>
     </div>
-    <template if="{{size === 'list'}}">
+    <template if="{{!!headline || !!caption}}">
         <div class="info">
             <content></content>
         </div>
@@ -186,7 +195,8 @@ Polymer('ps-vimeo-video', {
     },
     writeVideo: function() {
         var elm = this.shadowRoot.querySelector('#video');
-        elm.style.paddingBottom = (this.video.height / this.video.width) * 100 + '%';
+        //possibly has all videos sized to content?
+        //elm.style.paddingBottom = (this.video.height / this.video.width) * 100 + '%';
         elm.innerHTML = this.video.html;
         this.player = this.shadowRoot.querySelector('iframe');
     },
