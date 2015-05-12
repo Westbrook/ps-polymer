@@ -1,0 +1,48 @@
+<link rel="import" href="../polymer/polymer.html">
+<!--
+Element parsing instagram captions
+
+##### Example
+
+<ps-instagram-caption></ps-instagram-caption>
+
+@element ps-instagram-caption
+@blurb Element parsing instagram captions
+@status alpha
+@homepage #
+-->
+<polymer-element name="ps-instagram-caption" attributes="caption">
+    <template>
+    <p></p>
+</template>
+<script>
+Polymer('ps-instagram-caption', {
+    /**
+    * The `caption` attribute is the Intagram content to parse
+    *
+    * @attribute caption
+    * @type string
+    * @default ''
+    */
+    caption: '',
+    /**
+    * The `keysChanged` method uses the retrived keychain data to create the request URL.
+    *
+    * @method keysChanged
+    */
+    captionChanged: function() {
+        var caption,
+            text    = this.caption,
+            regexUser   = /(^|[^@\w])@(\w{1,15})\b/g,
+            regexCat  = /(^|[^#\w])#(\w{1,50})\b/g,
+            replaceUser = '$1@<a href="http://instagram.com/$2" target="_blank">$2</a>',
+            replaceCat = '$1#<a href="https://instagram.com/explore/tags/$2" target="_blank">$2</a>';
+
+        caption = text.replace( regexUser, replaceUser );
+        caption = caption.replace( regexCat, replaceCat );
+
+        this.injectBoundHTML(caption, this.shadowRoot.querySelector('p'));
+    }
+});
+</script>
+</polymer-element>

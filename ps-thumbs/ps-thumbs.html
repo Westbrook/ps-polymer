@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-gallery-service/ps-gallery-service.html">
 <link rel="import" href="../ps-image/ps-image.html">
+<link rel="import" href="../juicy-tile-list/juicy-tile-list.html">
 <!--
 Element displaying a PhotoShelter.com gallery as thumbnails.
 
@@ -14,12 +15,14 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
 @homepage #
 -->
 
-<polymer-element name="ps-thumbs" attributes="image G_ID gallery images displayRatio showTitle spacing justified">
+<polymer-element name="ps-thumbs" attributes="columns image G_ID gallery images displayRatio showTitle spacing justified maxEdge callback">
     <template>
     <style>
     :host {
         display: block;
         margin-right: auto;
+        height: 100%;
+        overflow: auto;
     }
     .thumbs {
         list-style: none;
@@ -39,7 +42,10 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
         box-sizing: border-box;
     }
     :host(:not([justified])) .thumb {
-        width: 33.33%;
+        width: 25%;
+    }
+    [screen="tab"] .thumb {
+        width: 25%;
     }
     .scaler {
         float: left;
@@ -83,6 +89,10 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
     .fill-row {
         height: 0;
     }
+    juicy-tile-list {
+        padding: 0;
+        overflow: hidden;
+    }
     </style>
 
     <template if="{{!!G_ID}}">
@@ -90,21 +100,24 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
     </template>
 
     <template if="{{!!processedImages}}">
-        <ul class="thumbs" data-ratio="{{displayRatio ? displayRatio : 'natural'}}"> <!-- style here too? style="padding-left: {{spacing}}px;"-->
+        <!-- <ul class="thumbs" data-ratio="{{displayRatio ? displayRatio : 'natural'}}" screen="{{screen}}"> <!-- style here too? style="padding-left: {{spacing}}px;" -->
+        <juicy-tile-list setup="{{juicySetup}}">
             <template repeat="{{image, i in processedImages}}" id="thumbs">
-                <li class="thumb" style="width: {{image.display_width}}px; height: {{image.display_height}}px; margin: 0 {{justified ? 0 : spacing}}px {{spacing}}px 0;">
+                <!-- <div class="thumb" style="width: {{image.display_width}}px; height: {{image.display_height}}px; padding: 0 {{justified ? 0 : spacing}}px {{spacing}}px 0;"> -->
+                <div juicytile="{{i}}" on-tap="{{setImage}}" class="thumb" style="width: {{image.display_width}}px; height: {{image.display_height}}px;">
                     <div class="scaler">
-                        <ps-image image="{{image.KeyImage || image}}" sizing="{{displayRatio ? 'cover' : 'relative'}}"></ps-image>
+                        <ps-image image="{{image.KeyImage || image}}" sizing="{{displayRatio ? 'cover' : 'relative'}}" size="{{setSize()}}"></ps-image>
                     </div>
-                    <template if="{{!!image.name}}">
+                    <template if="{{!!showTitle && !!image.name}}">
                         <h3>{{image.name}}</h3>
                     </template>
-                </li>
+                </div>
             </template>
             <template if="{{!!justified && !!fillRow()}}">
                 <li class="thumb fill-row" style="{{fillRow()}}"></li>
             </template>
-        </ul>
+        </juicy-tile-list>
+        <!-- </ul> -->
     </template>
 
 </template>
@@ -113,6 +126,7 @@ Element displaying a PhotoShelter.com gallery as thumbnails.
 Polymer('ps-thumbs',{
     spacing: 0,
     showTitle: false,
+    maxEdge: 350,
     created: function() {
         /**
         * The `G_ID` attribute is the gallery_id to be displayed.
@@ -164,12 +178,41 @@ Polymer('ps-thumbs',{
             this.justifyImages();
         } else {
             this.processedImages = this.images;
+            this.juicySetupPrep();
+            //TODO: not where this belongs
+            window.addEventListener("resize", function(e) {
+                this.juicySetupPrep();
+            }.bind(this), false);
         }
+    },
+    setSize: function() {
+        if (this.justified) {
+            return '1440x' + this.maxEdge;
+        } else {
+            return this.maxEdge;
+        }
+    },
+    juicySetupPrep: function() {
+        this.displayWidth = this.getBoundingClientRect().width - this.getScrollWidth();
+        var juicySetup = {gutter: 15,items:[]},
+            columns = Math.ceil(this.displayWidth / 350),
+            width = this.displayWidth / columns - (this.spacing / columns * (columns -1)),
+            image;
+        console.log(this.images);
+        for (var i = 0, ct = this.images.length; i < ct; i++) {
+            image = (this.images[0].KeyImage) ? this.images[0].KeyImage.Image : this.images[i].Image || this.images[i];
+            juicySetup.items.push({
+                width: width,
+                height: image.screen_height / image.screen_width * width,
+                index: i,
+                priority: 1 - i / this.images.length
+            });
+        }
+        this.juicySetup = juicySetup;
     },
     justifyImages: function() {
         this.displayWidth = this.getBoundingClientRect().width - this.getScrollWidth();
-        console.log(this.displayWidth);
-        var max_height = Math.max(100, Math.min(this.displayWidth/3, 350)),
+        var max_height = Math.max(100, Math.min(this.displayWidth/3, this.maxEdge)),
             slice = [],
             idx = 0, h = 0;
 
@@ -237,86 +280,9 @@ Polymer('ps-thumbs',{
 		outer.parentNode.removeChild(outer);
 		return widthNoScroll - widthWithScroll;
 	},
-
-
-
-    // Justify functions
-
-	_getheight: function(images, width, margin) {
-		width -= images.length * margin;
-		var h = 0, imgD;
-		for (var i = 0; i < images.length; ++i) {
-			imgD = $(images[i]).data();
-			h +=  imgD.width / imgD.height;
-		}
-		return width / h;
-	},
-
-	_setheight: function(images, height, row) {
-		var width = 0,
-			$img, imgD;
-		this.HEIGHTS = this.HEIGHTS || [];
-		this.HEIGHTS.push(height);
-		for (var i = 0; i < images.length; ++i) {
-			$img = $(images[i]);
-			imgD = $img.data();
-			width = height * imgD.width / imgD.height;
-			width = Math.round(width * 100) / 100; //not precision rounding.
-			height = Math.round(height * 100) / 100; //not precision rounding.
-			$img
-				.css({
-					width: width,
-					height: height
-				})
-				.data({
-					setWidth: width,
-					setHeight: height,
-					row: row
-				});
-		}
-	},
-
-	_justify: function($html, max_height) {
-        //get holder width
-		this.displayWidth = this.displayWidth ||
-			this.$elem.width() - 1;
-		var holder = this.$elem.find('.holder'),
-			size = this.displayWidth -
-				parseFloat(holder.css('padding-left')) -
-				parseFloat(holder.css('padding-right')),
-			margin = 0,
-			$marginTest = $('<div class="holder"><a class="margin-test"/></div>');
-            //set row height
-		max_height = Math.max(100, Math.min(size/4, 250));
-		var n = 0,
-			images = $html.find('.scaler'),
-			slice = [],
-			h = 0;
-        //test margins and set
-		this.$elem.append($marginTest);
-		margin = parseFloat($marginTest.find('.margin-test').css('margin-right'));
-		margin += parseFloat($marginTest.find('.margin-test').css('margin-left'));
-		$marginTest.remove();
-		w: while (images.length > 0) {
-			for (var i = 1; i < images.length + 1; ++i) {
-				slice = images.slice(0, i);
-				h = this._getheight(slice, size, margin);
-				if (h < max_height) {
-					this.setheight(slice, h, n);
-					n++;
-					images = images.slice(i);
-					continue w;
-				}
-			}
-			this.setheight(slice, Math.min(max_height, h), n);
-			n++;
-			break;
-		}
-
-		this.firstI = false;
-
-		return $html;
-	},
+    setImage: function(e) {
+        this.image = this.processedImages[e.currentTarget.getAttribute('juicytile')];
+    }
 });
 </script>
 </polymer-element>

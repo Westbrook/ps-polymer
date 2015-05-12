@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../ps-instagram-service/ps-instagram-service.html">
+<link rel="import" href="../ps-instagram-caption/ps-instagram-caption.html">
 <link rel="import" href="../core-image/core-image.html">
 <link rel="import" href="../core-icon/core-icon.html">
 <link rel="import" href="../core-icons/core-icons.html">
@@ -94,13 +95,12 @@ Element displaying a tumblr blog.
                         </div>
                     </template>
                     <template if="{{!!caption}}">
-                        <p>{{post.caption.text}}</p>
+                        <ps-instagram-caption caption={{post.caption.text}}></ps-instagram-caption>
                     </template>
                 </div>
             </template>
         </div>
     </template>
-
 </template>
 
 <script>

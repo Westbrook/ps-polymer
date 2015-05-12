@@ -44,7 +44,8 @@ Element displaying a PhotoShelter.com collection.
     </template>
 
     <template if="{{!!collection}}">
-        <ps-thumbs images="{{collection}}" displayRatio="4:3" spacing="10" showTitle="true"></ps-thumbs>
+        <!--ps-thumbs image="{{image}}" class="{{showing}}" gallery="{{gallery}}" spacing="15" columns="true"></ps-thumbs-->
+        <ps-thumbs images="{{collection}}" spacing="15" showTitle="true" columns="true"></ps-thumbs>
     </template>
 
 </template>
